@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import MenuTabsEditor from "./MenuTabsEditor";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_IMAGE_KB = 2048;
@@ -26,6 +27,14 @@ export default function CategoryManagement() {
     const [editingCategory, setEditingCategory] = useState(null);
     const [modalSaving, setModalSaving] = useState(false);
     const [modalError, setModalError] = useState("");
+    const [activeModalTab, setActiveModalTab] = useState("info"); // "info" | "menu"
+
+    // Dedicated Full Menu Array Modal state
+    const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
+    const [menuCategory, setMenuCategory] = useState(null);
+    const [menuTabs, setMenuTabs] = useState([]);
+    const [menuSaving, setMenuSaving] = useState(false);
+    const [menuError, setMenuError] = useState("");
 
     // Form state
     const [form, setForm] = useState({
@@ -36,9 +45,81 @@ export default function CategoryManagement() {
         displayOrder: "1",
         isActive: true,
         image: null,
+        items: [],
     });
     const [preview, setPreview] = useState(null);
     const fileInputRef = useRef(null);
+
+    // Helper functions for Menu Array
+    const parseCategoryItems = (cat) => {
+        if (!cat || !cat.items) return [];
+        try {
+            const parsed = typeof cat.items === "string" ? JSON.parse(cat.items) : cat.items;
+            return Array.isArray(parsed) ? parsed : [];
+        } catch {
+            return [];
+        }
+    };
+
+    const countCategoryItems = (cat) => {
+        const tabs = parseCategoryItems(cat);
+        let total = 0;
+        tabs.forEach((t) => {
+            total += (t.items || []).length;
+        });
+        return { tabCount: tabs.length, itemCount: total };
+    };
+
+    const openMenuModal = (cat) => {
+        setMenuCategory(cat);
+        const existingTabs = parseCategoryItems(cat);
+        setMenuTabs(existingTabs.length > 0 ? existingTabs : [{ category: "Full Menu", items: [] }]);
+        setMenuError("");
+        setIsMenuModalOpen(true);
+    };
+
+    const closeMenuModal = () => {
+        setIsMenuModalOpen(false);
+        setMenuCategory(null);
+        setMenuTabs([]);
+        setMenuError("");
+    };
+
+    const handleSaveMenu = async () => {
+        if (!menuCategory) return;
+        setMenuSaving(true);
+        setMenuError("");
+
+        try {
+            const res = await fetch(`/api/services/categories/${menuCategory.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    items: JSON.stringify(menuTabs),
+                }),
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.error || "Failed to update menu items.");
+            }
+
+            // Update in local state
+            setCategories((prev) =>
+                prev.map((c) =>
+                    c.id === menuCategory.id ? { ...c, items: JSON.stringify(menuTabs) } : c
+                )
+            );
+
+            setSuccessMsg(`Full menu array updated for "${menuCategory.name}"!`);
+            setTimeout(() => setSuccessMsg(""), 3500);
+            closeMenuModal();
+        } catch (err) {
+            setMenuError(err.message || "Failed to save menu array.");
+        } finally {
+            setMenuSaving(false);
+        }
+    };
 
     // Deleting state
     const [deletingId, setDeletingId] = useState(null);
@@ -66,6 +147,7 @@ export default function CategoryManagement() {
 
     const openAddModal = () => {
         setEditingCategory(null);
+        setActiveModalTab("info");
         setForm({
             name: "",
             slug: "",
@@ -74,6 +156,7 @@ export default function CategoryManagement() {
             displayOrder: String((categories.length + 1) || 1),
             isActive: true,
             image: null,
+            items: [{ category: "Full Menu", items: [] }],
         });
         setPreview(null);
         setModalError("");
@@ -82,6 +165,7 @@ export default function CategoryManagement() {
 
     const openEditModal = (cat) => {
         setEditingCategory(cat);
+        setActiveModalTab("info");
         setForm({
             name: cat.name || "",
             slug: cat.slug || "",
@@ -90,6 +174,7 @@ export default function CategoryManagement() {
             displayOrder: String(cat.display_order || 1),
             isActive: Boolean(cat.is_active),
             image: null,
+            items: parseCategoryItems(cat),
         });
         setPreview(cat.image || null);
         setModalError("");
@@ -142,6 +227,7 @@ export default function CategoryManagement() {
             formData.append("shortDesc", form.shortDesc.trim() || `Luxury ${form.name.trim().toLowerCase()} treatments handcrafted by certified artists.`);
             formData.append("displayOrder", form.displayOrder || "1");
             formData.append("isActive", form.isActive ? "1" : "0");
+            formData.append("items", JSON.stringify(form.items || []));
 
             if (form.image) {
                 formData.append("image", form.image);
@@ -304,6 +390,7 @@ export default function CategoryManagement() {
                                     <th className="py-4 px-6 w-16">#</th>
                                     <th className="py-4 px-6">Category</th>
                                     <th className="py-4 px-6">Frontend URL Slug</th>
+                                    <th className="py-4 px-6 text-center">The Full Menu Array</th>
                                     <th className="py-4 px-6 text-center">Status</th>
                                     <th className="py-4 px-6 text-right">Actions</th>
                                 </tr>
@@ -345,6 +432,27 @@ export default function CategoryManagement() {
                                                     /services/{cat.slug}
                                                     <span className="text-[10px]">↗</span>
                                                 </a>
+                                            </td>
+                                            <td className="py-4 px-6 text-center">
+                                                {(() => {
+                                                    const { itemCount, tabCount } = countCategoryItems(cat);
+                                                    return (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => openMenuModal(cat)}
+                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gold/50 bg-gold/5 hover:bg-gold hover:text-cream text-gold-deep text-[11px] font-sans font-medium transition-all cursor-pointer shadow-xs"
+                                                            title={`Manage full menu array for ${cat.name}`}
+                                                        >
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-3.5 w-3.5">
+                                                                <path d="M4 6h16M4 12h16M4 18h7" />
+                                                            </svg>
+                                                            <span>Edit Menu</span>
+                                                            <span className="px-1.5 py-0.2 bg-white/80 text-ink rounded-full text-[10px] font-mono">
+                                                                {itemCount}
+                                                            </span>
+                                                        </button>
+                                                    );
+                                                })()}
                                             </td>
                                             <td className="py-4 px-6 text-center">
                                                 <button
@@ -421,16 +529,16 @@ export default function CategoryManagement() {
             {/* Modal for Add / Edit Category */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/50 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-cream border border-border rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl">
-                        <div className="flex items-center justify-between mb-6 pb-4 border-b border-border">
+                    <div className="bg-cream border border-border rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl">
+                        <div className="flex items-center justify-between mb-4 pb-4 border-b border-border">
                             <div>
                                 <h2 className="font-display text-2xl italic text-ink">
-                                    {editingCategory ? "Edit Category" : "Add New Category"}
+                                    {editingCategory ? `Edit Category: ${editingCategory.name}` : "Add New Category"}
                                 </h2>
                                 <p className="text-xs text-muted mt-0.5">
                                     {editingCategory
-                                        ? "Update category title, slug, and status."
-                                        : "Create a dynamic category with URL slug and image."}
+                                        ? "Update category settings, banner image, and full menu treatment items."
+                                        : "Create a dynamic service category and configure its menu array."}
                                 </p>
                             </div>
                             <button
@@ -442,6 +550,35 @@ export default function CategoryManagement() {
                             </button>
                         </div>
 
+                        {/* Modal Tab Switcher */}
+                        <div className="flex items-center gap-2 border-b border-border mb-6">
+                            <button
+                                type="button"
+                                onClick={() => setActiveModalTab("info")}
+                                className={`pb-3 px-3 font-sans text-xs uppercase tracking-wider font-semibold transition-colors border-b-2 cursor-pointer ${
+                                    activeModalTab === "info"
+                                        ? "border-gold text-gold-deep"
+                                        : "border-transparent text-muted hover:text-ink"
+                                }`}
+                            >
+                                Category Details
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setActiveModalTab("menu")}
+                                className={`pb-3 px-3 font-sans text-xs uppercase tracking-wider font-semibold transition-colors border-b-2 flex items-center gap-2 cursor-pointer ${
+                                    activeModalTab === "menu"
+                                        ? "border-gold text-gold-deep"
+                                        : "border-transparent text-muted hover:text-ink"
+                                }`}
+                            >
+                                <span>The Full Menu Array</span>
+                                <span className="text-[10px] bg-gold/15 text-gold-deep px-2 py-0.5 rounded-full font-mono">
+                                    {(form.items || []).reduce((acc, t) => acc + (t.items || []).length, 0)} items
+                                </span>
+                            </button>
+                        </div>
+
                         {modalError && (
                             <div className="mb-5 bg-red-50 border border-red-200 text-red-700 text-xs px-4 py-2.5 rounded-xl">
                                 {modalError}
@@ -449,148 +586,235 @@ export default function CategoryManagement() {
                         )}
 
                         <form onSubmit={handleSaveCategory} className="space-y-5">
-                            <div className="grid sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold mb-1.5">
-                                        Category Name <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={form.name}
-                                        onChange={(e) => {
-                                            const newName = e.target.value;
-                                            setForm((prev) => ({
-                                                ...prev,
-                                                name: newName,
-                                                slug: prev.slug === slugify(prev.name) ? slugify(newName) : prev.slug,
-                                            }));
-                                        }}
-                                        placeholder="e.g. Skin Care"
-                                        className="w-full bg-white px-4 py-3 rounded-xl border border-border text-ink text-sm focus:outline-none focus:border-gold"
+                            {activeModalTab === "info" ? (
+                                <>
+                                    <div className="grid sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold mb-1.5">
+                                                Category Name <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={form.name}
+                                                onChange={(e) => {
+                                                    const newName = e.target.value;
+                                                    setForm((prev) => ({
+                                                        ...prev,
+                                                        name: newName,
+                                                        slug: prev.slug === slugify(prev.name) ? slugify(newName) : prev.slug,
+                                                    }));
+                                                }}
+                                                placeholder="e.g. Skin Care"
+                                                className="w-full bg-white px-4 py-3 rounded-xl border border-border text-ink text-sm focus:outline-none focus:border-gold"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold mb-1.5">
+                                                Display Order (#)
+                                            </label>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={form.displayOrder}
+                                                onChange={(e) => setForm({ ...form, displayOrder: e.target.value })}
+                                                className="w-full bg-white px-4 py-3 rounded-xl border border-border text-ink text-sm font-mono focus:outline-none focus:border-gold"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold">
+                                                URL Slug <span className="text-red-500">*</span>
+                                            </label>
+                                            <button
+                                                type="button"
+                                                onClick={() => setForm((prev) => ({ ...prev, slug: slugify(prev.name) }))}
+                                                className="text-[10px] uppercase font-sans text-gold-deep hover:underline cursor-pointer"
+                                            >
+                                                Auto from name
+                                            </button>
+                                        </div>
+                                        <div className="flex items-center gap-2 bg-white border border-border px-4 py-2.5 rounded-xl focus-within:border-gold">
+                                            <span className="text-muted/60 text-xs font-mono shrink-0">/services/</span>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={form.slug || slugify(form.name)}
+                                                onChange={(e) => setForm({ ...form, slug: slugify(e.target.value) })}
+                                                placeholder="skin-care"
+                                                className="w-full bg-transparent font-mono text-xs text-ink focus:outline-none"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold mb-1.5">
+                                            Category Headline / Title
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={form.title}
+                                            onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                            placeholder="e.g. Skin care rituals & clinical wellness."
+                                            className="w-full bg-white px-4 py-3 rounded-xl border border-border text-ink text-sm focus:outline-none focus:border-gold"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold mb-1.5">
+                                            Short Description
+                                        </label>
+                                        <textarea
+                                            rows={2}
+                                            value={form.shortDesc}
+                                            onChange={(e) => setForm({ ...form, shortDesc: e.target.value })}
+                                            placeholder="Brief introduction for the hero section..."
+                                            className="w-full bg-white px-4 py-3 rounded-xl border border-border text-ink text-xs focus:outline-none focus:border-gold resize-none"
+                                        />
+                                    </div>
+
+                                    {/* Image Upload */}
+                                    <div>
+                                        <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold mb-1.5">
+                                            Hero Image (Optional, 4:5 luxury portrait)
+                                        </label>
+                                        <div className="flex items-center gap-4">
+                                            {preview && (
+                                                <div className="h-16 w-14 rounded-lg overflow-hidden bg-white border border-border shrink-0">
+                                                    <img src={preview} alt="Preview" className="h-full w-full object-cover" />
+                                                </div>
+                                            )}
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                accept="image/jpeg,image/png,image/webp"
+                                                onChange={(e) => handleFileChange(e.target.files?.[0])}
+                                                className="text-xs text-muted file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[11px] file:uppercase file:font-semibold file:bg-gold/15 file:text-gold-deep hover:file:bg-gold/25 cursor-pointer"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Status */}
+                                    <div className="flex items-center gap-3 pt-2">
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={form.isActive}
+                                                onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold"></div>
+                                        </label>
+                                        <span className="text-xs font-sans text-ink font-medium">
+                                            Active (Show in services menu & website)
+                                        </span>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="space-y-4">
+                                    <p className="font-sans text-xs text-muted">
+                                        Configure treatment tabs and service item names. These will display in &quot;Our {form.name || "category"} services. The full menu&quot; section without opening detail pages.
+                                    </p>
+                                    <MenuTabsEditor
+                                        tabs={form.items || []}
+                                        onChange={(newTabs) => setForm((prev) => ({ ...prev, items: newTabs }))}
                                     />
                                 </div>
+                            )}
 
-                                <div>
-                                    <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold mb-1.5">
-                                        Display Order (#)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        value={form.displayOrder}
-                                        onChange={(e) => setForm({ ...form, displayOrder: e.target.value })}
-                                        className="w-full bg-white px-4 py-3 rounded-xl border border-border text-ink text-sm font-mono focus:outline-none focus:border-gold"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <div className="flex items-center justify-between mb-1.5">
-                                    <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold">
-                                        URL Slug <span className="text-red-500">*</span>
-                                    </label>
+                            <div className="flex items-center justify-between pt-4 border-t border-border">
+                                {activeModalTab === "menu" ? (
+                                    <span className="font-sans text-xs text-muted">
+                                        {(form.items || []).reduce((acc, t) => acc + (t.items || []).length, 0)} items configured
+                                    </span>
+                                ) : (
+                                    <span />
+                                )}
+                                <div className="flex items-center gap-3">
                                     <button
                                         type="button"
-                                        onClick={() => setForm((prev) => ({ ...prev, slug: slugify(prev.name) }))}
-                                        className="text-[10px] uppercase font-sans text-gold-deep hover:underline cursor-pointer"
+                                        onClick={closeModal}
+                                        className="px-5 py-2.5 rounded-full border border-border text-xs uppercase font-sans text-muted hover:text-ink transition-colors cursor-pointer"
                                     >
-                                        Auto from name
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={modalSaving}
+                                        className="px-6 py-2.5 rounded-full bg-gold text-cream text-xs uppercase tracking-widest font-sans font-semibold shadow-luxe hover:scale-[1.02] transition-transform disabled:opacity-50 cursor-pointer"
+                                    >
+                                        {modalSaving ? "Saving..." : (editingCategory ? "Update Category & Menu" : "Create Category")}
                                     </button>
                                 </div>
-                                <div className="flex items-center gap-2 bg-white border border-border px-4 py-2.5 rounded-xl focus-within:border-gold">
-                                    <span className="text-muted/60 text-xs font-mono shrink-0">/services/</span>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={form.slug || slugify(form.name)}
-                                        onChange={(e) => setForm({ ...form, slug: slugify(e.target.value) })}
-                                        placeholder="skin-care"
-                                        className="w-full bg-transparent font-mono text-xs text-ink focus:outline-none"
-                                    />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Dedicated Quick Modal for The Full Menu Array */}
+            {isMenuModalOpen && menuCategory && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/50 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-cream border border-border rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6">
+                        <div className="flex items-center justify-between pb-4 border-b border-border">
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <span className="font-sans text-[10px] tracking-widest uppercase bg-gold/15 text-gold-deep font-semibold px-2.5 py-0.5 rounded-full">
+                                        Frontend Menu Array
+                                    </span>
+                                    <h2 className="font-display text-2xl italic text-ink">
+                                        {menuCategory.name} Treatments Menu
+                                    </h2>
                                 </div>
+                                <p className="text-xs text-muted mt-1">
+                                    Manage tabs and treatment names for &quot;Our {menuCategory.name.toLowerCase()} services. The full menu&quot;. Add individual items or paste multiple items in bulk.
+                                </p>
                             </div>
+                            <button
+                                type="button"
+                                onClick={closeMenuModal}
+                                className="h-8 w-8 rounded-full border border-border flex items-center justify-center text-muted hover:text-ink hover:border-gold transition-colors cursor-pointer"
+                            >
+                                ✕
+                            </button>
+                        </div>
 
-                            <div>
-                                <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold mb-1.5">
-                                    Category Headline / Title
-                                </label>
-                                <input
-                                    type="text"
-                                    value={form.title}
-                                    onChange={(e) => setForm({ ...form, title: e.target.value })}
-                                    placeholder="e.g. Skin care rituals & clinical wellness."
-                                    className="w-full bg-white px-4 py-3 rounded-xl border border-border text-ink text-sm focus:outline-none focus:border-gold"
-                                />
+                        {menuError && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-4 py-2.5 rounded-xl">
+                                {menuError}
                             </div>
+                        )}
 
-                            <div>
-                                <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold mb-1.5">
-                                    Short Description
-                                </label>
-                                <textarea
-                                    rows={2}
-                                    value={form.shortDesc}
-                                    onChange={(e) => setForm({ ...form, shortDesc: e.target.value })}
-                                    placeholder="Brief introduction for the hero section..."
-                                    className="w-full bg-white px-4 py-3 rounded-xl border border-border text-ink text-xs focus:outline-none focus:border-gold resize-none"
-                                />
-                            </div>
+                        <MenuTabsEditor
+                            tabs={menuTabs}
+                            onChange={setMenuTabs}
+                        />
 
-                            {/* Image Upload */}
-                            <div>
-                                <label className="block text-[11px] font-sans uppercase tracking-wider text-muted font-semibold mb-1.5">
-                                    Hero Image (Optional, 4:5 luxury portrait)
-                                </label>
-                                <div className="flex items-center gap-4">
-                                    {preview && (
-                                        <div className="h-16 w-14 rounded-lg overflow-hidden bg-white border border-border shrink-0">
-                                            <img src={preview} alt="Preview" className="h-full w-full object-cover" />
-                                        </div>
-                                    )}
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        accept="image/jpeg,image/png,image/webp"
-                                        onChange={(e) => handleFileChange(e.target.files?.[0])}
-                                        className="text-xs text-muted file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[11px] file:uppercase file:font-semibold file:bg-gold/15 file:text-gold-deep hover:file:bg-gold/25 cursor-pointer"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Status */}
-                            <div className="flex items-center gap-3 pt-2">
-                                <label className="relative inline-flex items-center cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={form.isActive}
-                                        onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
-                                        className="sr-only peer"
-                                    />
-                                    <div className="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold"></div>
-                                </label>
-                                <span className="text-xs font-sans text-ink font-medium">
-                                    Active (Show in services menu & website)
-                                </span>
-                            </div>
-
-                            <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-border">
+                            <p className="font-sans text-xs text-muted">
+                                {menuTabs.length} tabs · {menuTabs.reduce((acc, t) => acc + (t.items?.length || 0), 0)} treatment items
+                            </p>
+                            <div className="flex items-center justify-end gap-3">
                                 <button
                                     type="button"
-                                    onClick={closeModal}
-                                    className="px-5 py-2.5 rounded-full border border-border text-xs uppercase font-sans text-muted hover:text-ink transition-colors"
+                                    onClick={closeMenuModal}
+                                    className="px-5 py-2.5 rounded-full border border-border text-xs uppercase font-sans text-muted hover:text-ink transition-colors cursor-pointer"
                                 >
                                     Cancel
                                 </button>
                                 <button
-                                    type="submit"
-                                    disabled={modalSaving}
-                                    className="px-6 py-2.5 rounded-full bg-gold text-cream text-xs uppercase tracking-widest font-sans font-semibold shadow-luxe hover:scale-[1.02] transition-transform disabled:opacity-50"
+                                    type="button"
+                                    onClick={handleSaveMenu}
+                                    disabled={menuSaving}
+                                    className="px-6 py-2.5 rounded-full bg-gold text-cream text-xs uppercase tracking-widest font-sans font-semibold shadow-luxe hover:scale-[1.02] transition-transform disabled:opacity-50 cursor-pointer"
                                 >
-                                    {modalSaving ? "Saving..." : (editingCategory ? "Update Category" : "Create Category")}
+                                    {menuSaving ? "Saving..." : "Save Menu Changes"}
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             )}

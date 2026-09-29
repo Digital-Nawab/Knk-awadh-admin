@@ -374,6 +374,7 @@ export async function createCategory(request) {
         let displayOrder = 1;
         let isActive = true;
         let imageUrl = null;
+        let items = null;
 
         const contentType = request.headers.get("content-type") || "";
 
@@ -385,6 +386,13 @@ export async function createCategory(request) {
             shortDesc = (formData.get("shortDesc") || formData.get("short_desc") || "").toString().trim();
             displayOrder = parseInt(formData.get("displayOrder") || formData.get("order") || "1", 10) || 1;
             isActive = formData.get("isActive") !== "false" && formData.get("isActive") !== "0";
+
+            if (formData.has("items")) {
+                try {
+                    const parsed = JSON.parse(formData.get("items"));
+                    items = Array.isArray(parsed) ? JSON.stringify(parsed) : null;
+                } catch { items = null; }
+            }
 
             const imageFile = formData.get("image");
             imageUrl = (formData.get("existingImage") || "").toString().trim() || null;
@@ -400,6 +408,9 @@ export async function createCategory(request) {
             displayOrder = parseInt(json.displayOrder || json.order || "1", 10) || 1;
             isActive = json.isActive !== false && json.isActive !== "0";
             imageUrl = json.image || null;
+            if (json.items !== undefined) {
+                items = Array.isArray(json.items) ? JSON.stringify(json.items) : (typeof json.items === "string" ? json.items : null);
+            }
         }
 
         if (!name) {
@@ -421,6 +432,7 @@ export async function createCategory(request) {
             image: imageUrl || "/assets/images/new/service/NAILS.webp",
             displayOrder,
             isActive,
+            items,
         });
 
         return { status: 201, body: { success: true, message: "Category created successfully.", category } };
@@ -444,6 +456,7 @@ export async function updateCategory(id, request) {
         let displayOrder = existingCategory.display_order || 1;
         let isActive = Boolean(existingCategory.is_active);
         let imageUrl = existingCategory.image;
+        let items = existingCategory.items;
 
         const contentType = request.headers.get("content-type") || "";
 
@@ -455,6 +468,13 @@ export async function updateCategory(id, request) {
             if (formData.has("shortDesc")) shortDesc = formData.get("shortDesc").toString().trim();
             if (formData.has("displayOrder")) displayOrder = parseInt(formData.get("displayOrder"), 10) || 1;
             if (formData.has("isActive")) isActive = formData.get("isActive") !== "false" && formData.get("isActive") !== "0";
+
+            if (formData.has("items")) {
+                try {
+                    const parsed = JSON.parse(formData.get("items"));
+                    items = Array.isArray(parsed) ? JSON.stringify(parsed) : null;
+                } catch { items = null; }
+            }
 
             const imageFile = formData.get("image");
             if (imageFile && typeof imageFile !== "string" && imageFile.size > 0) {
@@ -471,6 +491,9 @@ export async function updateCategory(id, request) {
             if (json.displayOrder !== undefined) displayOrder = parseInt(json.displayOrder, 10) || 1;
             if (json.isActive !== undefined) isActive = Boolean(json.isActive);
             if (json.image !== undefined) imageUrl = json.image;
+            if (json.items !== undefined) {
+                items = Array.isArray(json.items) ? JSON.stringify(json.items) : (typeof json.items === "string" ? json.items : null);
+            }
         }
 
         if (!name) {
@@ -496,6 +519,7 @@ export async function updateCategory(id, request) {
             image: imageUrl,
             displayOrder,
             isActive,
+            items,
         });
 
         // Also update category_name and category_slug in services table if name/slug changed

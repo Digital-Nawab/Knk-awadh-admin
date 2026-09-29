@@ -285,7 +285,7 @@ export default function CategoryServiceShowcase({
 
                                         {/* Card Top: Arched Image Window & Numbering */}
                                         <div>
-                                            <Link href={itemUrl} className="block relative overflow-hidden rounded-t-[44px] sm:rounded-t-[52px] rounded-b-[16px] aspect-[16/12] bg-[#120904] border border-[#cda882]/20 group/img">
+                                            <div className="relative overflow-hidden rounded-t-[44px] sm:rounded-t-[52px] rounded-b-[16px] aspect-[16/12] bg-[#120904] border border-[#cda882]/20 group/img">
                                                 <img
                                                     src={item.image}
                                                     alt={itemTitle}
@@ -307,7 +307,7 @@ export default function CategoryServiceShowcase({
                                                 <span className="absolute top-4 right-4 font-['Cormorant_Garamond',serif] italic text-base sm:text-lg text-[#e5c697] backdrop-blur-md bg-[#140a05]/75 border border-[#cda882]/35 px-3 py-0.5 rounded-full shadow-md">
                                                     NO. {itemNumber}
                                                 </span>
-                                            </Link>
+                                            </div>
 
                                             {/* Treatment Highlights micro-pills */}
                                             {itemHighlights.length > 0 && (
@@ -323,11 +323,9 @@ export default function CategoryServiceShowcase({
                                                 </div>
                                             )}
 
-                                            {/* Service Title (Click opens Service Detail page) */}
-                                            <h3 className="mt-3.5 font-['Cormorant_Garamond',serif] text-2xl sm:text-[27px] font-semibold leading-tight tracking-tight text-[#faf7f2] group-hover/card:text-[#e5c697] transition-colors duration-300">
-                                                <Link href={itemUrl} className="hover:text-[#e5c697] transition-colors">
-                                                    {itemTitle}
-                                                </Link>
+                                            {/* Service Title */}
+                                            <h3 className="mt-3.5 font-['Cormorant_Garamond',serif] text-2xl sm:text-[27px] font-semibold leading-tight tracking-tight text-[#faf7f2]">
+                                                {itemTitle}
                                             </h3>
 
                                             {/* Delicate gold hairline */}
@@ -366,8 +364,8 @@ export default function CategoryServiceShowcase({
                                             </div>
                                         </div>
 
-                                        {/* Action Buttons: Book Appointment & View Details */}
-                                        <div className="mt-6 pt-4 border-t border-[#cda882]/15 space-y-2">
+                                        {/* Action Button: Book Appointment */}
+                                        <div className="mt-6 pt-4 border-t border-[#cda882]/15">
                                             <button
                                                 type="button"
                                                 data-booking-trigger="true"
@@ -385,13 +383,6 @@ export default function CategoryServiceShowcase({
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                                 </svg>
                                             </button>
-
-                                            <Link
-                                                href={itemUrl}
-                                                className="block text-center font-sans text-[10px] tracking-[0.2em] uppercase text-[#caa882] hover:text-[#faf7f2] py-1 transition-colors"
-                                            >
-                                                View Treatment Details →
-                                            </Link>
                                         </div>
                                     </div>
                                 </div>

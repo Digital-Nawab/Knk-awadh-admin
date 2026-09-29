@@ -184,7 +184,7 @@ export default function DynamicCategoryPage({ categorySlug = "nails" }) {
                 />
             )}
 
-            {/* "Our ___ services." Section */}
+            {/* "Our ___ services." Section (Temporarily Commented Out)
             <section id="services-menu" className="px-6 py-20 md:py-28 bg-secondary">
                 <div className="max-w-6xl mx-auto">
                     <div className="max-w-[600px] mx-auto text-center mb-14">
@@ -195,10 +195,8 @@ export default function DynamicCategoryPage({ categorySlug = "nails" }) {
                         <GoldDivider center />
                     </div>
 
-                    {/* The Full Menu Container */}
                     <div className="relative mx-auto mt-12 max-w-4xl">
                         <div className="relative border border-gold/40 bg-cream px-6 py-12 sm:px-10 md:px-16 md:py-16">
-                            {/* Gold Corner Accents */}
                             <span aria-hidden="true" className="absolute left-0 top-0 h-6 w-6 border-l border-t border-gold" />
                             <span aria-hidden="true" className="absolute right-0 top-0 h-6 w-6 border-r border-t border-gold" />
                             <span aria-hidden="true" className="absolute left-0 bottom-0 h-6 w-6 border-l border-b border-gold" />
@@ -209,7 +207,6 @@ export default function DynamicCategoryPage({ categorySlug = "nails" }) {
                             </p>
                             <GoldDivider center />
 
-                            {/* Filter Tabs if multiple sub-categories exist */}
                             {filterTabs.length > 0 && (
                                 <div className="mt-10 flex flex-wrap justify-center gap-3">
                                     {filterTabs.map((tab) => {
@@ -241,7 +238,6 @@ export default function DynamicCategoryPage({ categorySlug = "nails" }) {
                                 </div>
                             )}
 
-                            {/* Editorial Services List */}
                             {loading ? (
                                 <div className="mt-12 grid gap-x-12 gap-y-3 sm:grid-cols-2">
                                     {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -304,6 +300,7 @@ export default function DynamicCategoryPage({ categorySlug = "nails" }) {
                     </div>
                 </div>
             </section>
+            */}
 
             <ProcessSteps />
             <ServicesCTA />
