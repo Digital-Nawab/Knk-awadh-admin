@@ -125,7 +125,7 @@ function Navbar() {
                         </div>
                     </div>
                     {/* Aesthetics — with dropdown, opens on hover */}
-                    <div className="group relative">
+                    {/* <div className="group relative">
                         <Link
                             href="/aesthetic"
                             className="relative flex items-center gap-1 transition-colors hover:text-gold after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all hover:after:w-full whitespace-nowrap"
@@ -158,7 +158,7 @@ function Navbar() {
                                 </Link>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
                     <Link
                         href="/makeup"
                         className="relative whitespace-nowrap transition-colors hover:text-gold after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all hover:after:w-full"
@@ -266,9 +266,9 @@ function Navbar() {
                         type="button"
                         onClick={() => setServicesOpen((prev) => !prev)}
                         aria-expanded={servicesOpen}
-                        className="flex w-full items-center justify-between rounded-lg px-2 py-3 hover:bg-secondary"
+                        className="flex w-full items-center justify-between rounded-lg px-2 py-3 hover:bg-secondary uppercase tracking-[0.2em]"
                     >
-                        Services
+                        SERVICES
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width={12}
@@ -302,6 +302,64 @@ function Navbar() {
                         </div>
                     )}
                 </div>
+
+                {/* Aesthetics — commented out */}
+                {/* <div>
+                    <button
+                        type="button"
+                        onClick={() => setAestheticsOpen((prev) => !prev)}
+                        aria-expanded={aestheticsOpen}
+                        className="flex w-full items-center justify-between rounded-lg px-2 py-3 hover:bg-secondary"
+                    >
+                        Aesthetics
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={12}
+                            height={12}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className={`transition-transform duration-200 ${aestheticsOpen ? 'rotate-180' : ''}`}
+                        >
+                            <path d="m6 9 6 6 6-6" />
+                        </svg>
+                    </button>
+                    {aestheticsOpen && (
+                        <div className="ml-3 flex flex-col gap-1 border-l border-border pl-3">
+                            {AESTHETICS_MENU.map((item) => (
+                                <Link
+                                    key={item.id}
+                                    href={item.href}
+                                    onClick={() => {
+                                        setAestheticsOpen(false);
+                                        setMenuOpen(false);
+                                    }}
+                                    className="rounded-lg px-2 py-2 text-[11px] hover:bg-secondary"
+                                >
+                                    {item.label}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </div> */}
+
+                <Link
+                    href="/makeup"
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-lg px-2 py-3 hover:bg-secondary"
+                >
+                    Makeup
+                </Link>
+                <Link
+                    href="/services/men-grooming"
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-lg px-2 py-3 hover:bg-secondary"
+                >
+                    Men's Grooming
+                </Link>
 
                 <Link
                     href="/gallery"
