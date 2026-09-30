@@ -1,37 +1,148 @@
 export const whyChoose = [
     "Architectural elegance inspired by Awadhi and global aesthetics",
-    "A highly skilled team of makeup artists across Lucknow",
-    "Premium, skin-safe products used in every treatment",
+    "A professional team of makeup and beauty artists",
+    "Professional products selected for the relevant service and treatment",
     "A welcoming space designed for every gender and age",
 ];
 
 export const whyBest = [
-    "Customised beauty solutions built around each client",
-    "Premium products safe for every skin type",
-    "State-of-the-art facilities for a luxurious experience",
-    "Trusted by brides, celebrities and beauty enthusiasts alike",
+    {
+        title: "Personalised beauty solutions",
+        description: "Services tailored around each client's preferences, occasion, and beauty needs.",
+    },
+    {
+        title: "Professional products & treatments",
+        description: "Products selected according to the service and individual client requirements.",
+    },
+    {
+        title: "Modern salon experience",
+        description: "Thoughtfully designed facilities combining comfort, contemporary style and Awadhi-inspired aesthetics.",
+    },
+    {
+        title: "Bridal & occasion makeup expertise",
+        description: "Specialised makeup services for bridal, engagement, party and other special occasions.",
+    },
 ];
 
 export const services = [
     {
-        title: "Bridal Makeup",
-        text: "Flawless HD and airbrush bridal looks, led by Poonam & Ishitta — from engagement to the big day.",
+        title: "1. Bridal Makeup",
+        cleanTitle: "Bridal Makeup",
+        text: "HD and airbrush bridal makeup tailored to your wedding look, from engagement and pre-wedding events to the big day.",
         img: "/assets/images/about/bridal-makeup.webp",
+        cta: "Explore Bridal Makeup →",
+        href: "/makeup",
     },
     {
-        title: "Hair Styling",
-        text: "Precision cuts, colour and treatments, tailored to face, texture and the occasion.",
+        title: "2. Hair Styling",
+        cleanTitle: "Hair Styling",
+        text: "Professional haircuts, colour, styling and treatments tailored to your hair type, preferences and occasion.",
         img: "/assets/images/about/hair-styling.webp",
+        cta: "Explore Hair Services →",
+        href: "/services/hair",
     },
     {
-        title: "Skincare & Aesthetics",
-        text: "Facials, microblading and aesthetic enhancements from a team that reads your skin first.",
+        title: "3. Skincare & Aesthetics",
+        cleanTitle: "Skincare & Aesthetics",
+        text: "Facials, microblading, and selected aesthetic services tailored to individual beauty and skincare needs.",
         img: "/assets/images/about/skincare-aesthetics.webp",
+        cta: "Explore Skin & Aesthetics →",
+        href: "https://soft-focus-affair-nextjs.vercel.app/",
     },
     {
-        title: "Body Massage",
-        text: "Slow, restorative therapies — the kind of wellness stop between appointments and errands.",
+        title: "4. Body Massage",
+        cleanTitle: "Body Massage",
+        text: "Relaxing body massage and wellness treatments designed to help you unwind and take time for yourself.",
         img: "/assets/images/about/body-massage.webp",
+        cta: "Explore Body Services →",
+        href: "/services/body",
+    },
+];
+
+export const aboutOverview = {
+    title: "About KNK Awadh Salon & Academy",
+    description: "KNK Awadh Salon & Academy is a luxury salon, makeup studio and beauty academy in Lucknow, offering professional hair, makeup, beauty, nail, skin and grooming services. KNK also provides professional makeup and beauty education through its academy.",
+    items: [
+        {
+            q: "What is KNK Awadh Salon & Academy?",
+            a: "KNK Awadh Salon & Academy is a luxury salon, makeup studio and beauty academy in Lucknow. The brand offers professional hair, makeup, beauty, nail, skin and grooming services, along with professional makeup and beauty training.",
+        },
+        {
+            q: "Where are KNK salons located?",
+            a: "KNK Awadh Salon & Academy has three locations in Lucknow: Mahanagar, Gomti Nagar and Hazratganj.",
+        },
+        {
+            q: "What services does KNK offer?",
+            a: "KNK offers hair styling and treatments, makeup, bridal makeup, beauty services, facial and skin services, nail services, body care and men's grooming. Selected aesthetic services are also available.",
+        },
+        {
+            q: "Does KNK offer bridal makeup?",
+            a: "Yes. KNK offers bridal makeup in Lucknow, including HD and airbrush makeup, along with makeup services for engagements and other special occasions.",
+        },
+        {
+            q: "Does KNK offer makeup courses?",
+            a: "Yes. KNK Academy offers professional makeup and beauty education, including training in bridal, editorial and fashion makeup.",
+        },
+        {
+            q: "Who founded KNK Awadh?",
+            a: "Poonam and Ishitta Chowdhary are the founders of KNK Awadh Salon & Academy. The mother-daughter team is also involved in the brand's makeup and beauty education.",
+        },
+        {
+            q: "How can I book an appointment at KNK?",
+            a: "You can book an appointment through the KNK website by selecting your preferred service, location and appointment details, or contact the KNK team by phone or WhatsApp.",
+        },
+    ],
+};
+
+export const locations = [
+    {
+        name: "KNK Mahanagar",
+        address: "Mahanagar Crossing (Chowraha), Mahanagar Colony, Lucknow",
+        phone: "+91 95593 21711",
+        mapUrl: "https://www.google.com/maps/search/?api=1&query=KNK+Awadh+Salon+Mahanagar+Crossing+Lucknow",
+    },
+    {
+        name: "KNK Gomti Nagar",
+        address: "02/01 Vipul Khand, Gomti Nagar, Lucknow",
+        phone: "+91 88810 00551",
+        mapUrl: "https://www.google.com/maps/search/?api=1&query=KNK+Awadh+Salon+Vipul+Khand+Gomti+Nagar+Lucknow",
+    },
+    {
+        name: "KNK Awadh Hazratganj",
+        address: "Ground Floor 11B, Tilak Marg, Opp. Ganna Sansthaan, Dalibagh Colony, Hazratganj, Lucknow",
+        phone: "+91 88810 00529",
+        mapUrl: "https://www.google.com/maps/search/?api=1&query=KNK+Awadh+Salon+Tilak+Marg+Hazratganj+Lucknow",
+    },
+];
+
+export const faqList = [
+    {
+        q: "What is KNK Awadh Salon & Academy?",
+        a: "KNK Awadh Salon & Academy is a salon, makeup studio, and beauty academy in Lucknow, offering professional hair, makeup, beauty, nail, skin, and grooming services.",
+    },
+    {
+        q: "Where are KNK Salon locations in Lucknow?",
+        a: "KNK Awadh Salon & Academy has three locations in Lucknow: Mahanagar, Gomti Nagar and Hazratganj.",
+    },
+    {
+        q: "What services does KNK Awadh Salon & Academy offer?",
+        a: "KNK offers hair styling and treatments, makeup, bridal makeup, beauty services, nail services, facial and skin services, body care, and men's grooming.",
+    },
+    {
+        q: "Does KNK offer bridal makeup in Lucknow?",
+        a: "Yes. KNK offers bridal makeup in Lucknow, including HD and airbrush makeup options for weddings and related occasions.",
+    },
+    {
+        q: "Does KNK offer professional makeup courses?",
+        a: "Yes. KNK Academy offers professional makeup and beauty training, including bridal, editorial, and fashion makeup skills.",
+    },
+    {
+        q: "Who founded KNK Awadh Salon & Academy?",
+        a: "Poonam and Ishitta Chowdhary are the founders of KNK Awadh Salon & Academy.",
+    },
+    {
+        q: "How can I book an appointment at KNK?",
+        a: "You can book an appointment through the KNK website or contact the team by phone or WhatsApp. You can choose your preferred service and KNK location when making an enquiry.",
     },
 ];
 
@@ -61,15 +172,3 @@ export const testimonials = [
     { name: "Richa Jaiswal", text: "I recently completed my makeup course at KNK Academy and every part of the experience exceeded expectations." },
 ];
 
-export const locations = [
-    { name: "Mahanagar", address: "Mahanagar Crossing (Chowraha), Mahanagar Colony, Lucknow", phone: "+91-95593 21711" },
-    { name: "Gomti Nagar", address: "02/01 Vipul Khand, Gomti Nagar, Lucknow", phone: "+91-88810 00551" },
-    { name: "Hazratganj", address: "Ground Floor 11B, Tilak Marg, Opp. Ganna Sansthaan, Dalibagh Colony, Hazratganj", phone: "+91-88810 00529" },
-];
-
-export const socials = [
-    { label: "Facebook", href: "https://www.facebook.com/Knksalonacademy/" },
-    { label: "Instagram", href: "https://www.instagram.com/knkawadh/" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/company/knk-salon/" },
-    { label: "YouTube", href: "https://www.youtube.com/user/sumpooish" },
-];

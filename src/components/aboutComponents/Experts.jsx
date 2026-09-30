@@ -9,7 +9,7 @@ export default function Experts() {
                 <div className="relative aspect-square rounded-2xl overflow-hidden shadow-luxe border border-border">
                     <img
                         src="/assets/images/about/experts.webp"
-                        alt="Poonam & Ishitta Chowdhary, founders of KNK Awadh"
+                        alt="Poonam and Ishitta Chowdhary, founders of KNK Awadh Salon & Academy"
                         className="w-full h-full object-cover"
                     />
                     <div
@@ -21,21 +21,22 @@ export default function Experts() {
                     <p className="font-['Inter'] text-[9px] font-medium uppercase tracking-[0.35em] text-[#a17b5a]">
                         Meet Our Experts
                     </p>
-                    <h2 className="mt-6 font-['Cormorant_Garamond'] text-[64px] font-medium leading-[0.8] tracking-[-0.05em] text-[#29231f] mb-6 sm:text-[78px] md:text-[92px] lg:text-[88px] xl:text-[105px]">
-                        Poonam &
+                    <h2 className="mt-6 font-['Cormorant_Garamond'] text-[52px] sm:text-[64px] md:text-[76px] lg:text-[88px] font-medium leading-[0.88] tracking-[-0.04em] text-[#29231f] mb-2">
+                        Poonam &amp;
                         <br />
                         <span className="italic text-[#b58a52]">Ishitta.</span>
                     </h2>
+                    <p className="font-['Cormorant_Garamond'] italic text-xl sm:text-2xl text-[#a17b5a] mb-5">
+                        Founders of KNK Awadh Salon &amp; Academy
+                    </p>
                     <p className="font-['Inter'] text-[13px] sm:text-[14px] text-[#71665c] leading-[1.9] mb-6">
-                        A dynamic mother-daughter duo and among Lucknow's most trusted makeup
-                        artists, Poonam & Ishitta lead our internationally acclaimed academy —
-                        training the next generation in creative and fashion makeup.
+                        Poonam and Ishitta Chowdhary, the mother-daughter founders of KNK Awadh Salon &amp; Academy, lead the brand's makeup and beauty vision in Lucknow. Their work focuses on bridal, editorial, and creative makeup, alongside professional beauty education through KNK Academy.
                     </p>
                     <ul className="space-y-3">
                         {[
-                            "Hands-on training for global competitiveness",
+                            "Hands-on professional makeup training",
                             "Specialised bridal and editorial makeup skills",
-                            "Blending traditional Awadhi beauty with modern technique",
+                            "Traditional Awadhi beauty with modern techniques",
                         ].map((item) => (
                             <li key={item} className="flex gap-3 font-['Inter'] text-[13px] sm:text-[14px] text-[#71665c] leading-[1.9]">
                                 <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#b58a52] shrink-0" />

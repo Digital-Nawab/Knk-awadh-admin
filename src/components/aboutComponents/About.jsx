@@ -13,8 +13,10 @@ import Academy from "./Academy";
 import Gallery from "./Gallery";
 import Testimonials from "./Testimonials";
 import OfferStrip from "./OfferStrip";
+import AboutOverview from "./AboutOverview";
 import Locations from "./Locations";
 import BookingSection from "./BookingSection";
+import Faq from "./Faq";
 import ClosingCTA from "./ClosingCTA";
 
 export default function About() {
@@ -36,11 +38,12 @@ export default function About() {
             <JaaliDivider />
             <Testimonials />
             <OfferStrip />
+            <AboutOverview />
+            <JaaliDivider />
             <Locations />
             <BookingSection />
+            <Faq />
             <ClosingCTA />
         </div>
     );
 }
-
-

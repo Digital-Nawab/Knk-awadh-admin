@@ -16,9 +16,9 @@ export default function WhyChoose() {
                 </div>
                 <div className="order-1 md:order-2">
                     <p className="font-['Inter'] text-[9px] font-medium uppercase tracking-[0.35em] text-[#a17b5a]">
-                        Why Choose KNK Awadh
+                        WHY CHOOSE KNK
                     </p>
-                    <h2 className="mt-6 font-['Cormorant_Garamond'] text-[64px] font-medium leading-[0.8] tracking-[-0.05em] text-[#29231f] mb-6 sm:text-[78px] md:text-[92px] lg:text-[88px] xl:text-[105px]">
+                    <h2 className="mt-6 font-['Cormorant_Garamond'] text-[52px] sm:text-[64px] md:text-[76px] lg:text-[88px] font-medium leading-[0.88] tracking-[-0.04em] text-[#29231f] mb-6">
                         Affordable,
                         <br />
                         <span className="italic text-[#b58a52]">never cutting corners.</span>
