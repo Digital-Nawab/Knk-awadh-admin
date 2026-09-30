@@ -291,6 +291,7 @@ export default function CategoryServiceShowcase({
                                                     alt={itemTitle}
                                                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/img:scale-108"
                                                     loading="lazy"
+                                                    decoding="async"
                                                 />
                                                 
                                                 {/* Vignette shadow gradient */}

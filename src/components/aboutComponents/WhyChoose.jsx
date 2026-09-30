@@ -11,6 +11,8 @@ export default function WhyChoose() {
                     <img
                         src="/assets/images/about/why-choose.webp"
                         alt="KNK Awadh team at work"
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                     />
                 </div>

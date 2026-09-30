@@ -2,6 +2,7 @@ import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
 import { revalidatePath } from "next/cache";
 import SeoModel from "@/models/SeoModel";
+import { getSafeOriginalFilename } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const UPLOAD_DIR = path.join(process.cwd(), "public", "admin-assets", "seo");
@@ -51,14 +52,10 @@ export async function createSeo(request) {
                 return { status: 400, body: { error: "OG Image must be JPG, PNG, or WEBP." } };
             }
 
-            await mkdir(UPLOAD_DIR, { recursive: true });
-            const sanitizedExt = path.extname(ogImageFile.name) || ".webp";
-            const uniqueName = `og-${Date.now()}-${slugify(path.basename(ogImageFile.name, sanitizedExt))}${sanitizedExt}`;
-            const filePath = path.join(UPLOAD_DIR, uniqueName);
-
+            const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, ogImageFile.name, ".webp");
             const buffer = Buffer.from(await ogImageFile.arrayBuffer());
             await writeFile(filePath, buffer);
-            ogImageUrl = `/admin-assets/seo/${uniqueName}`;
+            ogImageUrl = `/admin-assets/seo/${fileName}`;
         }
 
         const seo = await SeoModel.create({
@@ -151,13 +148,10 @@ export async function updateSeo(id, request) {
             if (!IMAGE_TYPES.includes(ogImageFile.type)) {
                 return { status: 400, body: { error: "OG Image must be JPG, PNG, or WEBP." } };
             }
-            await mkdir(UPLOAD_DIR, { recursive: true });
-            const sanitizedExt = path.extname(ogImageFile.name) || ".webp";
-            const uniqueName = `og-${Date.now()}-${slugify(path.basename(ogImageFile.name, sanitizedExt))}${sanitizedExt}`;
-            const filePath = path.join(UPLOAD_DIR, uniqueName);
+            const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, ogImageFile.name, ".webp");
             const buffer = Buffer.from(await ogImageFile.arrayBuffer());
             await writeFile(filePath, buffer);
-            ogImageUrl = `/admin-assets/seo/${uniqueName}`;
+            ogImageUrl = `/admin-assets/seo/${fileName}`;
         }
 
         await SeoModel.update(id, {

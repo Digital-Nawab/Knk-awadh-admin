@@ -1,6 +1,7 @@
 import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
 import BlogModel from "@/models/BlogModel";
+import { getSafeOriginalFilename } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const UPLOAD_DIR = path.join(process.cwd(), "public", "admin-assets", "blogs");
@@ -70,14 +71,10 @@ export async function createBlog(request) {
                 return { status: 400, body: { error: "Cover image must be JPG, PNG, or WEBP." } };
             }
 
-            await mkdir(UPLOAD_DIR, { recursive: true });
-            const sanitizedExt = path.extname(coverImageFile.name) || ".webp";
-            const uniqueName = `${Date.now()}-${slugify(path.basename(coverImageFile.name, sanitizedExt))}${sanitizedExt}`;
-            const filePath = path.join(UPLOAD_DIR, uniqueName);
-
+            const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, coverImageFile.name, ".webp");
             const buffer = Buffer.from(await coverImageFile.arrayBuffer());
             await writeFile(filePath, buffer);
-            coverImageUrl = `/admin-assets/blogs/${uniqueName}`;
+            coverImageUrl = `/admin-assets/blogs/${fileName}`;
         }
 
         const readTime = calculateReadTime(content);
@@ -165,13 +162,10 @@ export async function updateBlog(id, request) {
             if (!IMAGE_TYPES.includes(coverImageFile.type)) {
                 return { status: 400, body: { error: "Cover image must be JPG, PNG, or WEBP." } };
             }
-            await mkdir(UPLOAD_DIR, { recursive: true });
-            const sanitizedExt = path.extname(coverImageFile.name) || ".webp";
-            const uniqueName = `${Date.now()}-${slugify(path.basename(coverImageFile.name, sanitizedExt))}${sanitizedExt}`;
-            const filePath = path.join(UPLOAD_DIR, uniqueName);
+            const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, coverImageFile.name, ".webp");
             const buffer = Buffer.from(await coverImageFile.arrayBuffer());
             await writeFile(filePath, buffer);
-            coverImageUrl = `/admin-assets/blogs/${uniqueName}`;
+            coverImageUrl = `/admin-assets/blogs/${fileName}`;
         }
 
         const readTime = calculateReadTime(content);

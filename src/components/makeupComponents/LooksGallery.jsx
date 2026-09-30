@@ -20,6 +20,8 @@ export default function LooksGallery() {
                             <img
                                 src={item.src}
                                 alt={`Makeup look ${i + 1}`}
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full h-full object-cover"
                                 style={{ objectPosition: item.position }}
                             />

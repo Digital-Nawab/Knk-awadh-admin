@@ -74,6 +74,8 @@ export default function Hero() {
                     <img
                         src={heroImage}
                         alt="KNK Makeup Studio artist at work"
+                        fetchPriority="high"
+                        decoding="async"
                         className="w-full h-full object-cover"
                         style={{ objectPosition: heroImagePosition }}
                     />

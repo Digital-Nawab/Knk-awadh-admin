@@ -1,6 +1,7 @@
 import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
 import HeroModel from "@/models/HeroModel";
+import { getSafeOriginalFilename } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const VIDEO_TYPES = ["video/mp4", "video/webm"];
@@ -28,12 +29,8 @@ export async function createHero(request) {
         return { status: 400, body: { error: "Unsupported file type. Allowed: JPG, PNG, WEBP, MP4, WEBM." } };
     }
 
-    await mkdir(UPLOAD_DIR, { recursive: true });
-
-    const ext = path.extname(media.name) || (isVideo ? ".mp4" : ".webp");
-    const cleanBase = path.basename(media.name, ext).replace(/[^a-zA-Z0-9_-]/g, "_");
-    const fileName = `${Date.now()}-${cleanBase}${ext}`;
-    const filePath = path.join(UPLOAD_DIR, fileName);
+    const fallbackExt = isVideo ? ".mp4" : ".webp";
+    const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, media.name, fallbackExt);
 
     const buffer = Buffer.from(await media.arrayBuffer());
     await writeFile(filePath, buffer);
@@ -115,12 +112,8 @@ export async function updateHero(id, request) {
             return { status: 400, body: { error: "Unsupported file type. Allowed: JPG, PNG, WEBP, MP4, WEBM." } };
         }
 
-        await mkdir(UPLOAD_DIR, { recursive: true });
-
-        const ext = path.extname(media.name) || (isVideo ? ".mp4" : ".webp");
-        const cleanBase = path.basename(media.name, ext).replace(/[^a-zA-Z0-9_-]/g, "_");
-        const fileName = `${Date.now()}-${cleanBase}${ext}`;
-        const filePath = path.join(UPLOAD_DIR, fileName);
+        const fallbackExt = isVideo ? ".mp4" : ".webp";
+        const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, media.name, fallbackExt);
 
         const buffer = Buffer.from(await media.arrayBuffer());
         await writeFile(filePath, buffer);

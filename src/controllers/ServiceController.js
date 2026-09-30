@@ -2,6 +2,7 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import ServiceModel from "@/models/ServiceModel";
 import { db } from "@/lib/db";
+import { getSafeOriginalFilename } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
@@ -27,18 +28,12 @@ async function saveUploadedImage(imageFile, prefix = "service") {
         throw new Error(`Image file exceeds 2MB limit (${(imageFile.size / (1024 * 1024)).toFixed(2)}MB).`);
     }
 
-    await mkdir(UPLOAD_DIR, { recursive: true });
-
-    const rawExt = path.extname(imageFile.name) || ".webp";
-    const ext = rawExt.toLowerCase();
-    const baseClean = slugify(path.basename(imageFile.name, rawExt)) || prefix;
-    const uniqueName = `${Date.now()}-${baseClean}${ext}`;
-    const filePath = path.join(UPLOAD_DIR, uniqueName);
+    const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, imageFile.name, ".webp");
 
     const buffer = Buffer.from(await imageFile.arrayBuffer());
     await writeFile(filePath, buffer);
 
-    return `/admin-assets/services/${uniqueName}`;
+    return `/admin-assets/services/${fileName}`;
 }
 
 // =============================================================================

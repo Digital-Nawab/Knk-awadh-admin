@@ -28,6 +28,8 @@ export default function Services() {
                                     <img
                                         src={service.img}
                                         alt={service.cleanTitle || service.title}
+                                        loading="lazy"
+                                        decoding="async"
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                     />
                                 </div>

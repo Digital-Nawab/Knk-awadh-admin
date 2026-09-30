@@ -93,6 +93,9 @@ export default function AdminBookingsPage() {
             case "contact_us":
             case "contact":
                 return { label: "Contact Us", badge: "bg-teal-100 text-teal-800" };
+            case "about_page_booking":
+            case "about":
+                return { label: "About Page", badge: "bg-orange-100 text-orange-800" };
             default:
                 return { label: type || "General", badge: "bg-gray-100 text-gray-800" };
         }
@@ -185,6 +188,7 @@ export default function AdminBookingsPage() {
                             <option value="luxury_booking">Luxury Studio</option>
                             <option value="makeup">Bridal Makeup</option>
                             <option value="academy">Academy Admission</option>
+                            <option value="about_page_booking">About Page</option>
                             <option value="contact_us">Contact Us</option>
                         </select>
                     </div>

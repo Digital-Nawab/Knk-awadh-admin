@@ -10,6 +10,8 @@ export default function Experts() {
                     <img
                         src="/assets/images/about/experts.webp"
                         alt="Poonam and Ishitta Chowdhary, founders of KNK Awadh Salon & Academy"
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                     />
                     <div

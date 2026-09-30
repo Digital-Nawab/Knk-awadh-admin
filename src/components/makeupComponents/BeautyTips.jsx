@@ -9,7 +9,7 @@ export default function BeautyTips() {
         <section className="px-6 py-20 md:py-24">
             <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
                 <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border order-2 md:order-1" style={{ borderColor: LINE }}>
-                    <img src={sideImage} alt="Bridal skincare" className="w-full h-full object-cover" />
+                    <img src={sideImage} alt="Bridal skincare" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 </div>
                 <div className="order-1 md:order-2">
                     <Eyebrow>Before the Big Day</Eyebrow>

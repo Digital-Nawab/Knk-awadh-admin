@@ -67,6 +67,8 @@ export default function Hero() {
                         autoPlay
                         loop
                         muted
+                        playsInline
+                        preload="metadata"
                     />
                 </div>
             </div>

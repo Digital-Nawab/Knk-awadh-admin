@@ -8,10 +8,15 @@ import 'swiper/css/pagination';
 
 // Placeholder slider images — repeat celebrity.webp until real images are provided.
 const celebritySlides = [
-    '/assets/images/new/home/celebrity/7.webp',
-    '/assets/images/new/home/celebrity/5.webp',
-    '/assets/images/new/home/celebrity/4.webp',
-    '/assets/images/new/home/celebrity/6.webp',
+    '/assets/images/new/home/celebrity/celebrity-artist-06.webp',
+    '/assets/images/new/home/celebrity/celebrity-artist-09.webp',
+    '/assets/images/new/home/celebrity/celebrity-artist-07.webp',
+    '/assets/images/new/home/celebrity/celebrity-artist-08.webp',
+    '/assets/images/new/home/celebrity/celebrity-artist-05.webp',
+    '/assets/images/new/home/celebrity/celebrity-artist-01.webp',
+    '/assets/images/new/home/celebrity/celebrity-artist-03.webp',
+    '/assets/images/new/home/celebrity/celebrity-artist-04.webp',
+    '/assets/images/new/home/celebrity/celebrity-artist-02.webp',
 ];
 
 function CelebrityMakeup() {

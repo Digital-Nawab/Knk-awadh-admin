@@ -120,13 +120,13 @@ function Hero({ initialHero = null }) {
               {videoLoaded && (
                 <video
                   ref={videoRef}
-                  src={hero?.media_url || "/assets/media/reel-2.mp4"}
+                  src={hero?.media_url || "/admin-assets/hero/1790749838367-reel-2.mp4"}
                   poster="/assets/images/reel-1-IdXjgO27.webp"
                   autoPlay
                   muted
                   loop
                   playsInline
-                  preload="auto"
+                  preload="metadata"
                   className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
                 />
               )}

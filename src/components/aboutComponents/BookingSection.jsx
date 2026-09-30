@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 function BookingForm() {
-    const [submitted, setSubmitted] = useState(false);
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
     const [form, setForm] = useState({
         name: "",
         mobile: "",
@@ -25,8 +27,9 @@ function BookingForm() {
         if (!form.name || !form.mobile || !form.service || !form.location) return;
 
         setLoading(true);
+        setErrorMsg("");
         try {
-            await fetch("/api/bookings", {
+            const res = await fetch("/api/bookings", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -41,46 +44,37 @@ function BookingForm() {
                     form_started_at: Date.now() - 3000,
                 }),
             });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                const queryParams = new URLSearchParams({
+                    bookingId: data.bookingId ? String(data.bookingId) : "",
+                    service: form.service || "Luxury Treatment",
+                    name: form.name.trim(),
+                    date: form.date || "",
+                    location: form.location || "",
+                });
+                router.push(`/thank-you?${queryParams.toString()}`);
+            } else {
+                setErrorMsg(data.error || "Failed to submit booking. Please call us directly.");
+            }
         } catch (error) {
             console.error("Booking submission error:", error);
+            setErrorMsg("Network error. Please try again or reach out via WhatsApp.");
         } finally {
             setLoading(false);
-            setSubmitted(true);
         }
-    }
-
-    if (submitted) {
-        return (
-            <div className="bg-card border border-border rounded-2xl p-10 text-center shadow-soft">
-                <p className="font-['Cormorant_Garamond'] text-3xl font-medium text-[#29231f] mb-3">Appointment Request Received</p>
-                <p className="font-['Inter'] text-[14px] text-[#71665c] max-w-md mx-auto leading-relaxed">
-                    Thank you, {form.name}. Our concierge team will contact you shortly to confirm your booking details and preferred slot.
-                </p>
-                <button
-                    type="button"
-                    onClick={() => {
-                        setSubmitted(false);
-                        setForm({
-                            name: "",
-                            mobile: "",
-                            email: "",
-                            service: "",
-                            location: "",
-                            date: "",
-                            message: "",
-                        });
-                    }}
-                    className="mt-6 inline-flex items-center justify-center border border-[#b58a52] text-[#a17b5a] font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-3 rounded-full hover:bg-[#b58a52]/10 transition-colors"
-                >
-                    Book Another Service
-                </button>
-            </div>
-        );
     }
 
     return (
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 md:p-10 shadow-soft">
             <div className="grid sm:grid-cols-2 gap-5">
+                {errorMsg && (
+                    <div className="sm:col-span-2">
+                        <p className="font-['Inter'] text-xs text-rose-600 bg-rose-50 border border-rose-200 px-4 py-2.5 rounded-lg">
+                            {errorMsg}
+                        </p>
+                    </div>
+                )}
                 {/* Name */}
                 <div className="sm:col-span-1">
                     <label className="font-['Inter'] text-[11px] tracking-[0.15em] uppercase text-[#71665c] mb-2 block">

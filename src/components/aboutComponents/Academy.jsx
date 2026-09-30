@@ -29,6 +29,8 @@ export default function Academy() {
                     <img
                         src="/assets/images/about/academy-training.webp"
                         alt="KNK Makeup Academy training session"
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                     />
                 </div>

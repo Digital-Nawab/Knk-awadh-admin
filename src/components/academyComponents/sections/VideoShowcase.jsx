@@ -19,6 +19,7 @@ export default function VideoShowcase() {
                         src={reelVideo}
                         controls
                         playsInline
+                        preload="metadata"
                         poster={whyAcademyImage}
                         className="w-full h-auto max-h-[520px] object-cover bg-black"
                     >

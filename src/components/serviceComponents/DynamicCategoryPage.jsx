@@ -166,6 +166,8 @@ export default function DynamicCategoryPage({ categorySlug = "nails" }) {
                         <img
                             src={category?.image || "/assets/images/new/service/NAILS.webp"}
                             alt={category?.name || `${catName} specialist at KNK Awadh`}
+                            fetchPriority="high"
+                            decoding="async"
                             className="w-full h-full object-cover"
                         />
                     </div>

@@ -13,6 +13,7 @@ import BlogSection from './BlogSection';
 import Faq from './Faq';
 import LuxuryBooking from './LuxuryBooking';
 import HeroModel from '@/models/HeroModel';
+import BlogModel from '@/models/BlogModel';
 
 const CelebrityMakeup = dynamic(() => import('./CelebrityMakeup'), {
   loading: () => <div className="min-h-[500px] bg-[#3b2419]" />,
