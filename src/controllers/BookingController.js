@@ -11,7 +11,7 @@ function cleanString(str) {
 }
 
 function checkRateLimit(ip) {
-    if (!ip) return true;
+    if (!ip || ip === "127.0.0.1" || ip === "::1" || ip === "localhost") return true;
     const now = Date.now();
     const records = submissionTracker.get(ip) || [];
     const validRecords = records.filter((ts) => now - ts < RATE_LIMIT_WINDOW_MS);
@@ -44,11 +44,11 @@ export async function submitBooking(request) {
             };
         }
 
-        // 2. Form submission time check (sub-400ms indicates automated script bot)
+        // 2. Form submission time check (sub-100ms indicates automated script bot)
         if (body.form_started_at) {
             const elapsed = Date.now() - Number(body.form_started_at);
-            if (elapsed < 400) {
-                console.warn("Spam detected: Form submitted in under 400ms by IP:", clientIp);
+            if (elapsed > 0 && elapsed < 100) {
+                console.warn("Spam detected: Form submitted in under 100ms by IP:", clientIp);
                 return {
                     status: 200,
                     body: { success: true, message: "Appointment request received successfully." },
@@ -70,13 +70,14 @@ export async function submitBooking(request) {
         const cleanPhone = rawPhone.replace(/[^\d+]/g, "");
         const email = cleanString(body.email);
         const formType = cleanString(body.form_type || "luxury_booking");
-        const serviceOrCourse = cleanString(body.service || body.course || body.service_or_course);
-        const branchLocation = cleanString(body.location || body.branch || body.branch_location);
-        const bookingDate = cleanString(body.date || body.booking_date);
-        const bookingTime = cleanString(body.time || body.booking_time);
+        const isContactForm = formType === "contact_us" || formType === "contact";
+        const serviceOrCourse = cleanString(body.service || body.course || body.service_or_course) || (isContactForm ? "General Salon Inquiry" : "");
+        const branchLocation = cleanString(body.location || body.branch || body.branch_location) || "KNK Salon Mahanagar";
+        const bookingDate = cleanString(body.date || body.booking_date) || new Date().toISOString().split("T")[0];
+        const bookingTime = cleanString(body.time || body.booking_time) || null;
         const guests = Number(body.guests) || 1;
-        const city = cleanString(body.city);
-        const message = cleanString(body.message || body.notes);
+        const city = cleanString(body.city) || null;
+        const message = cleanString(body.message || body.notes) || null;
 
         if (!name || name.length < 2) {
             return { status: 400, body: { error: "Please provide your full name." } };
@@ -87,7 +88,7 @@ export async function submitBooking(request) {
         }
 
         if (!serviceOrCourse) {
-            return { status: 400, body: { error: "Please select a service." } };
+            return { status: 400, body: { error: "Please select a service or inquiry type." } };
         }
 
         if (!bookingDate) {
@@ -118,7 +119,9 @@ export async function submitBooking(request) {
             status: 201,
             body: {
                 success: true,
-                message: "Thank you! Your appointment request has been reserved. Our concierge will contact you shortly.",
+                message: isContactForm
+                    ? "Thank you! Your message has been received. Our concierge team will reach out to you shortly."
+                    : "Thank you! Your appointment request has been reserved. Our concierge will contact you shortly.",
                 bookingId: booking.id,
             },
         };

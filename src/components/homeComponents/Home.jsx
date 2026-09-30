@@ -12,7 +12,7 @@ import Review from './Review';
 import BlogSection from './BlogSection';
 import Faq from './Faq';
 import LuxuryBooking from './LuxuryBooking';
-import BlogModel from '@/models/BlogModel';
+import HeroModel from '@/models/HeroModel';
 
 const CelebrityMakeup = dynamic(() => import('./CelebrityMakeup'), {
   loading: () => <div className="min-h-[500px] bg-[#3b2419]" />,
@@ -29,9 +29,26 @@ async function Home() {
     console.warn("Failed to prefetch blogs on server:", err?.message || err);
   }
 
+  let initialHero = null;
+  try {
+    const activeHeroes = await HeroModel.getActive();
+    if (activeHeroes && activeHeroes.length > 0) {
+      const topHero = activeHeroes[0];
+      initialHero = {
+        id: topHero.id,
+        media_url: topHero.media_url,
+        media_type: topHero.media_type,
+        alt_text: topHero.alt_text,
+        is_active: topHero.is_active,
+      };
+    }
+  } catch (err) {
+    console.warn("Failed to prefetch hero on server:", err?.message || err);
+  }
+
   return (
     <>
-      <Hero />
+      <Hero initialHero={initialHero} />
       <About />
       <Services />
       <Makeup />

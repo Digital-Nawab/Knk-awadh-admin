@@ -3,13 +3,39 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-function Hero() {
+function Hero({ initialHero = null }) {
   const today = new Date().toISOString().split("T")[0];
   const [formStartedAt] = useState(Date.now());
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [hero, setHero] = useState(initialHero);
   const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (initialHero) {
+      setHero(initialHero);
+      return;
+    }
+    let isMounted = true;
+    async function loadActiveHero() {
+      try {
+        const res = await fetch("/api/hero?active=true");
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.heroes && data.heroes.length > 0) {
+            setHero(data.heroes[0]);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to fetch active hero:", err);
+      }
+    }
+    loadActiveHero();
+    return () => {
+      isMounted = false;
+    };
+  }, [initialHero]);
 
   useEffect(() => {
     // Gracefully defer heavy video loading until after initial critical paint/idle
@@ -69,27 +95,42 @@ function Hero() {
         className="relative h-[92vh] min-h-[34rem] overflow-hidden"
       >
         <div className="parallax-bg absolute inset-0 -top-24 h-[calc(100%+12rem)] will-change-transform">
-          <Image
-            src="/assets/images/reel-1-IdXjgO27.webp"
-            alt="KNK Salon Awadh Luxury Beauty"
-            priority={true}
-            fill
-            sizes="100vw"
-            quality={85}
-            className="h-full w-full object-cover"
-          />
-          {videoLoaded && (
-            <video
-              ref={videoRef}
-              src="/assets/media/reel-2.mp4"
-              poster="/assets/images/reel-1-IdXjgO27.webp"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+          {hero?.media_type === "image" && hero.media_url ? (
+            <Image
+              src={hero.media_url}
+              alt={hero.alt_text || "KNK Salon Awadh Luxury Beauty"}
+              priority={true}
+              fill
+              sizes="100vw"
+              quality={85}
+              unoptimized={hero.media_url.startsWith("/admin-assets/")}
+              className="h-full w-full object-cover"
             />
+          ) : (
+            <>
+              <Image
+                src="/assets/images/reel-1-IdXjgO27.webp"
+                alt={hero?.alt_text || "KNK Salon Awadh Luxury Beauty"}
+                priority={true}
+                fill
+                sizes="100vw"
+                quality={85}
+                className="h-full w-full object-cover"
+              />
+              {videoLoaded && (
+                <video
+                  ref={videoRef}
+                  src={hero?.media_url || "/assets/media/reel-2.mp4"}
+                  poster="/assets/images/reel-1-IdXjgO27.webp"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+                />
+              )}
+            </>
           )}
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/35 to-primary/10" />

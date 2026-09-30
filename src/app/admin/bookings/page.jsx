@@ -90,6 +90,9 @@ export default function AdminBookingsPage() {
                 return { label: "Bridal Makeup", badge: "bg-rose-100 text-rose-800" };
             case "academy":
                 return { label: "Academy Admission", badge: "bg-blue-100 text-blue-800" };
+            case "contact_us":
+            case "contact":
+                return { label: "Contact Us", badge: "bg-teal-100 text-teal-800" };
             default:
                 return { label: type || "General", badge: "bg-gray-100 text-gray-800" };
         }
@@ -182,6 +185,7 @@ export default function AdminBookingsPage() {
                             <option value="luxury_booking">Luxury Studio</option>
                             <option value="makeup">Bridal Makeup</option>
                             <option value="academy">Academy Admission</option>
+                            <option value="contact_us">Contact Us</option>
                         </select>
                     </div>
 
@@ -365,7 +369,7 @@ export default function AdminBookingsPage() {
                             <div>
                                 <span className="text-[10px] uppercase text-muted tracking-wider block">Appointment Slot:</span>
                                 <span className="text-ink">
-                                    {selectedBooking.booking_date || "Flexible"} ({selectedBooking.booking_time || "Any time"})
+                                    {selectedBooking.booking_date || "Flexible"} {selectedBooking.booking_time ? `(${selectedBooking.booking_time})` : ""}
                                 </span>
                             </div>
                         </div>

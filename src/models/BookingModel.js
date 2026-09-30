@@ -58,8 +58,12 @@ const BookingModel = {
         }
 
         if (formType && formType !== "all") {
-            query += " AND form_type = ?";
-            params.push(formType);
+            if (formType === "contact_us" || formType === "contact") {
+                query += " AND (form_type = 'contact_us' OR form_type = 'contact')";
+            } else {
+                query += " AND form_type = ?";
+                params.push(formType);
+            }
         }
 
         if (search) {

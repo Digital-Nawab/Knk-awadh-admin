@@ -6,7 +6,7 @@ export async function POST(request) {
     return NextResponse.json(body, { status });
 }
 
-export async function GET() {
-    const { status, body } = await listHeroes();
+export async function GET(request) {
+    const { status, body } = await listHeroes(request);
     return NextResponse.json(body, { status });
 }
