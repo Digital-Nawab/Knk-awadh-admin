@@ -25,7 +25,7 @@ export default function Lightbox({ images, index, onClose, onPrev, onNext }) {
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-xl text-white transition-colors hover:bg-white/10"
+                className="absolute right-3 top-3 sm:right-5 sm:top-5 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-white/30 text-lg sm:text-xl text-white transition-colors hover:bg-white/10"
             >
                 &times;
             </button>
@@ -39,7 +39,7 @@ export default function Lightbox({ images, index, onClose, onPrev, onNext }) {
                             onPrev();
                         }}
                         aria-label="Previous image"
-                        className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 text-xl text-white transition-colors hover:bg-white/10 sm:left-6"
+                        className="absolute left-2 sm:left-6 top-1/2 flex h-9 w-9 sm:h-11 sm:w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 text-lg sm:text-xl text-white transition-colors hover:bg-white/10"
                     >
                         &#8249;
                     </button>
@@ -50,7 +50,7 @@ export default function Lightbox({ images, index, onClose, onPrev, onNext }) {
                             onNext();
                         }}
                         aria-label="Next image"
-                        className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 text-xl text-white transition-colors hover:bg-white/10 sm:right-6"
+                        className="absolute right-2 sm:right-6 top-1/2 flex h-9 w-9 sm:h-11 sm:w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 text-lg sm:text-xl text-white transition-colors hover:bg-white/10"
                     >
                         &#8250;
                     </button>
@@ -61,7 +61,7 @@ export default function Lightbox({ images, index, onClose, onPrev, onNext }) {
                 src={images[index]}
                 alt=""
                 onClick={(e) => e.stopPropagation()}
-                className="max-h-[85vh] max-w-full rounded-lg object-contain shadow-2xl"
+                className="max-h-[82vh] max-w-[92vw] sm:max-w-full rounded-lg object-contain shadow-2xl"
             />
         </div>
     );

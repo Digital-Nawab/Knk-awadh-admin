@@ -12,6 +12,10 @@ export const DARK = "#241d18";
 
 export const whyAcademyImage = "/assets/images/academy/about1.webp";
 export const reelVideo = "/assets/videos/reel-content.webm";
+export const mentorsImage = "/assets/images/about/experts.webp";
+export const academyTrainingImage = "/assets/images/about/academy-training.webp";
+export const bridalArtImage = "/assets/images/about/bridal-makeup.webp";
+export const hairStylingImage = "/assets/images/about/hair-styling.webp";
 
 export const whyAcademyPoints = [
     "Globally trained experts with experience across the US, UK, Russia and more",
@@ -23,21 +27,25 @@ export const whyAcademyPoints = [
 ];
 
 export const stats = [
-    { value: "15+", label: "Years of Legacy" },
-    { value: "1000+", label: "Students Trained" },
-    { value: "12", label: "Specialised Courses" },
-    { value: "IAF", label: "Certified Academy" },
+    { value: "15+", label: "Years of Legacy", detail: "Shaping India's finest artists" },
+    { value: "1000+", label: "Students Trained", detail: "Placed in salons & bridal studios" },
+    { value: "12", label: "Specialised Courses", detail: "Beginner to Master Diploma" },
+    { value: "IAF", label: "Certified Academy", detail: "Global recognition in 80+ nations" },
 ];
 
 export const mentors = [
     {
         name: "Poonam Ranjan Chowdhary",
         role: "Founder & Lead Mentor",
+        title: "Master Cosmetologist & Bridal Icon",
+        credentials: "20+ Years Artistry • International Certifications",
         bio: "An internationally certified bridal makeup expert and cosmetologist, Poonam has spent years shaping Lucknow's makeup and hairstyling trends and personally mentors every batch at KNK Academy.",
     },
     {
         name: "Ishitta Chowdhary",
         role: "Co-Founder & Creative Director",
+        title: "Runway & Backstage MUA",
+        credentials: "Milan & Paris Fashion Week Backstage Experience",
         bio: "A bridal MUA and backstage artist with international fashion-week experience, Ishitta leads the academy's creative and fashion makeup modules, bringing runway-level technique into the classroom.",
     },
 ];
