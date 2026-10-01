@@ -322,6 +322,51 @@ export async function initDatabase() {
             console.log("Default About page sections seeded successfully");
         }
 
+        // 9. Interior Gallery Table (KNK Interior branches: Hazratganj and Gomti Nagar)
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS interior_gallery (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                branch VARCHAR(50) NOT NULL,
+                image_url VARCHAR(255) NOT NULL,
+                title VARCHAR(255) NULL,
+                display_order INT DEFAULT 0,
+                is_active TINYINT(1) DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_branch (branch),
+                INDEX idx_is_active (is_active),
+                INDEX idx_display_order (display_order)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // Seed default Hazratganj and Gomti Nagar interior images if empty
+        const [existingInterior] = await db.query("SELECT id FROM interior_gallery LIMIT 1");
+        if (existingInterior.length === 0) {
+            const interiorValues = [
+                // Hazratganj
+                ['hazratganj', '/assets/images/interior/4.webp', 'Grand Reception & Welcome Lounge', 1, 1],
+                ['hazratganj', '/assets/images/interior/8.webp', 'Regal Jaali Wall & Chandelier Atrium', 2, 1],
+                ['hazratganj', '/assets/images/interior/10.webp', 'Imperial Bridal Vanity Suite', 3, 1],
+                ['hazratganj', '/assets/images/interior/5.webp', 'Royal Awadh Crimson Feature Wall', 4, 1],
+                ['hazratganj', '/assets/images/interior/9.webp', 'Emerald Velvet Waiting Lounge', 5, 1],
+                ['hazratganj', '/assets/images/interior/11.webp', 'Heritage Jharokha & Consultation Nook', 6, 1],
+                // Gomti Nagar
+                ['gomtinagar', '/assets/images/interior/12.webp', 'Avant-Garde Arched Styling Bays', 1, 1],
+                ['gomtinagar', '/assets/images/interior/2.webp', 'Arched Vanity Corridor & Botanical Ceiling', 2, 1],
+                ['gomtinagar', '/assets/images/interior/6.webp', 'Living Garden Pedicure Sanctuary', 3, 1],
+                ['gomtinagar', '/assets/images/interior/1.webp', 'Private Spa & Foot Reflexology Suite', 4, 1],
+                ['gomtinagar', '/assets/images/interior/7.webp', 'Ambient Hair Wash & Scalp Sanctuary', 5, 1],
+                ['gomtinagar', '/assets/images/interior/3.webp', 'Gilded Styling Stations & Motif Flooring', 6, 1],
+                ['gomtinagar', '/assets/images/interior/13.webp', 'Bespoke Makeup & Hair Artistry Counters', 7, 1]
+            ];
+
+            await db.query(
+                `INSERT INTO interior_gallery (branch, image_url, title, display_order, is_active) VALUES ?`,
+                [interiorValues]
+            );
+            console.log("Default KNK Interior images (Hazratganj & Gomti Nagar) seeded successfully");
+        }
+
         return { success: true, message: "Database tables and seed data initialized successfully." };
     } catch (error) {
         console.error("Database initialization error:", error);

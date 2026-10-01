@@ -139,3 +139,18 @@ CREATE TABLE IF NOT EXISTS about_sections (
     INDEX idx_section_key (section_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 10. Interior Gallery Table (KNK Interior branches: Hazratganj and Gomti Nagar)
+CREATE TABLE IF NOT EXISTS interior_gallery (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    branch VARCHAR(50) NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NULL,
+    display_order INT DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_branch (branch),
+    INDEX idx_is_active (is_active),
+    INDEX idx_display_order (display_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+

@@ -67,6 +67,15 @@ const links = [
         ),
     },
     {
+        label: "KNK Interior",
+        href: "/admin/interior",
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4" />
+            </svg>
+        ),
+    },
+    {
         label: "About Page CMS",
         href: "/admin/about",
         icon: (
