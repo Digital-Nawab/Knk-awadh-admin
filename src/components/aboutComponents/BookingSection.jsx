@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-function BookingForm() {
+function BookingForm({ whatsappText, whatsappNumber }) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -214,10 +214,10 @@ function BookingForm() {
             {/* Below the button: WhatsApp section */}
             <div className="mt-8 pt-6 border-t border-border/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <p className="font-['Inter'] text-[13px] text-[#71665c]">
-                    Prefer WhatsApp? Send us your preferred service, location, and date, and our team will contact you.
+                    {whatsappText || "Prefer WhatsApp? Send us your preferred service, location, and date, and our team will contact you."}
                 </p>
                 <a
-                    href="https://wa.me/918881000552?text=Hi%20KNK%20Awadh%2C%20I%20would%20like%20to%20book%20an%20appointment."
+                    href={`https://wa.me/${whatsappNumber || "918881000552"}?text=Hi%20KNK%20Awadh%2C%20I%20would%20like%20to%20book%20an%20appointment.`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="shrink-0 inline-flex items-center justify-center border border-[#b58a52] text-[#a17b5a] font-['Inter'] text-[11px] tracking-[0.15em] uppercase px-6 py-3 rounded-full hover:bg-[#b58a52]/10 transition-colors"
@@ -229,24 +229,34 @@ function BookingForm() {
     );
 }
 
-export default function BookingSection() {
+export default function BookingSection({ data = {} }) {
+    const d = {
+        eyebrow: "Book an Appointment",
+        heading: "Book an",
+        headingHighlight: "Appointment",
+        description: "Choose your preferred service, KNK location and date. Our team will contact you to confirm availability.",
+        whatsappText: "Prefer WhatsApp? Send us your preferred service, location, and date, and our team will contact you.",
+        whatsappNumber: "918881000552",
+        ...data,
+    };
+
     return (
         <section id="booking" className="px-6 py-14 md:py-20">
             <div id="contact" className="max-w-3xl mx-auto">
                 <div className="text-center mb-12">
                     <p className="font-['Inter'] text-[9px] font-medium uppercase tracking-[0.35em] text-[#a17b5a]">
-                        Book an Appointment
+                        {d.eyebrow}
                     </p>
                     <h2 className="mt-6 font-['Cormorant_Garamond'] text-[52px] sm:text-[64px] md:text-[76px] lg:text-[88px] font-medium leading-[0.88] tracking-[-0.04em] text-[#29231f]">
-                        Book an
+                        {d.heading}
                         <br />
-                        <span className="italic text-[#b58a52]">Appointment</span>
+                        <span className="italic text-[#b58a52]">{d.headingHighlight}</span>
                     </h2>
                     <p className="mt-4 font-['Inter'] text-[13px] sm:text-[14px] text-[#71665c] leading-[1.8] max-w-xl mx-auto">
-                        Choose your preferred service, KNK location and date. Our team will contact you to confirm availability.
+                        {d.description}
                     </p>
                 </div>
-                <BookingForm />
+                <BookingForm whatsappText={d.whatsappText} whatsappNumber={d.whatsappNumber} />
             </div>
         </section>
     );

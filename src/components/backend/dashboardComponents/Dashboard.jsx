@@ -28,6 +28,18 @@ const quickLinks = [
         href: "/admin/services",
         actionText: "Manage Services",
     },
+    {
+        title: "Artistry Gallery Lookbook",
+        desc: "Upload, view, and manage bridal transformations and salon lookbook photos.",
+        href: "/admin/gallery",
+        actionText: "Manage Gallery",
+    },
+    {
+        title: "About Us Page CMS",
+        desc: "Customize hero video, brand story, founders, academy, and FAQ content on the About page.",
+        href: "/admin/about",
+        actionText: "Manage About Page",
+    },
 ];
 
 export default function Dashboard() {
@@ -43,25 +55,29 @@ export default function Dashboard() {
         totalBookings: 0,
         totalBlogs: 3,
         totalSeo: 7,
+        totalGallery: 22,
     });
 
     useEffect(() => {
         async function fetchStats() {
             try {
-                const [bRes, blRes, sRes] = await Promise.all([
+                const [bRes, blRes, sRes, gRes] = await Promise.all([
                     fetch("/api/bookings"),
                     fetch("/api/blogs"),
                     fetch("/api/seo"),
+                    fetch("/api/gallery"),
                 ]);
                 const bData = bRes.ok ? await bRes.json() : null;
                 const blData = blRes.ok ? await blRes.json() : null;
                 const sData = sRes.ok ? await sRes.json() : null;
+                const gData = gRes.ok ? await gRes.json() : null;
 
                 setStats({
                     todayBookings: bData?.stats?.today ?? 0,
                     totalBookings: bData?.stats?.total ?? 0,
                     totalBlogs: blData?.blogs?.length ?? 3,
                     totalSeo: sData?.seoList?.length ?? 7,
+                    totalGallery: gData?.gallery?.length ?? 22,
                 });
             } catch {
                 // Fallback stats

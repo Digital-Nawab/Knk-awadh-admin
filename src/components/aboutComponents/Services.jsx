@@ -1,28 +1,31 @@
 "use client";
 
 import React from "react";
-import { services } from "./AboutData";
+import { DEFAULT_ABOUT_SECTIONS } from "@/data/aboutDefaults";
 
-export default function Services() {
+export default function Services({ data = {} }) {
+    const d = { ...DEFAULT_ABOUT_SECTIONS.services, ...data };
+    const items = d.items || DEFAULT_ABOUT_SECTIONS.services.items;
+
     return (
         <section id="services" className="px-6 py-20 md:py-24">
             <div className="max-w-6xl mx-auto">
                 <div className="max-w-3xl mb-14">
                     <p className="font-['Inter'] text-[9px] font-medium uppercase tracking-[0.35em] text-[#a17b5a]">
-                        Our Services
+                        {d.eyebrow}
                     </p>
                     <h2 className="mt-6 font-['Cormorant_Garamond'] text-[46px] sm:text-[58px] md:text-[70px] lg:text-[80px] font-medium leading-[0.95] tracking-[-0.04em] text-[#29231f]">
-                        Makeup, Hair, Skin &amp; Beauty
+                        {d.heading}
                         <br />
-                        <span className="italic text-[#b58a52]">— Under One Roof</span>
+                        <span className="italic text-[#b58a52]">{d.headingHighlight}</span>
                     </h2>
                     <p className="mt-5 max-w-2xl font-['Inter'] text-[13px] sm:text-[14px] text-[#71665c] leading-[1.9]">
-                        From bridal makeup and professional hair services to skincare, aesthetics, and wellness treatments, KNK offers a range of beauty services across its Lucknow salons.
+                        {d.description}
                     </p>
                 </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {services.map((service) => (
-                        <div key={service.title} className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft group flex flex-col justify-between">
+                    {items.map((service, idx) => (
+                        <div key={idx} className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft group flex flex-col justify-between">
                             <div>
                                 <div className="aspect-[4/5] overflow-hidden">
                                     <img

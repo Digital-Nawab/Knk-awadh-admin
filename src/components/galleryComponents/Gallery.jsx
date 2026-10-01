@@ -1,16 +1,14 @@
 "use client";
 
 import React from 'react'
-
 import GallerySection from './GallerySection'
 
-function Gallery() {
-
+function Gallery({ initialImages = [] }) {
   return (
     <>
-     <GallerySection />
+      <GallerySection initialImages={initialImages} />
     </>
   )
 }
 
-export default Gallery
+export default Gallery

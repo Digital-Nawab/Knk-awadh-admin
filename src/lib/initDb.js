@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db } from "./db.js";
 import bcrypt from "bcryptjs";
 
 export async function initDatabase() {
@@ -257,6 +257,69 @@ export async function initDatabase() {
                 )
             `);
             console.log("Default SEO metadata seeded successfully");
+        }
+
+        // 7. Gallery Table (Artistry & Lookbook portfolio)
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS gallery (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                image_url VARCHAR(255) NOT NULL,
+                title VARCHAR(255) NULL,
+                display_order INT DEFAULT 0,
+                is_active TINYINT(1) DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_is_active (is_active),
+                INDEX idx_display_order (display_order)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // Seed default 22 bridal gallery lookbook images if empty
+        const [existingGallery] = await db.query("SELECT id FROM gallery LIMIT 1");
+        if (existingGallery.length === 0) {
+            const galleryValues = [];
+            for (let i = 1; i <= 22; i++) {
+                galleryValues.push([
+                    `/assets/images/new/home/bridal/${i}.webp`,
+                    `KNK Awadh Bridal Lookbook ${i}`,
+                    i,
+                    1
+                ]);
+            }
+            await db.query(
+                `INSERT INTO gallery (image_url, title, display_order, is_active) VALUES ?`,
+                [galleryValues]
+            );
+            console.log("Default 22 bridal gallery photos seeded successfully");
+        }
+
+        // 8. About Page Sections Table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS about_sections (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                section_key VARCHAR(50) NOT NULL UNIQUE,
+                section_name VARCHAR(100) NOT NULL,
+                content JSON NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_section_key (section_key)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // Seed default About page sections if empty
+        const [existingAbout] = await db.query("SELECT id FROM about_sections LIMIT 1");
+        if (existingAbout.length === 0) {
+            const { DEFAULT_ABOUT_SECTIONS, SECTION_METADATA } = await import("../data/aboutDefaults.js");
+            const values = SECTION_METADATA.map((meta) => [
+                meta.key,
+                meta.label,
+                JSON.stringify(DEFAULT_ABOUT_SECTIONS[meta.key] || {}),
+            ]);
+            await db.query(
+                `INSERT INTO about_sections (section_key, section_name, content) VALUES ?`,
+                [values]
+            );
+            console.log("Default About page sections seeded successfully");
         }
 
         return { success: true, message: "Database tables and seed data initialized successfully." };

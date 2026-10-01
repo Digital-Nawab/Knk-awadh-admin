@@ -1,31 +1,34 @@
 "use client";
 
 import React, { useState } from "react";
-import { faqList } from "./AboutData";
+import { DEFAULT_ABOUT_SECTIONS } from "@/data/aboutDefaults";
 
-export default function Faq() {
+export default function Faq({ data = {} }) {
     const [openIndex, setOpenIndex] = useState(0);
 
     const toggleFaq = (index) => {
         setOpenIndex((prev) => (prev === index ? null : index));
     };
 
+    const d = { ...DEFAULT_ABOUT_SECTIONS.faq, ...data };
+    const items = d.items || DEFAULT_ABOUT_SECTIONS.faq.items;
+
     return (
         <section id="faq" className="px-6 py-20 md:py-24 bg-secondary/60">
             <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-14">
                     <p className="font-['Inter'] text-[9px] font-medium uppercase tracking-[0.35em] text-[#a17b5a]">
-                        FAQ
+                        {d.eyebrow}
                     </p>
                     <h2 className="mt-6 font-['Cormorant_Garamond'] text-[52px] sm:text-[64px] md:text-[76px] lg:text-[88px] font-medium leading-[0.88] tracking-[-0.04em] text-[#29231f]">
-                        Frequently Asked
+                        {d.heading}
                         <br />
-                        <span className="italic text-[#b58a52]">Questions</span>
+                        <span className="italic text-[#b58a52]">{d.headingHighlight}</span>
                     </h2>
                 </div>
 
                 <div className="border-t border-[#d8cbbd]">
-                    {faqList.map((item, index) => {
+                    {items.map((item, index) => {
                         const isOpen = openIndex === index;
                         const num = `0${index + 1}`;
 

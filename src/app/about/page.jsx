@@ -1,8 +1,9 @@
 import Layout from '../../layout/Layout'
 import About from '../../components/aboutComponents/About'
 import { getDynamicMetadata } from '@/lib/seo'
+import AboutModel from '@/models/AboutModel'
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
     return await getDynamicMetadata('/about', {
@@ -11,13 +12,18 @@ export async function generateMetadata() {
     })
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+    let aboutData = {};
+    try {
+        aboutData = await AboutModel.getAllSections();
+    } catch (error) {
+        console.error("Failed to load about data on server:", error);
+        aboutData = {};
+    }
+
     return (
-        <>
-            <Layout>
-                <About />
-            </Layout>
-        </>
+        <Layout>
+            <About initialData={aboutData} />
+        </Layout>
     )
 }
-

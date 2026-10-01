@@ -2,21 +2,20 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 
-// Local bridal gallery images (22 total, /assets/images/new/home/bridal/1.webp ... 22.webp).
+// Fallback local bridal gallery images (22 total, /assets/images/new/home/bridal/1.webp ... 22.webp).
 // Distributed round-robin across the 3 columns so no image repeats anywhere.
 const BRIDAL_PATH = (n) => `/assets/images/new/home/bridal/${n}.webp`;
-
-const COLUMN_1 = [1, 4, 7, 10, 13, 16, 19, 22].map(BRIDAL_PATH);
-const COLUMN_2 = [2, 5, 8, 11, 14, 17, 20].map(BRIDAL_PATH);
-const COLUMN_3 = [3, 6, 9, 12, 15, 18, 21].map(BRIDAL_PATH);
-
-// Flat list (in on-screen order across the 3 columns) used for the lightbox
-// so left/right navigation moves through every photo, not just one column.
-const ALL_IMAGES = [...COLUMN_1, ...COLUMN_2, ...COLUMN_3];
+const DEFAULT_BRIDAL_IMAGES = Array.from({ length: 22 }, (_, i) => BRIDAL_PATH(i + 1));
 
 function ScrollColumn({ images, duration, reverse = false, onImageClick }) {
-    // duplicate the list so the loop is seamless at translateY(-50%)
-    const loop = [...images, ...images];
+    if (!images || images.length === 0) return null;
+
+    // Duplicate list so the loop is seamless at translateY(-50%)
+    let loop = [...images];
+    while (loop.length < 6) {
+        loop = [...loop, ...images];
+    }
+    loop = [...loop, ...loop];
 
     return (
         <div className="relative h-full w-full overflow-hidden">
@@ -47,19 +46,56 @@ function ScrollColumn({ images, duration, reverse = false, onImageClick }) {
     );
 }
 
-function GallerySection() {
+function GallerySection({ initialImages = [] }) {
+    const [items, setItems] = useState(initialImages);
     const [lightboxSrc, setLightboxSrc] = useState(null);
+
+    // Fetch fresh active gallery items on mount
+    useEffect(() => {
+        let isMounted = true;
+        fetch('/api/gallery?active=true')
+            .then((res) => {
+                if (!res.ok) throw new Error();
+                return res.json();
+            })
+            .then((data) => {
+                if (isMounted && data.gallery && Array.isArray(data.gallery) && data.gallery.length > 0) {
+                    setItems(data.gallery);
+                }
+            })
+            .catch(() => {
+                // Keep initialImages or fallback
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    // Flatten image list to string URLs
+    const imageList = (items && items.length > 0)
+        ? items.map((item) => (typeof item === 'string' ? item : item.image_url)).filter(Boolean)
+        : DEFAULT_BRIDAL_IMAGES;
+
+    // Distribute round-robin across 3 columns matching original column layout
+    const col1 = imageList.filter((_, idx) => idx % 3 === 0);
+    const col2 = imageList.filter((_, idx) => idx % 3 === 1);
+    const col3 = imageList.filter((_, idx) => idx % 3 === 2);
+
+    // Flat list across columns for lightbox navigation
+    const allImages = [...col1, ...col2, ...col3];
 
     const closeLightbox = useCallback(() => setLightboxSrc(null), []);
 
     const showNext = useCallback((dir) => {
         setLightboxSrc((current) => {
-            if (!current) return current;
-            const idx = ALL_IMAGES.indexOf(current);
-            const nextIdx = (idx + dir + ALL_IMAGES.length) % ALL_IMAGES.length;
-            return ALL_IMAGES[nextIdx];
+            if (!current || allImages.length === 0) return current;
+            const idx = allImages.indexOf(current);
+            if (idx === -1) return allImages[0];
+            const nextIdx = (idx + dir + allImages.length) % allImages.length;
+            return allImages[nextIdx];
         });
-    }, []);
+    }, [allImages]);
 
     useEffect(() => {
         if (!lightboxSrc) return;
@@ -117,9 +153,9 @@ function GallerySection() {
                             'linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%)',
                     }}
                 >
-                    <ScrollColumn images={COLUMN_1} duration={26} onImageClick={setLightboxSrc} />
-                    <ScrollColumn images={COLUMN_2} duration={32} reverse onImageClick={setLightboxSrc} />
-                    <ScrollColumn images={COLUMN_3} duration={24} onImageClick={setLightboxSrc} />
+                    <ScrollColumn images={col1} duration={26} onImageClick={setLightboxSrc} />
+                    <ScrollColumn images={col2} duration={32} reverse onImageClick={setLightboxSrc} />
+                    <ScrollColumn images={col3} duration={24} onImageClick={setLightboxSrc} />
                 </div>
             </div>
 

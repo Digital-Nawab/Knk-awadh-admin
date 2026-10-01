@@ -115,3 +115,27 @@ CREATE TABLE IF NOT EXISTS services (
     INDEX idx_is_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 8. Gallery Table (Artistry & Lookbook portfolio)
+CREATE TABLE IF NOT EXISTS gallery (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    image_url VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NULL,
+    display_order INT DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_is_active (is_active),
+    INDEX idx_display_order (display_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 9. About Page Sections Table (Dynamic CMS for all About Page content)
+CREATE TABLE IF NOT EXISTS about_sections (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    section_key VARCHAR(50) NOT NULL UNIQUE,
+    section_name VARCHAR(100) NOT NULL,
+    content JSON NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_section_key (section_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
