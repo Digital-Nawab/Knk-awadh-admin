@@ -72,7 +72,7 @@ export default function CertificationHighlight() {
                                 <ArrowUpRight className="size-3.5" />
                             </a>
                             <span className="font-['Inter'] text-[12px] text-[#71665c] text-center sm:text-left">
-                                Admissions Helpline: <strong className="text-[#29231f]">+91 63900 08020</strong>
+                                Admissions Helpline: <strong className="text-[#29231f]">+91 88810 00552</strong>
                             </span>
                         </div>
                     </div>

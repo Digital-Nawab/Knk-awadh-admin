@@ -419,64 +419,64 @@ export default function Courses() {
                                         {/* Card Header / Summary Clickable Bar */}
                                         <div
                                             onClick={() => setOpenIndex(isOpen ? -1 : i)}
-                                            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-6 cursor-pointer select-none"
+                                            className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 sm:gap-4 p-4 sm:p-6 cursor-pointer select-none"
                                         >
-                                            <div className="flex items-start sm:items-center gap-4">
+                                            <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
                                                 <div
-                                                    className={`size-11 sm:size-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
+                                                    className={`size-10 sm:size-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
                                                         isOpen ? "bg-[#b58a52] text-white" : "bg-[#f4eee1] text-[#a17b5a]"
                                                     }`}
                                                 >
-                                                    <Icon size={20} strokeWidth={1.8} />
+                                                    <Icon size={18} className="sm:size-5" strokeWidth={1.8} />
                                                 </div>
 
-                                                <div>
-                                                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                                                        <span className="font-['Inter'] text-[9.5px] uppercase tracking-[0.2em] font-semibold text-[#a17b5a]">
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
+                                                        <span className="font-['Inter'] text-[9px] sm:text-[9.5px] uppercase tracking-[0.18em] sm:tracking-[0.2em] font-semibold text-[#a17b5a]">
                                                             {c.category}
                                                         </span>
                                                         {isFeatured && (
-                                                            <span className="inline-flex items-center gap-1 font-['Inter'] text-[8.5px] font-bold uppercase tracking-[0.16em] px-2.5 py-0.5 rounded-full bg-[#b58a52] text-white">
-                                                                <Sparkles size={10} /> Popular Flagship
+                                                            <span className="inline-flex items-center gap-1 font-['Inter'] text-[8px] sm:text-[8.5px] font-bold uppercase tracking-[0.14em] sm:tracking-[0.16em] px-2 sm:px-2.5 py-0.5 rounded-full bg-[#b58a52] text-white">
+                                                                <Sparkles size={9} className="sm:size-2.5" /> Popular Flagship
                                                             </span>
                                                         )}
                                                     </div>
 
-                                                    <h3 className="font-['Cormorant_Garamond'] text-xl sm:text-2xl font-semibold text-[#29231f]">
+                                                    <h3 className="font-['Cormorant_Garamond'] text-lg sm:text-2xl font-semibold text-[#29231f] leading-snug break-words">
                                                         {c.title}
                                                     </h3>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center justify-between md:justify-end gap-3 sm:gap-5 pt-2 md:pt-0 border-t md:border-t-0 border-[#e8dfc8]">
+                                            <div className="flex items-center justify-between md:justify-end gap-2 sm:gap-5 pt-2.5 md:pt-0 border-t md:border-t-0 border-[#e8dfc8]">
                                                 {/* Duration Pill */}
-                                                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#f4eee1] text-[#29231f] border border-[#e6dece]">
-                                                    <Clock className="size-3.5 text-[#b58a52]" />
-                                                    <span className="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider">
+                                                <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-[#f4eee1] text-[#29231f] border border-[#e6dece] shrink-0">
+                                                    <Clock className="size-3 sm:size-3.5 text-[#b58a52]" />
+                                                    <span className="font-['Inter'] text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">
                                                         {c.duration}
                                                     </span>
                                                 </div>
 
                                                 {/* Quick Actions */}
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-2 shrink-0">
                                                     <button
                                                         type="button"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             setModalCourse(c.title);
                                                         }}
-                                                        className="px-4 py-2 rounded-full font-['Inter'] text-[10.5px] font-semibold uppercase tracking-wider text-white transition-transform hover:scale-105"
+                                                        className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full font-['Inter'] text-[10px] sm:text-[10.5px] font-semibold uppercase tracking-wider text-white transition-transform hover:scale-105 shrink-0"
                                                         style={{ backgroundColor: GOLD }}
                                                     >
                                                         Enroll Now
                                                     </button>
 
                                                     <div
-                                                        className={`size-8 rounded-full flex items-center justify-center border border-[#d0bda4] text-[#a17b5a] transition-transform duration-300 ${
+                                                        className={`size-7 sm:size-8 rounded-full flex items-center justify-center border border-[#d0bda4] text-[#a17b5a] transition-transform duration-300 shrink-0 ${
                                                             isOpen ? "rotate-180 bg-[#f4eee1]" : "bg-white"
                                                         }`}
                                                     >
-                                                        <ChevronDown size={16} />
+                                                        <ChevronDown size={15} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -484,85 +484,88 @@ export default function Courses() {
 
                                         {/* Expandable Syllabus Blueprint Drawer */}
                                         <div
-                                            className="grid transition-all duration-300 ease-in-out"
-                                            style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+                                            className={`grid transition-all duration-300 ease-in-out ${
+                                                isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                                            }`}
                                         >
-                                            <div className="overflow-hidden border-t border-[#e8dfc8] bg-[#fbf7f0]/60 px-5 sm:px-7 py-6">
-                                                <div className="flex items-center gap-2 mb-4">
-                                                    <BookOpen className="size-4 text-[#b58a52]" />
-                                                    <span className="font-['Inter'] text-[10.5px] uppercase tracking-[0.2em] font-semibold text-[#29231f]">
-                                                        Comprehensive Syllabus & Module Blueprint
-                                                    </span>
-                                                </div>
-
-                                                {c.sections ? (
-                                                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                                                        {c.sections.map((sec) => (
-                                                            <div
-                                                                key={sec.title}
-                                                                className="p-4 rounded-xl bg-white border border-[#e8dfc8] shadow-2xs"
-                                                            >
-                                                                <p className="mb-2.5 font-['Cormorant_Garamond'] text-base font-semibold text-[#b58a52] flex items-center gap-1.5">
-                                                                    <span className="h-1.5 w-1.5 rounded-full bg-[#b58a52]" />
-                                                                    {sec.title}
-                                                                </p>
-                                                                <ul className="space-y-1.5">
-                                                                    {sec.items.map((point) => (
-                                                                        <li
-                                                                            key={point}
-                                                                            className="flex items-start gap-2 font-['Inter'] text-[12px] leading-relaxed text-[#71665c]"
-                                                                        >
-                                                                            <CheckCircle2 className="size-3.5 shrink-0 mt-0.5 text-[#b58a52]/80" />
-                                                                            <span>{point}</span>
-                                                                        </li>
-                                                                    ))}
-                                                                </ul>
-                                                            </div>
-                                                        ))}
+                                            <div className="overflow-hidden min-h-0">
+                                                <div className="border-t border-[#e8dfc8] bg-[#fbf7f0]/60 px-4 py-5 sm:px-7 sm:py-6">
+                                                    <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                                                        <BookOpen className="size-3.5 sm:size-4 text-[#b58a52] shrink-0" />
+                                                        <span className="font-['Inter'] text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.16em] sm:tracking-[0.2em] font-semibold text-[#29231f]">
+                                                            Comprehensive Syllabus &amp; Module Blueprint
+                                                        </span>
                                                     </div>
-                                                ) : (
-                                                    <div className="p-4 sm:p-5 rounded-xl bg-white border border-[#e8dfc8] shadow-2xs">
-                                                        <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                                                            {c.points.map((point) => (
-                                                                <li
-                                                                    key={point}
-                                                                    className="flex items-start gap-2 font-['Inter'] text-[12px] leading-relaxed text-[#71665c]"
+
+                                                    {c.sections ? (
+                                                        <div className="grid gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                                            {c.sections.map((sec) => (
+                                                                <div
+                                                                    key={sec.title}
+                                                                    className="p-3.5 sm:p-4 rounded-xl bg-white border border-[#e8dfc8] shadow-2xs"
                                                                 >
-                                                                    <CheckCircle2 className="size-3.5 shrink-0 mt-0.5 text-[#b58a52]" />
-                                                                    <span>{point}</span>
-                                                                </li>
+                                                                    <p className="mb-2 sm:mb-2.5 font-['Cormorant_Garamond'] text-[15px] sm:text-base font-semibold text-[#b58a52] flex items-center gap-1.5">
+                                                                        <span className="h-1.5 w-1.5 rounded-full bg-[#b58a52]" />
+                                                                        {sec.title}
+                                                                    </p>
+                                                                    <ul className="space-y-1.5">
+                                                                        {sec.items.map((point) => (
+                                                                            <li
+                                                                                key={point}
+                                                                                className="flex items-start gap-2 font-['Inter'] text-[11.5px] sm:text-[12px] leading-relaxed text-[#71665c]"
+                                                                            >
+                                                                                <CheckCircle2 className="size-3.5 shrink-0 mt-0.5 text-[#b58a52]/80" />
+                                                                                <span>{point}</span>
+                                                                            </li>
+                                                                        ))}
+                                                                    </ul>
+                                                                </div>
                                                             ))}
-                                                        </ul>
-                                                    </div>
-                                                )}
+                                                        </div>
+                                                    ) : (
+                                                        <div className="p-3.5 sm:p-5 rounded-xl bg-white border border-[#e8dfc8] shadow-2xs">
+                                                            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-2.5">
+                                                                {c.points.map((point) => (
+                                                                    <li
+                                                                        key={point}
+                                                                        className="flex items-start gap-2 font-['Inter'] text-[11.5px] sm:text-[12px] leading-relaxed text-[#71665c]"
+                                                                    >
+                                                                        <CheckCircle2 className="size-3.5 shrink-0 mt-0.5 text-[#b58a52]" />
+                                                                        <span>{point}</span>
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
 
-                                                {/* Bottom Drawer Bar with Actions */}
-                                                <div className="mt-6 pt-4 border-t border-[#e8dfc8] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
-                                                    <div className="flex items-center gap-2 text-[#71665c] font-['Inter'] text-[11.5px] sm:text-[12px]">
-                                                        <Sparkles className="size-3.5 text-[#b58a52] shrink-0" />
-                                                        <span>Includes IAF Recognized Certification & Live Practical Evaluation</span>
-                                                    </div>
+                                                    {/* Bottom Drawer Bar with Actions */}
+                                                    <div className="mt-5 sm:mt-6 pt-4 border-t border-[#e8dfc8] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+                                                        <div className="flex items-center gap-2 text-[#71665c] font-['Inter'] text-[11px] sm:text-[12px]">
+                                                            <Sparkles className="size-3.5 text-[#b58a52] shrink-0" />
+                                                            <span>Includes IAF Recognized Certification &amp; Live Practical Evaluation</span>
+                                                        </div>
 
-                                                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                                                        <a
-                                                            href={`https://wa.me/918881000552?text=Hello,%20I'm%20interested%20in%20learning%20more%20about%20the%20${encodeURIComponent(c.title)}%20at%20KNK%20Academy.`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full border border-[#25D366] text-[#128C7E] bg-white text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider hover:bg-[#25D366]/10 transition-colors text-center"
-                                                        >
-                                                            <MessageCircle className="size-3.5 shrink-0" />
-                                                            <span>WhatsApp Syllabus</span>
-                                                        </a>
+                                                        <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3">
+                                                            <a
+                                                                href={`https://wa.me/918881000552?text=Hello,%20I'm%20interested%20in%20learning%20more%20about%20the%20${encodeURIComponent(c.title)}%20at%20KNK%20Academy.`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full border border-[#25D366] text-[#128C7E] bg-white text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider hover:bg-[#25D366]/10 transition-colors text-center"
+                                                            >
+                                                                <MessageCircle className="size-3.5 shrink-0" />
+                                                                <span>WhatsApp Syllabus</span>
+                                                            </a>
 
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setModalCourse(c.title)}
-                                                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full font-['Inter'] text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider text-white shadow-sm transition-transform hover:scale-105 text-center"
-                                                            style={{ backgroundColor: GOLD }}
-                                                        >
-                                                            <span>Reserve Seat</span>
-                                                            <ArrowRight className="size-3.5 shrink-0" />
-                                                        </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setModalCourse(c.title)}
+                                                                className="inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full font-['Inter'] text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider text-white shadow-sm transition-transform hover:scale-105 text-center"
+                                                                style={{ backgroundColor: GOLD }}
+                                                            >
+                                                                <span>Reserve Seat</span>
+                                                                <ArrowRight className="size-3.5 shrink-0" />
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

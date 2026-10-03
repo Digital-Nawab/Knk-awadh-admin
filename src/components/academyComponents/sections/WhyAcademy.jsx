@@ -31,20 +31,20 @@ const POINT_TITLES = [
 export default function WhyAcademy() {
     return (
         <section className="relative px-5 sm:px-8 py-20 md:py-28 bg-[#fbf7f0] overflow-hidden">
-            {/* Subtle background ambient lighting */}
+            {/* Subtle background ambient lighting (desktop only to prevent mobile shadow/blur artifacts) */}
             <div
-                className="absolute top-1/3 left-0 w-[500px] h-[350px] bg-[#f4eee1] rounded-full blur-3xl pointer-events-none -translate-x-1/2"
+                className="hidden md:block absolute top-1/3 left-0 w-[500px] h-[350px] bg-[#f4eee1] rounded-full blur-3xl pointer-events-none -translate-x-1/2"
                 aria-hidden="true"
             />
 
-            <div className="max-w-7xl mx-auto">
+            <div className="relative z-10 max-w-7xl mx-auto">
                 <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
                     {/* Left: Editorial Overlapping Multi-Image Composition */}
                     <div className="lg:col-span-5 order-2 lg:order-1 relative">
                         <div className="relative max-w-[460px] mx-auto">
                             {/* Decorative angled gold frame behind */}
                             <div
-                                className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-full h-full rounded-3xl border border-[#b58a52]/35 pointer-events-none -rotate-2"
+                                className="absolute -top-3 left-0 sm:-top-6 sm:-left-6 w-full h-full rounded-3xl border border-[#b58a52]/35 pointer-events-none -rotate-1 sm:-rotate-2"
                                 aria-hidden="true"
                             />
 

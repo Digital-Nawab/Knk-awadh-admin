@@ -2,20 +2,24 @@
 
 import React from "react";
 import { Eyebrow, GoldDivider } from "./Makeupui";
-import { INK, MUTED, GOLD, GOLD_DEEP, heroImage, heroImagePosition } from "./Makeupdata";
+import { INK, GOLD, GOLD_DEEP, heroImage, heroImagePosition } from "./Makeupdata";
 
-export default function Hero() {
+export default function HeroSection() {
     return (
-        <section className="relative overflow-hidden px-6 pt-20 pb-20 md:pt-28 md:pb-24">
-            {/* Dark strip behind the fixed header so its light nav text stays
-                readable on this page's cream hero */}
+        <section className="relative overflow-hidden px-5 pt-20 pb-16 sm:px-6 md:pt-28 md:pb-24">
+            {/* Dark strip behind the fixed header so its light nav text stays readable on this page's cream hero */}
             <div
                 aria-hidden="true"
                 className="fixed inset-x-0 top-0 h-24 z-40 pointer-events-none"
                 style={{ backgroundColor: "#241d18" }}
             />
 
-            <svg aria-hidden="true" className="absolute inset-0 w-full h-full opacity-[0.05]" style={{ color: INK }} preserveAspectRatio="xMidYMid slice">
+            <svg
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full opacity-[0.04] pointer-events-none"
+                style={{ color: INK }}
+                preserveAspectRatio="xMidYMid slice"
+            >
                 <defs>
                     <pattern id="makeupJaali" width="60" height="52" patternUnits="userSpaceOnUse">
                         <path d="M30 4 L56 26 L30 48 L4 26 Z" fill="none" stroke="currentColor" strokeWidth="1" />
@@ -24,61 +28,71 @@ export default function Hero() {
                 <rect width="100%" height="100%" fill="url(#makeupJaali)" />
             </svg>
 
-            <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
-                <div className="relative z-10 max-w-[560px]">
-                    <Eyebrow>Makeup / Artistry</Eyebrow>
-                    <h1 className="mt-6 font-['Cormorant_Garamond'] text-[52px] font-medium leading-[0.9] tracking-[-0.05em] sm:text-[64px] md:text-[76px] lg:text-[70px] xl:text-[82px]" style={{ color: INK }}>
-                        Best bridal makeup
-                        <br />
-                        <span className="italic" style={{ color: GOLD }}>artist in Lucknow.</span>
+            <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+                <div className="relative z-10 max-w-[580px]">
+                    <Eyebrow>MAKEUP STUDIO · LUCKNOW</Eyebrow>
+
+                    <h1
+                        className="mt-5 font-['Cormorant_Garamond',serif] text-[36px] sm:text-[46px] md:text-[54px] lg:text-[60px] font-medium leading-[1.08] tracking-[-0.03em]"
+                        style={{ color: INK }}
+                    >
+                        Professional Makeup Artist &{" "}
+                        <span className="italic" style={{ color: GOLD }}>
+                            Makeup Studio in Lucknow
+                        </span>
                     </h1>
+
                     <GoldDivider />
-                    <p className="mt-7 font-['Inter'] text-[13px] leading-[1.9] sm:text-[14px]" style={{ color: MUTED }}>
-                        Your engagement, wedding and reception deserve makeup that holds
-                        up under every camera and every eye in the room. Our artists work
-                        with your features, not against them, so the finished look feels
-                        entirely yours — from bridal hairstyling and mehendi to radiant
-                        bridal eye makeup.
+
+                    <p
+                        className="mt-6 font-['Inter',sans-serif] text-[13.5px] sm:text-[14.5px] leading-[1.85] text-[#5c5248]"
+                    >
+                        KNK Awadh Salon &amp; Academy offers professional makeup services in Lucknow for bridal,
+                        engagement, reception, party, and special occasions. Choose from customized bridal, HD,
+                        airbrush, and occasion makeup looks, with services available across Mahanagar, Gomti Nagar,
+                        and Hazratganj.
                     </p>
-                    <div className="mt-8 flex flex-wrap gap-4">
+
+                    {/* CTAs */}
+                    <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4">
                         <a
-                            href="tel:+919559321711"
-                            className="inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full text-[#fbf7f0] transition-transform duration-300 hover:scale-105"
+                            href="#book"
+                            className="inline-flex items-center justify-center font-['Inter',sans-serif] text-[11px] font-semibold tracking-[0.2em] uppercase px-7 py-4 rounded-full text-[#fbf7f0] shadow-md transition-all duration-300 hover:scale-105 text-center"
                             style={{ backgroundColor: GOLD }}
                         >
-                            Book Now
+                            Book Makeup Appointment
                         </a>
                         <a
-                            href="#looks"
-                            className="inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full border transition-colors"
+                            href="#portfolio"
+                            className="inline-flex items-center justify-center font-['Inter',sans-serif] text-[11px] font-semibold tracking-[0.2em] uppercase px-7 py-4 rounded-full border transition-all duration-300 hover:bg-[#b58a52]/10 text-center"
                             style={{ borderColor: GOLD, color: GOLD_DEEP }}
                         >
-                            View All Looks
+                            View Makeup Looks
                         </a>
                     </div>
-                    <div className="mt-10 flex flex-wrap items-center gap-5">
-                        {["Bridal Makeup", "Engagement Makeup", "Party Makeup"].map((cat) => (
-                            <a
-                                key={cat}
-                                href="#services"
-                                className="font-['Inter'] text-[11px] tracking-[0.15em] uppercase transition-colors"
-                                style={{ color: MUTED }}
-                            >
-                                {cat}
-                            </a>
-                        ))}
+
+                    {/* Small trust line */}
+                    <div className="mt-9 pt-6 border-t border-[#dfd2c4]/70">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-[13px] font-['Inter',sans-serif] font-medium text-[#71665c]">
+                            <span className="hover:text-[#b58a52] transition-colors">Bridal Makeup</span>
+                            <span className="text-[#b58a52] font-semibold">|</span>
+                            <span className="hover:text-[#b58a52] transition-colors">Engagement Makeup</span>
+                            <span className="text-[#b58a52] font-semibold">|</span>
+                            <span className="hover:text-[#b58a52] transition-colors">Party Makeup</span>
+                        </div>
                     </div>
                 </div>
 
-                <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-[0_24px_60px_-24px_rgba(181,138,82,0.35)] border" style={{ borderColor: "#d0bda4" }}>
+                <div className="relative aspect-[4/5] max-w-[460px] mx-auto w-full rounded-2xl overflow-hidden shadow-[0_24px_60px_-20px_rgba(181,138,82,0.35)] border border-[#d0bda4]">
                     <img
                         src={heroImage}
-                        alt="KNK Makeup Studio artist at work"
+                        alt="Professional Makeup Artist & Makeup Studio in Lucknow - KNK Awadh"
                         fetchPriority="high"
                         decoding="async"
                         className="w-full h-full object-cover"
                         style={{ objectPosition: heroImagePosition }}
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent pointer-events-none" />
                 </div>
             </div>
         </section>

@@ -22,9 +22,9 @@ export default function VideoShowcase() {
 
     return (
         <section className="relative px-5 sm:px-8 py-20 md:py-28 bg-[#241d18] text-[#fbf7f0] overflow-hidden">
-            {/* Ambient luxury glow */}
+            {/* Ambient luxury glow (desktop only to prevent mobile shadow/blur artifacts) */}
             <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#b58a52]/10 blur-3xl pointer-events-none rounded-full"
+                className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#b58a52]/10 blur-3xl pointer-events-none rounded-full"
                 aria-hidden="true"
             />
 

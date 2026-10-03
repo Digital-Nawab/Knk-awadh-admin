@@ -22,9 +22,9 @@ export default function Hero() {
                 </svg>
             </div>
 
-            {/* Ambient luxury glow */}
+            {/* Ambient luxury glow (desktop only to prevent mobile shadow/blur artifacts) */}
             <div
-                className="absolute top-1/4 right-1/4 w-[550px] h-[350px] bg-gradient-to-br from-[#b58a52]/10 via-[#ead9ae]/5 to-transparent blur-3xl pointer-events-none rounded-full"
+                className="hidden md:block absolute top-1/4 right-1/4 w-[550px] h-[350px] bg-gradient-to-br from-[#b58a52]/10 via-[#ead9ae]/5 to-transparent blur-3xl pointer-events-none rounded-full"
                 aria-hidden="true"
             />
 
@@ -127,11 +127,11 @@ export default function Hero() {
                             </a>
 
                             <a
-                                href="tel:+916390008020"
+                                href="tel:+918881000552"
                                 className="inline-flex items-center justify-center sm:justify-start gap-2 font-['Inter'] text-[12px] text-[#71665c] hover:text-[#b58a52] transition-colors pt-1 sm:pt-0 sm:ml-1"
                             >
                                 <Phone className="size-3.5 text-[#b58a52]" />
-                                <span>Admissions: +91 63900 08020</span>
+                                <span>Admissions: +91 88810 00552</span>
                             </a>
                         </div>
                     </div>
@@ -165,7 +165,7 @@ export default function Hero() {
                             </div>
 
                             {/* Overlapping Floating Polaroid Card (Bottom-Left) */}
-                            <div className="absolute -bottom-6 -left-3 sm:-bottom-8 sm:-left-10 w-36 sm:w-52 p-2 sm:p-2.5 rounded-xl bg-[#fffdf9] border border-[#d0bda4] shadow-2xl transition-transform duration-500 hover:-translate-y-1">
+                            <div className="absolute -bottom-6 left-0 sm:-bottom-8 sm:-left-10 w-36 sm:w-52 p-2 sm:p-2.5 rounded-xl bg-[#fffdf9] border border-[#d0bda4] shadow-xl sm:shadow-2xl transition-transform duration-500 hover:-translate-y-1">
                                 <div className="aspect-[4/3] rounded-lg overflow-hidden mb-1.5 sm:mb-2 bg-[#f4eee1]">
                                     <img
                                         src={bridalArtImage}
@@ -187,7 +187,7 @@ export default function Hero() {
                             </div>
 
                             {/* Overlapping Accreditation Stamp Badge (Top-Right) */}
-                            <div className="absolute -top-4 -right-2 sm:-top-5 sm:-right-6 px-3 sm:px-4 py-2 sm:py-3 rounded-2xl bg-[#29231f] text-[#fbf7f0] border border-[#b58a52]/50 shadow-xl flex items-center gap-2.5 sm:gap-3">
+                            <div className="absolute -top-4 right-0 sm:-top-5 sm:-right-6 px-3 sm:px-4 py-2 sm:py-3 rounded-2xl bg-[#29231f] text-[#fbf7f0] border border-[#b58a52]/50 shadow-xl flex items-center gap-2.5 sm:gap-3">
                                 <div className="h-7 w-7 sm:h-9 sm:w-9 rounded-full bg-[#b58a52]/20 border border-[#b58a52] flex items-center justify-center text-[#ead9ae] shrink-0">
                                     <Award className="size-3.5 sm:size-4" />
                                 </div>

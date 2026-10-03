@@ -44,12 +44,12 @@ export default function ClosingCTA() {
 
                     <div className="mt-9 flex flex-col sm:flex-row justify-center items-center gap-3.5 sm:gap-4 w-full sm:w-auto">
                         <a
-                            href="tel:+916390008020"
+                            href="tel:+918881000552"
                             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 font-['Inter'] text-[11px] font-semibold tracking-[0.2em] uppercase px-6 sm:px-8 py-3.5 sm:py-4 rounded-full text-[#241d18] shadow-lg transition-transform duration-300 hover:scale-105"
                             style={{ backgroundColor: GOLD }}
                         >
                             <Phone className="size-3.5 text-[#241d18]" />
-                            <span>Call: +91 63900 08020</span>
+                            <span>Call: +91 88810 00552</span>
                         </a>
 
                         <a

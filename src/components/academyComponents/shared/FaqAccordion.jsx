@@ -73,7 +73,7 @@ export default function FaqAccordion() {
 
                 <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2.5 shrink-0 w-full sm:w-auto">
                     <a
-                        href="tel:+916390008020"
+                        href="tel:+918881000552"
                         className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-[#29231f] text-white text-[11px] font-semibold uppercase tracking-wider hover:bg-[#b58a52] transition-colors text-center"
                     >
                         <Phone size={12} />
