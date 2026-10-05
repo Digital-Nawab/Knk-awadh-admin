@@ -74,6 +74,19 @@ const links = [
         ),
     },
     {
+        label: "Men Grooming CMS",
+        href: "/admin/men-grooming",
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <circle cx="6" cy="6" r="3" />
+                <circle cx="6" cy="18" r="3" />
+                <line x1="20" y1="4" x2="8.12" y2="15.88" />
+                <line x1="14.47" y1="14.48" x2="20" y2="20" />
+                <line x1="8.12" y1="8.12" x2="12" y2="12" />
+            </svg>
+        ),
+    },
+    {
         label: "Artistry Gallery",
         href: "/admin/gallery",
         icon: (
@@ -145,11 +158,10 @@ export default function Sidebar() {
                         <Link
                             key={link.href}
                             href={link.href}
-                            className={`group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-sans text-xs tracking-wide transition-all duration-200 ${
-                                isActive
+                            className={`group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-sans text-xs tracking-wide transition-all duration-200 ${isActive
                                     ? "bg-gold/15 text-gold font-semibold"
                                     : "text-cream/60 hover:bg-white/5 hover:text-cream"
-                            }`}
+                                }`}
                         >
                             {isActive && (
                                 <span

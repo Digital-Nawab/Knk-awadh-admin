@@ -1,8 +1,11 @@
 import Layout from '@/layout/Layout';
 import MenGroomingService from '@/components/serviceComponents/MenGroomingService';
+import MenGroomingModel from '@/models/MenGroomingModel';
+import { DEFAULT_MEN_GROOMING_SECTIONS } from '@/data/menGroomingDefaults';
 import { getDynamicMetadata } from '@/lib/seo';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata() {
     return await getDynamicMetadata('/services/men-grooming', {
@@ -13,10 +16,17 @@ export async function generateMetadata() {
     });
 }
 
-export default function MenGroomingPage() {
+export default async function MenGroomingPage() {
+    let menGroomingData = DEFAULT_MEN_GROOMING_SECTIONS;
+    try {
+        menGroomingData = await MenGroomingModel.getAllSections();
+    } catch (err) {
+        console.warn("Failed to prefetch men grooming sections on server:", err?.message || err);
+    }
+
     return (
         <Layout>
-            <MenGroomingService />
+            <MenGroomingService initialData={menGroomingData} />
         </Layout>
     );
 }

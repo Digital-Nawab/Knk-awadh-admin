@@ -425,6 +425,35 @@ export async function initDatabase() {
             console.log("Default Makeup page sections seeded successfully");
         }
 
+        // 12. Men Grooming Page Sections Table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS men_grooming_sections (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                section_key VARCHAR(50) NOT NULL UNIQUE,
+                section_name VARCHAR(100) NOT NULL,
+                content JSON NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_section_key (section_key)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // Seed default Men Grooming page sections if empty
+        const [existingMenGrooming] = await db.query("SELECT id FROM men_grooming_sections LIMIT 1");
+        if (existingMenGrooming.length === 0) {
+            const { DEFAULT_MEN_GROOMING_SECTIONS, MEN_GROOMING_SECTION_METADATA } = await import("../data/menGroomingDefaults.js");
+            const values = MEN_GROOMING_SECTION_METADATA.map((meta) => [
+                meta.key,
+                meta.label,
+                JSON.stringify(DEFAULT_MEN_GROOMING_SECTIONS[meta.key] || {}),
+            ]);
+            await db.query(
+                `INSERT INTO men_grooming_sections (section_key, section_name, content) VALUES ?`,
+                [values]
+            );
+            console.log("Default Men Grooming page sections seeded successfully");
+        }
+
         return { success: true, message: "Database tables and seed data initialized successfully." };
     } catch (error) {
         console.error("Database initialization error:", error);
