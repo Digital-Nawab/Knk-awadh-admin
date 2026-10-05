@@ -1,38 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-const services = [
-    {
-        name: 'Haircuts',
-        file: '/assets/images/new/home/services/haircut.webp',
-        direction: 'top-left'
-    },
-    {
-        name: 'Hair Colour',
-        file: '/assets/images/new/home/services/hair-color.webp',
-        direction: 'top'
-    },
-    {
-        name: 'Hair Spa',
-        file: '/assets/images/new/home/services/hairspa.webp',
-        direction: 'top-right'
-    },
-    {
-        name: 'Facials',
-        file: '/assets/images/new/home/services/facial.webp',
-        direction: 'bottom-left'
-    },
-    {
-        name: 'Nails',
-        file: '/assets/images/new/home/services/nails.webp',
-        direction: 'bottom'
-    },
-    {
-        name: "Men's Grooming",
-        file: '/assets/images/new/home/services/mensgrooming.webp',
-        direction: 'bottom-right'
-    },
-];
+import { DEFAULT_HOME_SECTIONS } from '@/data/homeDefaults';
+
+const defaultServices = DEFAULT_HOME_SECTIONS.grooming.items || [];
 
 // Pixel offsets for each entrance direction — applied via inline style,
 // so the transform is guaranteed to render (not dependent on Tailwind's
@@ -46,9 +17,18 @@ const directionOffsets = {
     'bottom-right': { x: 35, y: 35 },
 };
 
-function Makeup() {
+function Makeup({ data }) {
+    const content = { ...DEFAULT_HOME_SECTIONS.grooming, ...(data || {}) };
+    const rawItems = (Array.isArray(content.items) && content.items.length > 0)
+        ? content.items
+        : (Array.isArray(content.services) && content.services.length > 0 ? content.services : defaultServices);
+    const services = Array.isArray(rawItems) ? rawItems : defaultServices;
     const [visible, setVisible] = useState(() => services.map(() => false));
     const tileRefs = useRef([]);
+
+    useEffect(() => {
+        setVisible(services.map(() => false));
+    }, [services]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -90,7 +70,7 @@ function Makeup() {
         });
 
         return () => observer.disconnect();
-    }, []);
+    }, [services]);
 
     return (
         <>
@@ -100,7 +80,7 @@ function Makeup() {
             >
                 {/* Background Decorative Text */}
                 <div className="pointer-events-none absolute -bottom-10 right-[-30px] select-none font-['Cormorant_Garamond'] text-[180px] leading-none text-[#d8c9b7]/40 sm:text-[240px] lg:text-[320px]">
-                    FACE
+                    {content.bgWord || content.bg_watermark || "FACE"}
                 </div>
                 <div className="mx-auto max-w-[1440px] items-center gap-14 px-4 sm:px-6 lg:gap-20 lg:px-10 xl:px-12">
 
@@ -114,18 +94,18 @@ function Makeup() {
                                 SERVICES — photo tile gallery
                             ================================================== */}
                             <p className="font-['Cormorant_Garamond'] text-[26px] italic text-[#8e6e50]">
-                                All things beauty &amp; grooming.
+                                {content.title || content.heading || "All things beauty & grooming."}
                             </p>
                             <div className="mx-auto mt-6 grid max-w-[1200px] grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:gap-5">
                                 {services.map((service, idx) => {
-                                    const offset = directionOffsets[service.direction];
+                                    const offset = directionOffsets[service.direction] || { x: 0, y: 0 };
                                     const isVisible = visible[idx];
                                     return (
                                         <a
-                                            key={service.name}
+                                            key={service.name + idx}
                                             ref={(el) => (tileRefs.current[idx] = el)}
                                             data-index={idx}
-                                            href="#services"
+                                            href={service.href || service.link || "#services"}
                                             className="service-tile group relative block w-full h-[450px] overflow-hidden"
                                             style={{
                                                 opacity: isVisible ? 1 : 0,

@@ -1,35 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { DEFAULT_HOME_SECTIONS } from '@/data/homeDefaults';
 
-const FAQ_ITEMS = [
-    {
-        q: "Do I need to book an appointment in advance?",
-        a: "We recommend booking an appointment in advance, especially for bridal services, hair treatments, and premium facial therapies. This guarantees we reserve the appropriate senior specialist and private studio time specifically for you.",
-    },
-    {
-        q: "What specialized hair services do you offer?",
-        a: "Our hair artistry includes bespoke styling, global colour, custom balayage, organic Nanoplastia, Keratin infusion, deep hair spa rituals, and smoothening treatments formulated for your exact hair texture.",
-    },
-    {
-        q: "Do you provide celebrity and bridal makeup services?",
-        a: "Yes. We offer bespoke bridal and celebrity occasion makeup sculpted around your bone structure, outfit, and personal aesthetics. We offer airbrush, HD, and waterproof long-stay finishes.",
-    },
-    {
-        q: "How long does a luxury salon appointment take?",
-        a: "Duration varies by treatment. Express blowouts and nail services take 45-60 minutes, while complete balayage, Nanoplastia, or full pre-bridal packages can range from 2.5 to 4 hours. We ensure your experience is relaxing and never rushed.",
-    },
-    {
-        q: "What are your salon opening timings and locations?",
-        a: "KNK Salon Awadh is open Monday through Sunday, 10:00 AM to 8:30 PM across our luxury locations in Mahanagar, Gomti Nagar, and Hazratganj.",
-    },
-    {
-        q: "How can I book an appointment or bridal consultation?",
-        a: "You can book directly using our website concierge form above, via WhatsApp, or by calling our desk. Our concierge will confirm your date, time slot, and preferred artist.",
-    },
-];
+const defaultFaqs = DEFAULT_HOME_SECTIONS.faq.items;
 
-export default function Faq() {
+export default function Faq({ data }) {
+    const content = { ...DEFAULT_HOME_SECTIONS.faq, ...(data || {}) };
+    const rawItems = (Array.isArray(content.items) && content.items.length > 0)
+        ? content.items
+        : defaultFaqs;
+    const items = Array.isArray(rawItems) ? rawItems : [];
     const [openIndex, setOpenIndex] = useState(0);
 
     const toggleFaq = (index) => {
@@ -51,27 +32,27 @@ export default function Faq() {
                         <div className="mb-5 flex items-center gap-3">
                             <span className="h-px w-10 bg-[#c49a4d]" />
                             <span className="font-['Inter'] text-[10px] font-medium uppercase tracking-[0.35em] text-[#a47a59]">
-                                FAQ
+                                {content.eyebrow || content.badge || "FAQ"}
                             </span>
                         </div>
                         <h2 className="font-['Cormorant_Garamond'] text-[52px] font-medium leading-[0.9] tracking-[-0.04em] text-[#29231f] sm:text-[68px] lg:text-[82px]">
-                            Questions,
+                            {content.heading || content.heading_line1 || "Questions,"}
                             <br />
-                            <span className="italic text-[#c49a4d]">answered.</span>
+                            <span className="italic text-[#c49a4d]">
+                                {content.headingHighlight || content.heading_highlight || "answered."}
+                            </span>
                         </h2>
                     </div>
                     <div className="max-w-xl lg:ml-auto lg:pb-2">
                         <p className="font-['Inter'] text-[13px] leading-[1.9] text-[#6d645d]">
-                            Everything you need to know before your visit. From appointments
-                            and services to timings and salon experience — we've got you
-                            covered.
+                            {content.description || content.subheading}
                         </p>
                     </div>
                 </div>
 
                 {/* ================= FAQ LIST ================= */}
                 <div className="mt-14 border-t border-[#d8cbbd]">
-                    {FAQ_ITEMS.map((item, index) => {
+                    {items.map((item, index) => {
                         const isOpen = openIndex === index;
                         const num = `0${index + 1}`;
 
@@ -133,17 +114,17 @@ export default function Faq() {
                 <div className="mt-12 flex flex-col items-start justify-between gap-5 rounded-[2rem] border border-[#d8cbbd] bg-[#f2ece3] px-7 py-7 sm:flex-row sm:items-center sm:px-9">
                     <div>
                         <p className="font-['Cormorant_Garamond'] text-2xl italic text-[#493e37]">
-                            Still have a question?
+                            {content.ctaTitle || content.cta_title || "Still have a question?"}
                         </p>
                         <p className="mt-1 font-['Inter'] text-[11px] text-[#756b63]">
-                            Our concierge team will be happy to help you.
+                            {content.ctaSubtitle || content.cta_subtitle || "Our concierge team will be happy to help you."}
                         </p>
                     </div>
                     <a
-                        href="#book"
+                        href={typeof content.ctaButtonLink === 'string' ? content.ctaButtonLink : (typeof content.cta_button_link === 'string' ? content.cta_button_link : "#book")}
                         className="group inline-flex items-center gap-4 rounded-full bg-[#29231f] px-7 py-3.5 font-['Inter'] text-[9px] font-medium uppercase tracking-[0.22em] text-[#fffaf3] transition-all duration-300 hover:bg-[#c49a4d] hover:shadow-lg"
                     >
-                        <span>Book Appointment</span>
+                        <span>{content.ctaButtonText || content.cta_button_text || "Book Appointment"}</span>
                         <span className="text-[16px] transition-transform duration-300 group-hover:translate-x-1">
                             →
                         </span>

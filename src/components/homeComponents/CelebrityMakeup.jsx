@@ -6,20 +6,23 @@ import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-// Placeholder slider images — repeat celebrity.webp until real images are provided.
-const celebritySlides = [
-    '/assets/images/new/home/celebrity/celebrity-artist-06.webp',
-    '/assets/images/new/home/celebrity/celebrity-artist-09.webp',
-    '/assets/images/new/home/celebrity/celebrity-artist-07.webp',
-    '/assets/images/new/home/celebrity/celebrity-artist-08.webp',
-    '/assets/images/new/home/celebrity/celebrity-artist-05.webp',
-    '/assets/images/new/home/celebrity/celebrity-artist-01.webp',
-    '/assets/images/new/home/celebrity/celebrity-artist-03.webp',
-    '/assets/images/new/home/celebrity/celebrity-artist-04.webp',
-    '/assets/images/new/home/celebrity/celebrity-artist-02.webp',
-];
+import { DEFAULT_HOME_SECTIONS } from '@/data/homeDefaults';
 
-function CelebrityMakeup() {
+function CelebrityMakeup({ data }) {
+    const content = { ...DEFAULT_HOME_SECTIONS.celebrity, ...(data || {}) };
+    const rawSlides = (Array.isArray(content.slides) && content.slides.length > 0)
+        ? content.slides
+        : (DEFAULT_HOME_SECTIONS.celebrity.slides || []);
+    const slides = Array.isArray(rawSlides) ? rawSlides : [];
+
+    const features = Array.isArray(content.features) && content.features.length > 0
+        ? content.features
+        : [
+            { title: content.feature1_title || "HD & Airbrush", label: content.feature1_label || "Bespoke Formulas" },
+            { title: content.feature2_title || "Long-Wear", label: content.feature2_label || "18-Hour Stay" },
+            { title: content.feature3_title || "Custom Tone", label: content.feature3_label || "Tailored Blend" },
+        ];
+
     return (
         <>
             <section
@@ -28,108 +31,94 @@ function CelebrityMakeup() {
             >
                 {/* Background decorative typography */}
                 <div className="pointer-events-none absolute -right-10 top-8 select-none font-['Cormorant_Garamond'] text-[150px] font-medium leading-none text-white/[0.025] sm:text-[220px] lg:text-[300px]">
-                    GLAM
+                    {content.bgWord || content.bg_watermark || "GLAM"}
                 </div>
                 <div className="pointer-events-none absolute -left-20 bottom-0 h-[400px] w-[400px] rounded-full bg-[#c49a4d]/10 blur-[100px]" />
                 <div className="relative mx-auto max-w-[1380px] px-5 sm:px-8 lg:px-12">
                     {/* =====================================================
-     TOP EDITORIAL LABEL
-====================================================== */}
+                        TOP EDITORIAL LABEL
+                    ====================================================== */}
                     <div className="mb-12 flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <span className="h-px w-10 bg-[#c49a4d]" />
                             <span className="font-['Inter'] text-[9px] font-medium uppercase tracking-[0.4em] text-[#d3b37b]">
-                                KNK Celebrity Makeup
+                                {content.topLabel || content.top_label || "KNK Celebrity Makeup"}
                             </span>
                         </div>
                         <span className="hidden font-['Cormorant_Garamond'] text-[18px] italic text-white/30 sm:block">
-                            Beauty / 04
+                            {content.categoryTag || content.category_tag || "Beauty / 04"}
                         </span>
                     </div>
                     {/* =====================================================
-     MAIN EDITORIAL GRID
-====================================================== */}
+                        MAIN EDITORIAL GRID
+                    ====================================================== */}
                     <div className="grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 xl:grid-cols-[0.75fr_1.25fr]">
                         {/* =================================================
-       LEFT — TYPOGRAPHY
-  ================================================== */}
+                            LEFT — TYPOGRAPHY
+                        ================================================== */}
                         <div className="relative z-20 order-2 lg:order-1">
                             {/* Small eyebrow */}
                             <p className="font-['Inter'] text-[9px] font-medium uppercase tracking-[0.35em] text-[#d3b37b]">
-                                The KNK Celebrity 
+                                {content.eyebrow}
                             </p>
                             {/* HUGE HEADING */}
                             <h2 className="mt-6 font-['Cormorant_Garamond'] text-[68px] font-medium leading-[0.76] tracking-[-0.055em] text-[#faf7f0] sm:text-[82px] md:text-[100px] lg:-mr-28 lg:text-[105px] xl:text-[125px]">
-                                The KNK
+                                {content.heading1 || content.heading_line1 || "SIT IN OUR"}
                                 <br />
-                                Celebrity
+                                {content.heading2 || content.heading_line2 || "CHAIR,"}
                                 <br />
                                 <span className="ml-8 italic text-[#c49a4d] sm:ml-12">
-                                    Edit.
+                                    {content.headingHighlight || content.heading_highlight || "LEAVE A STAR."}
                                 </span>
                             </h2>
                             {/* Description */}
                             <p className="mt-9 max-w-[440px] font-['Inter'] text-[12px] leading-[1.9] text-[#c0b5aa] sm:text-[13px]">
-                                Step into a look designed for the spotlight. Our
-                                celebrity-inspired makeup experience blends flawless skin,
-                                sculpted features and refined detailing to create a sophisticated,
-                                camera-ready finish.
+                                {content.description}
                             </p>
                             {/* =================================================
-         SIGNATURE DETAILS
-    ================================================== */}
+                                SIGNATURE DETAILS
+                            ================================================== */}
                             <div className="mt-9 grid max-w-[450px] grid-cols-3 border-y border-white/10 py-5">
-                                <div className="border-r border-white/10 pr-3">
-                                    <p className="font-['Cormorant_Garamond'] text-[23px] italic text-[#c49a4d]">
-                                        HD
-                                    </p>
-                                    <p className="mt-1 font-['Inter'] text-[7px] uppercase tracking-[0.2em] text-[#8e847b]">
-                                        Finish
-                                    </p>
-                                </div>
-                                <div className="border-r border-white/10 px-4">
-                                    <p className="font-['Cormorant_Garamond'] text-[23px] italic text-[#c49a4d]">
-                                        Pro
-                                    </p>
-                                    <p className="mt-1 font-['Inter'] text-[7px] uppercase tracking-[0.2em] text-[#8e847b]">
-                                        Artists
-                                    </p>
-                                </div>
-                                <div className="pl-4">
-                                    <p className="font-['Cormorant_Garamond'] text-[23px] italic text-[#c49a4d]">
-                                        Glow
-                                    </p>
-                                    <p className="mt-1 font-['Inter'] text-[7px] uppercase tracking-[0.2em] text-[#8e847b]">
-                                        Skin
-                                    </p>
-                                </div>
+                                {features.map((feat, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={idx < 2 ? "border-r border-white/10 pr-3 pl-2" : "pl-3"}
+                                    >
+                                        <p className="font-['Cormorant_Garamond'] text-[23px] italic text-[#c49a4d]">
+                                            {feat.title}
+                                        </p>
+                                        <p className="mt-1 font-['Inter'] text-[7px] uppercase tracking-[0.2em] text-[#8e847b]">
+                                            {feat.label}
+                                        </p>
+                                    </div>
+                                ))}
                             </div>
                             {/* =================================================
-         CTA
-    ================================================== */}
+                                CTA
+                            ================================================== */}
                             <div className="mt-9 flex flex-wrap items-center gap-7">
                                 <a
-                                    href="#book"
+                                    href={typeof content.cta_primary_link === 'string' ? content.cta_primary_link : "#book"}
                                     className="group inline-flex items-center gap-4 rounded-full bg-[#c49a4d] px-7 py-3.5 font-['Inter'] text-[8px] font-semibold uppercase tracking-[0.22em] text-[#29231f] transition-all duration-500 hover:-translate-y-1 hover:bg-[#d6b875] hover:shadow-[0_15px_35px_rgba(196,154,77,0.25)]"
                                 >
-                                    <span>Book Celebrity Glam</span>
+                                    <span>{content.cta_primary_text || "Book Celebrity Glam"}</span>
                                     <span className="text-[16px] transition-transform duration-300 group-hover:translate-x-1">
                                         ↗
                                     </span>
                                 </a>
                                 <a
-                                    href="#services"
+                                    href={typeof content.cta_secondary_link === 'string' ? content.cta_secondary_link : "#services"}
                                     className="font-['Inter'] text-[8px] uppercase tracking-[0.2em] text-[#a69a90] transition-colors hover:text-white"
                                 >
-                                    Explore Looks
+                                    {content.cta_secondary_text || "Explore Looks"}
                                 </a>
                             </div>
                         </div>
                         {/* =================================================
-       RIGHT — EDITORIAL IMAGE COMPOSITION
-  ================================================== */}
+                            RIGHT — EDITORIAL IMAGE COMPOSITION
+                        ================================================== */}
                         <div className="relative order-1 min-h-[550px] sm:min-h-[650px] lg:order-2 lg:min-h-[700px]">
-                            {/* Main image frame — now a Swiper slider */}
+                            {/* Main image frame — Swiper slider */}
                             <div className="celebrity-image-frame celebrity-swiper-wrap absolute right-0 top-0 h-[500px] w-[82%] overflow-hidden sm:h-[590px] lg:h-[650px] xl:h-[690px]">
                                 <Swiper
                                     modules={[Autoplay, Pagination]}
@@ -139,19 +128,22 @@ function CelebrityMakeup() {
                                     speed={1000}
                                     className="h-full w-full"
                                 >
-                                    {celebritySlides.map((src, i) => (
-                                        <SwiperSlide key={i}>
-                                            <img
-                                                src={src}
-                                                alt="Celebrity inspired makeup at KNK Salon"
-                                                width={600}
-                                                height={690}
-                                                loading="lazy"
-                                                decoding="async"
-                                                className="celebrity-editorial-image h-full w-full object-cover object-center"
-                                            />
-                                        </SwiperSlide>
-                                    ))}
+                                    {slides.map((slide, i) => {
+                                        const imgSrc = typeof slide === 'string' ? slide : (slide?.image || slide?.src || '');
+                                        return (
+                                            <SwiperSlide key={i}>
+                                                <img
+                                                    src={imgSrc}
+                                                    alt="Celebrity inspired makeup at KNK Salon"
+                                                    width={600}
+                                                    height={690}
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                    className="celebrity-editorial-image h-full w-full object-cover object-center"
+                                                />
+                                            </SwiperSlide>
+                                        );
+                                    })}
                                 </Swiper>
                                 {/* Image shadow */}
                                 <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/50 via-transparent to-black/5" />
@@ -160,10 +152,10 @@ function CelebrityMakeup() {
                                 {/* Bottom label */}
                                 <div className="pointer-events-none absolute bottom-8 left-8 z-20">
                                     <p className="font-['Inter'] text-[7px] uppercase tracking-[0.35em] text-white/60">
-                                        KNK Beauty Studio
+                                        {content.imageLabel || content.image_label || "KNK Beauty Studio"}
                                     </p>
                                     <p className="mt-2 font-['Cormorant_Garamond'] text-[26px] italic text-white">
-                                        Own the spotlight.
+                                        {content.imageTagline || content.image_tagline || "Own the spotlight."}
                                     </p>
                                 </div>
                                 {/* Swiper pagination dots */}
@@ -178,8 +170,8 @@ function CelebrityMakeup() {
                         </div>
                     </div>
                     {/* =====================================================
-     BOTTOM MARQUEE
-====================================================== */}
+                        BOTTOM MARQUEE
+                    ====================================================== */}
                     <div className="mt-14 overflow-hidden border-y border-white/10 py-4">
                         <div className="celebrity-marquee flex w-max items-center gap-10 whitespace-nowrap">
                             <span className="font-['Cormorant_Garamond'] text-[19px] italic text-white/50">
@@ -223,7 +215,6 @@ function CelebrityMakeup() {
                 }}
             />
         </>
-
     );
 }
 export default CelebrityMakeup;

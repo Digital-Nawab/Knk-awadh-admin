@@ -14,6 +14,8 @@ import Faq from './Faq';
 import LuxuryBooking from './LuxuryBooking';
 import HeroModel from '@/models/HeroModel';
 import BlogModel from '@/models/BlogModel';
+import HomeModel from '@/models/HomeModel';
+import { DEFAULT_HOME_SECTIONS } from '@/data/homeDefaults';
 
 const CelebrityMakeup = dynamic(() => import('./CelebrityMakeup'), {
   loading: () => <div className="min-h-[500px] bg-[#3b2419]" />,
@@ -47,21 +49,28 @@ async function Home() {
     console.warn("Failed to prefetch hero on server:", err?.message || err);
   }
 
+  let homeData = DEFAULT_HOME_SECTIONS;
+  try {
+    homeData = await HomeModel.getAllSections();
+  } catch (err) {
+    console.warn("Failed to prefetch home sections on server:", err?.message || err);
+  }
+
   return (
     <>
       <Hero initialHero={initialHero} />
-      <About />
-      <Services />
-      <Makeup />
-      <Aesthetics />
-      <Academy />
-      <CelebrityMakeup />
-      <Location />
-      <ParallaxBanner />
+      <About data={homeData?.about} />
+      <Services data={homeData?.services} />
+      <Makeup data={homeData?.grooming} />
+      <Aesthetics data={homeData?.aesthetics} />
+      <Academy data={homeData?.academy} />
+      <CelebrityMakeup data={homeData?.celebrity} />
+      <Location data={homeData?.locations} />
+      <ParallaxBanner data={homeData?.banner} />
       <BlogSection initialBlogs={initialBlogs} />
-      <Review />
-      <Faq />
-      <LuxuryBooking />
+      <Review data={homeData?.reviews} />
+      <Faq data={homeData?.faq} />
+      <LuxuryBooking data={homeData?.booking} />
     </>
   );
 }

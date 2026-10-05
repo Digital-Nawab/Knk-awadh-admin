@@ -3,15 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const galleryImages = [
-    { src: '/assets/images/new/home/bridal/1.webp', alt: 'KNK Salon interior' },
-    { src: '/assets/images/new/home/bridal/2.webp', alt: 'Hair styling at KNK' },
-    { src: '/assets/images/new/home/bridal/3.webp', alt: 'Makeup artistry at KNK' },
-    { src: '/assets/images/new/home/bridal/4.webp', alt: 'Bridal look at KNK' },
-    { src: '/assets/images/new/home/bridal/5.webp', alt: 'Nail art at KNK' },
-];
+import { DEFAULT_HOME_SECTIONS } from '@/data/homeDefaults';
 
-function LuxuryBooking() {
+const defaultGallery = DEFAULT_HOME_SECTIONS.booking.slideshow || DEFAULT_HOME_SECTIONS.booking.gallery_images || [];
+
+function LuxuryBooking({ data }) {
+    const content = { ...DEFAULT_HOME_SECTIONS.booking, ...(data || {}) };
+    const rawGallery = (Array.isArray(content.slideshow) && content.slideshow.length > 0)
+        ? content.slideshow
+        : ((Array.isArray(content.gallery_images) && content.gallery_images.length > 0)
+            ? content.gallery_images
+            : defaultGallery);
+    const galleryImages = Array.isArray(rawGallery) ? rawGallery : [];
     const router = useRouter();
     const [activeImage, setActiveImage] = useState(0);
     const [formStartedAt] = useState(Date.now());
@@ -19,11 +22,12 @@ function LuxuryBooking() {
     const [statusMessage, setStatusMessage] = useState(null);
 
     useEffect(() => {
+        if (!galleryImages.length) return;
         const interval = setInterval(() => {
             setActiveImage((prev) => (prev + 1) % galleryImages.length);
         }, 3500);
         return () => clearInterval(interval);
-    }, []);
+    }, [galleryImages.length]);
 
     const handleBookingSubmit = async (event) => {
         event.preventDefault();
@@ -62,8 +66,6 @@ function LuxuryBooking() {
         }
     };
 
-
-
     return (
         <>
             <section
@@ -79,21 +81,13 @@ function LuxuryBooking() {
                         ====================================================== */}
                     <div className="mb-14 grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
                         <div className="reveal">
-                            {/* <div className="mb-5 flex items-center gap-3">
-                                <span className="h-px w-8 bg-[#b88c50]" />
-                                <span className="font-['Inter'] text-[9px] font-medium uppercase tracking-[0.35em] text-[#92765b]">
-                                    The Concierge
-                                </span>
-                            </div> */}
                             <h2 className="font-['Cormorant_Garamond'] text-[55px] font-medium leading-[0.86] tracking-[-0.045em] text-[#29231f] sm:text-[68px] lg:text-[78px]">
-                                Book Your Appointment
+                                {content.heading || "Book Your Appointment"}
                             </h2>
                         </div>
                         <div className="max-w-xl lg:ml-auto">
                             <p className="font-['Inter'] text-[13px] leading-[1.8] text-[#756b63]">
-                                Whether you're preparing for a special occasion or simply ready
-                                for a little self-care, reserve your time with our artists and let
-                                us create an experience made for you.
+                                {content.subheading}
                             </p>
                         </div>
                     </div>
@@ -110,7 +104,7 @@ function LuxuryBooking() {
                             {/* Form heading */}
                             <div className="mb-9">
                                 <span className="font-['Inter'] text-[8px] font-medium uppercase tracking-[0.3em] text-[#a07c5d]">
-                                    Book an appointment
+                                    {content.form_title || "Book an appointment"}
                                 </span>
                             </div>
                             <form
@@ -324,19 +318,23 @@ function LuxuryBooking() {
   ================================================== */}
                         <div id="visit" className="relative flex flex-col bg-[#eee6da]">
                             <div className="group relative h-[300px] w-full overflow-hidden sm:h-[420px] lg:h-full lg:min-h-[520px]">
-                                {galleryImages.map((img, index) => (
-                                    <img
-                                        key={img.src}
-                                        src={img.src}
-                                        alt={img.alt}
-                                        width={600}
-                                        height={520}
-                                        loading="lazy"
-                                        decoding="async"
-                                        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ${index === activeImage ? 'opacity-100' : 'opacity-0'
-                                            }`}
-                                    />
-                                ))}
+                                {galleryImages.map((img, index) => {
+                                    const src = typeof img === 'string' ? img : (img?.src || img?.image || '');
+                                    const alt = typeof img === 'object' && img?.alt ? img.alt : "KNK Salon";
+                                    return (
+                                        <img
+                                            key={src + index}
+                                            src={src}
+                                            alt={alt}
+                                            width={600}
+                                            height={520}
+                                            loading="lazy"
+                                            decoding="async"
+                                            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ${index === activeImage ? 'opacity-100' : 'opacity-0'
+                                                }`}
+                                        />
+                                    );
+                                })}
                                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#211a16]/50 via-transparent to-transparent" />
                                 {/* Dots */}
                                 <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">

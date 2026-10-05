@@ -12,39 +12,46 @@ import BookingSection from "./BookingSection";
 import Testimonials from "./Testimonials";
 import MakeupCTA from "./MakeupCTA";
 import { bannerImage } from "./Makeupdata";
+import { DEFAULT_MAKEUP_SECTIONS } from "@/data/makeupDefaults";
 
-export default function Makeup() {
+export default function Makeup({ initialData }) {
+    const data = initialData || DEFAULT_MAKEUP_SECTIONS;
+
     return (
         <div className="bg-[#fbf7f0] text-[#29231f]">
             {/* 1. Hero Section */}
-            <HeroSection />
+            <HeroSection data={data?.hero} />
 
             {/* 2. Portfolio Gallery */}
-            <LooksGallery />
+            <LooksGallery data={data?.gallery} />
 
             {/* 3. Bridal Makeup Trends */}
-            <TrendyIntro />
+            <TrendyIntro data={data?.trends} />
 
             {/* 4. Bespoke Atelier - Signature Makeup Looks & Services */}
-            <SignatureMakeupServices />
+            <SignatureMakeupServices data={data?.signature} />
 
             {/* 5. Bridal Makeup Styles for Different Wedding Styles */}
-            <BridalStylesSection />
+            <BridalStylesSection data={data?.styles} />
 
             {/* 6. Studio Banner Break */}
-            <BannerImage src={bannerImage} alt="KNK Awadh Makeup Studio Lucknow" />
+            <BannerImage
+                src={data?.banner?.image || bannerImage}
+                alt={data?.banner?.alt_text || "KNK Awadh Makeup Studio Lucknow"}
+                data={data?.banner}
+            />
 
             {/* 7. Frequently Asked Questions (FAQ) */}
-            <MakeupFAQ />
+            <MakeupFAQ data={data?.faq} />
 
             {/* 8. Reserve Your Slot - Booking Form */}
-            <BookingSection />
+            <BookingSection data={data?.booking_info} />
 
             {/* 9. Loved By Real Brides */}
-            <Testimonials />
+            <Testimonials data={data?.testimonials} />
 
             {/* 10. Makeup CTA */}
-            <MakeupCTA />
+            <MakeupCTA data={data?.cta} />
         </div>
     );
 }

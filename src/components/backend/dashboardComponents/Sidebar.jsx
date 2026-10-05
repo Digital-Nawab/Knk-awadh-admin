@@ -27,31 +27,49 @@ const links = [
         ),
     },
     {
-        label: "The Journal (Blogs)",
-        href: "/admin/blogs",
+        label: "Home Page CMS",
+        href: "/admin/home",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
-                <path d="M6 6h10M6 10h10M6 14h6" />
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
         ),
     },
     {
-        label: "Master SEO",
-        href: "/admin/seo",
+        label: "About Page CMS",
+        href: "/admin/about",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3M11 8v6M8 11h6" />
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4M12 8h.01" />
             </svg>
         ),
     },
     {
-        label: "Hero Banners",
-        href: "/admin/hero",
+        label: "Service Categories",
+        href: "/admin/services/categories",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-                <path d="M12 3c-4 2-6 5-6 9a6 6 0 0 0 12 0c0-4-2-7-6-9Z" />
+                <path d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+        ),
+    },
+    {
+        label: "Services CMS",
+        href: "/admin/services",
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            </svg>
+        ),
+    },
+    {
+        label: "Makeup Page CMS",
+        href: "/admin/makeup",
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
             </svg>
         ),
     },
@@ -76,30 +94,22 @@ const links = [
         ),
     },
     {
-        label: "About Page CMS",
-        href: "/admin/about",
+        label: "The Journal (Blogs)",
+        href: "/admin/blogs",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 16v-4M12 8h.01" />
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                <path d="M6 6h10M6 10h10M6 14h6" />
             </svg>
         ),
     },
     {
-        label: "Services CMS",
-        href: "/admin/services",
+        label: "Master SEO",
+        href: "/admin/seo",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-            </svg>
-        ),
-    },
-    {
-        label: "Service Categories",
-        href: "/admin/services/categories",
-        icon: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-                <path d="M4 6h16M4 12h16M4 18h7" />
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3M11 8v6M8 11h6" />
             </svg>
         ),
     },

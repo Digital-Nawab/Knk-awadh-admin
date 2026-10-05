@@ -367,9 +367,68 @@ export async function initDatabase() {
             console.log("Default KNK Interior images (Hazratganj & Gomti Nagar) seeded successfully");
         }
 
+        // 10. Home Page Sections Table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS home_sections (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                section_key VARCHAR(50) NOT NULL UNIQUE,
+                section_name VARCHAR(100) NOT NULL,
+                content JSON NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_section_key (section_key)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // Seed default Home page sections if empty
+        const [existingHome] = await db.query("SELECT id FROM home_sections LIMIT 1");
+        if (existingHome.length === 0) {
+            const { DEFAULT_HOME_SECTIONS, HOME_SECTION_METADATA } = await import("../data/homeDefaults.js");
+            const values = HOME_SECTION_METADATA.map((meta) => [
+                meta.key,
+                meta.label,
+                JSON.stringify(DEFAULT_HOME_SECTIONS[meta.key] || {}),
+            ]);
+            await db.query(
+                `INSERT INTO home_sections (section_key, section_name, content) VALUES ?`,
+                [values]
+            );
+            console.log("Default Home page sections seeded successfully");
+        }
+
+        // 11. Makeup Page Sections Table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS makeup_sections (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                section_key VARCHAR(50) NOT NULL UNIQUE,
+                section_name VARCHAR(100) NOT NULL,
+                content JSON NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_section_key (section_key)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // Seed default Makeup page sections if empty
+        const [existingMakeup] = await db.query("SELECT id FROM makeup_sections LIMIT 1");
+        if (existingMakeup.length === 0) {
+            const { DEFAULT_MAKEUP_SECTIONS, MAKEUP_SECTION_METADATA } = await import("../data/makeupDefaults.js");
+            const values = MAKEUP_SECTION_METADATA.map((meta) => [
+                meta.key,
+                meta.label,
+                JSON.stringify(DEFAULT_MAKEUP_SECTIONS[meta.key] || {}),
+            ]);
+            await db.query(
+                `INSERT INTO makeup_sections (section_key, section_name, content) VALUES ?`,
+                [values]
+            );
+            console.log("Default Makeup page sections seeded successfully");
+        }
+
         return { success: true, message: "Database tables and seed data initialized successfully." };
     } catch (error) {
         console.error("Database initialization error:", error);
         return { success: false, error: error.message };
     }
 }
+

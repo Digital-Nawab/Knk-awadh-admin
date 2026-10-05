@@ -11,6 +11,48 @@ const quickLinks = [
         actionText: "View Leads",
     },
     {
+        title: "Home Page CMS",
+        desc: "Section-wise management of Home banners, services, academies, aesthetics, locations, FAQs, and reviews.",
+        href: "/admin/home",
+        actionText: "Manage Home Page",
+    },
+    {
+        title: "About Us Page CMS",
+        desc: "Customize hero video, brand story, founders, academy, and FAQ content on the About page.",
+        href: "/admin/about",
+        actionText: "Manage About Page",
+    },
+    {
+        title: "Service Categories",
+        desc: "Organize and prioritize service categories and departments across the salon.",
+        href: "/admin/services/categories",
+        actionText: "Manage Categories",
+    },
+    {
+        title: "Services CMS",
+        desc: "Add, edit, or reorder luxury services across Hair, Beauty, Nails, Facial, and Body.",
+        href: "/admin/services",
+        actionText: "Manage Services",
+    },
+    {
+        title: "Makeup Page CMS",
+        desc: "Manage bridal makeup hero, looks gallery, trend showcase, signature packages, and FAQs.",
+        href: "/admin/makeup",
+        actionText: "Manage Makeup Page",
+    },
+    {
+        title: "Artistry Gallery Lookbook",
+        desc: "Upload, view, and manage bridal transformations and salon lookbook photos.",
+        href: "/admin/gallery",
+        actionText: "Manage Gallery",
+    },
+    {
+        title: "KNK Interior CMS",
+        desc: "Manage luxury interior showcase, infrastructure features, and ambience imagery.",
+        href: "/admin/interior",
+        actionText: "Manage Interior",
+    },
+    {
         title: "The Journal (Blogs)",
         desc: "Publish and edit editorial stories, bridal guides, and haircare tips.",
         href: "/admin/blogs",
@@ -21,24 +63,6 @@ const quickLinks = [
         desc: "Configure URL-specific meta titles, descriptions, keywords, and OpenGraph social images.",
         href: "/admin/seo",
         actionText: "Open SEO Suite",
-    },
-    {
-        title: "Services & Categories",
-        desc: "Add, edit, or reorder services across Hair, Beauty, Nails, Facial, and Body.",
-        href: "/admin/services",
-        actionText: "Manage Services",
-    },
-    {
-        title: "Artistry Gallery Lookbook",
-        desc: "Upload, view, and manage bridal transformations and salon lookbook photos.",
-        href: "/admin/gallery",
-        actionText: "Manage Gallery",
-    },
-    {
-        title: "About Us Page CMS",
-        desc: "Customize hero video, brand story, founders, academy, and FAQ content on the About page.",
-        href: "/admin/about",
-        actionText: "Manage About Page",
     },
 ];
 
@@ -51,46 +75,37 @@ export default function Dashboard() {
     });
 
     const [stats, setStats] = useState({
-        todayBookings: 0,
-        totalBookings: 0,
-        totalBlogs: 3,
-        totalSeo: 7,
-        totalGallery: 22,
+        today: 0,
+        pending: 0,
+        confirmed: 0,
+        total: 0,
     });
 
     useEffect(() => {
         async function fetchStats() {
             try {
-                const [bRes, blRes, sRes, gRes] = await Promise.all([
-                    fetch("/api/bookings"),
-                    fetch("/api/blogs"),
-                    fetch("/api/seo"),
-                    fetch("/api/gallery"),
-                ]);
-                const bData = bRes.ok ? await bRes.json() : null;
-                const blData = blRes.ok ? await blRes.json() : null;
-                const sData = sRes.ok ? await sRes.json() : null;
-                const gData = gRes.ok ? await gRes.json() : null;
-
-                setStats({
-                    todayBookings: bData?.stats?.today ?? 0,
-                    totalBookings: bData?.stats?.total ?? 0,
-                    totalBlogs: blData?.blogs?.length ?? 3,
-                    totalSeo: sData?.seoList?.length ?? 7,
-                    totalGallery: gData?.gallery?.length ?? 22,
-                });
+                const res = await fetch("/api/bookings");
+                if (res.ok) {
+                    const data = await res.json();
+                    setStats({
+                        today: data?.stats?.today ?? 0,
+                        pending: data?.stats?.pending ?? 0,
+                        confirmed: data?.stats?.confirmed ?? 0,
+                        total: data?.stats?.total ?? 0,
+                    });
+                }
             } catch {
-                // Fallback stats
+                // Keep default stats on error
             }
         }
         fetchStats();
     }, []);
 
     const metricCards = [
-        { label: "Today's Bookings", value: stats.todayBookings, link: "/admin/bookings" },
-        { label: "Total Client Leads", value: stats.totalBookings, link: "/admin/bookings" },
-        { label: "Published Stories", value: stats.totalBlogs, link: "/admin/blogs" },
-        { label: "Configured SEO Pages", value: stats.totalSeo, link: "/admin/seo" },
+        { label: "Today's Leads", value: stats.today, link: "/admin/bookings" },
+        { label: "Pending Inquiries", value: stats.pending, link: "/admin/bookings" },
+        { label: "Confirmed Leads", value: stats.confirmed, link: "/admin/bookings" },
+        { label: "Total Client Leads", value: stats.total, link: "/admin/bookings" },
     ];
 
     return (

@@ -3,76 +3,14 @@
 import React, { useState } from "react";
 import { Eyebrow, GoldDivider } from "./Makeupui";
 import { INK, GOLD, GOLD_DEEP, LINE } from "./Makeupdata";
+import { DEFAULT_MAKEUP_SECTIONS } from "@/data/makeupDefaults";
 
-const bridalStyles = [
-    {
-        number: "01",
-        title: "The Royal Bridal Look",
-        image: "/assets/images/new/home/bridal/1.webp",
-        imagePosition: "center 20%",
-        text: "The Royal Bridal Look is ideal for heavily embroidered lehengas and statement jewellery. Defined eyes, bold kajal and warm gold or bronze tones create a dramatic bridal finish, balanced with nude, deep red, or rose-gold lips. The overall look works particularly well with kundan and gold jewellery.",
-        bestSuited: [
-            "Heavy lehengas",
-            "Kundan jewellery",
-            "Gold jewellery",
-            "Evening celebrations",
-        ],
-    },
-    {
-        number: "02",
-        title: "Natural / No-Makeup Bridal Look",
-        image: "/assets/images/new/home/bridal/11.webp",
-        imagePosition: "center 15%",
-        text: "Designed for brides who want a fresh, understated appearance, this style focuses on an even-looking complexion, subtle eye definition, and natural pink or nude lips. It works especially well with pastel lehengas, minimal jewellery and daytime wedding ceremonies.",
-        bestSuited: [
-            "Pastel lehengas",
-            "Minimal jewellery",
-            "Daytime ceremonies",
-            "Soft styling",
-        ],
-    },
-    {
-        number: "03",
-        title: "Traditional Bridal Makeup Look",
-        image: "/assets/images/new/home/bridal/10.webp",
-        imagePosition: "center 25%",
-        text: "A classic bridal style featuring gold eyeshadow, defined liner, bold kajal and a deep red lip. The richer makeup balances traditional bridal attire and statement jewellery while maintaining the classic character of the overall wedding look.",
-        bestSuited: [
-            "Traditional lehengas",
-            "Sarees",
-            "Statement jewellery",
-            "Wedding ceremonies",
-        ],
-    },
-    {
-        number: "04",
-        title: "Peach Bridal Makeup Look",
-        image: "/assets/images/new/home/bridal/8.webp",
-        imagePosition: "center top",
-        text: "Soft and fresh, the peach bridal look combines peach-toned lips, subtle eye makeup and a gentle blush for a warm, luminous finish. It pairs naturally with pastel outfits, minimal jewellery and softer hairstyles such as loose curls or braids.",
-        bestSuited: [
-            "Pastel outfits",
-            "Daytime events",
-            "Minimal jewellery",
-            "Soft hairstyles",
-        ],
-    },
-    {
-        number: "05",
-        title: "Matte Bridal Makeup Look",
-        image: "/assets/images/new/home/bridal/14.webp",
-        imagePosition: "center 20%",
-        text: "For brides who prefer a polished, shine-controlled finish, the matte bridal look combines a refined base with soft smoky eyes, defined liner, and a matte lip. It can be a suitable option for brides who prefer a more structured, modern makeup aesthetic for ceremonies and photography.",
-        bestSuited: [
-            "Modern bridal styling",
-            "Evening ceremonies",
-            "Structured makeup looks",
-            "Photography",
-        ],
-    },
-];
+const defaultStyles = DEFAULT_MAKEUP_SECTIONS.styles.items;
 
-export default function BridalStylesSection() {
+export default function BridalStylesSection({ data }) {
+    const content = { ...DEFAULT_MAKEUP_SECTIONS.styles, ...(data || {}) };
+    const rawStyles = (Array.isArray(content.items) && content.items.length > 0) ? content.items : defaultStyles;
+    const styles = Array.isArray(rawStyles) ? rawStyles : [];
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
@@ -80,31 +18,29 @@ export default function BridalStylesSection() {
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="max-w-3xl mx-auto text-center mb-16">
-                    <Eyebrow>BRIDAL MAKEUP STYLES</Eyebrow>
+                    <Eyebrow>{content.eyebrow || content.badge || "BRIDAL MAKEUP STYLES"}</Eyebrow>
                     <h2
                         className="mt-4 font-['Cormorant_Garamond',serif] text-[34px] sm:text-[46px] md:text-[54px] font-medium leading-[1.08] tracking-[-0.03em]"
                         style={{ color: INK }}
                     >
-                        Bridal Makeup Looks for{" "}
+                        {content.heading || content.heading_line1 || "Bridal Makeup Styles &"}{" "}
                         <span className="italic" style={{ color: GOLD }}>
-                            Different Wedding Styles
+                            {content.headingHighlight || content.heading_highlight || "Looks for Weddings in Lucknow"}
                         </span>
                     </h2>
                     <GoldDivider center />
                     <p className="mt-6 font-['Inter',sans-serif] text-[13.5px] sm:text-[15px] leading-[1.9] text-[#63574c]">
-                        Every bride has a different vision for her wedding look. From regal and traditional
-                        makeup to natural, peach and matte finishes, bridal makeup can be customized around
-                        your outfit, jewellery, ceremony, photography and personal style.
+                        {content.description}
                     </p>
                 </div>
 
                 {/* Editorial Stacked Style Cards */}
                 <div className="space-y-8 sm:space-y-10">
-                    {bridalStyles.map((style, idx) => {
+                    {styles.map((style, idx) => {
                         const isEven = idx % 2 === 0;
                         return (
                             <div
-                                key={style.number}
+                                key={style.number || idx}
                                 className={`rounded-3xl border border-[#dcd0c0] bg-[#fffdfa] shadow-sm hover:shadow-md transition-all duration-300 p-6 sm:p-8 md:p-10 grid md:grid-cols-12 gap-8 items-center ${
                                     isEven ? "md:bg-[#fffdfa]" : "md:bg-[#f6efe4]"
                                 }`}

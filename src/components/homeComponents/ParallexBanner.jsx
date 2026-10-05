@@ -2,7 +2,10 @@
 
 import React, { useEffect, useRef } from 'react';
 
-function ParallaxBanner() {
+import { DEFAULT_HOME_SECTIONS } from '@/data/homeDefaults';
+
+function ParallaxBanner({ data }) {
+  const content = { ...DEFAULT_HOME_SECTIONS.banner, ...(data || {}) };
   const bgRef = useRef(null);
 
   useEffect(() => {
@@ -29,8 +32,8 @@ function ParallaxBanner() {
     <section className="relative h-[50vh] min-h-[22rem] overflow-hidden">
       <div ref={bgRef} className="absolute inset-0 -top-24 h-[calc(100%+12rem)]">
         <img
-          src="/assets/images/new/parallel-img.webp"
-          alt="KNK Salon interior"
+          src={content.image || "/assets/images/new/parallel-img.webp"}
+          alt={content.alt_text || "KNK Salon interior"}
           width={1400}
           height={600}
           loading="lazy"
@@ -41,7 +44,7 @@ function ParallaxBanner() {
       <div className="absolute inset-0 bg-primary/55" />
       <div className="relative z-10 flex h-full items-center justify-center px-6 text-center">
         <p className="max-w-xl font-display text-3xl italic text-cream md:text-5xl">
-          "An experience shaped by expertise and care."
+          "{content.quote}"
         </p>
       </div>
     </section>

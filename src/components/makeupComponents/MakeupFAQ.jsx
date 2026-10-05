@@ -3,51 +3,14 @@
 import React, { useState } from "react";
 import { Eyebrow, GoldDivider } from "./Makeupui";
 import { INK, GOLD, LINE } from "./Makeupdata";
+import { DEFAULT_MAKEUP_SECTIONS } from "@/data/makeupDefaults";
 
-const faqs = [
-    {
-        q: "What makeup services does KNK offer in Lucknow?",
-        a: "KNK Awadh Salon & Academy offers bridal, HD, airbrush, engagement, reception, and party makeup services in Lucknow. Makeup can be customized according to the occasion, outfit, personal style, and preferred finish.",
-    },
-    {
-        q: "Can I customize my makeup look?",
-        a: "Yes. Your makeup look can be discussed and customized around your occasion, outfit, jewellery, preferred makeup style, and overall styling requirements.",
-    },
-    {
-        q: "What bridal makeup styles are available?",
-        a: "Bridal makeup can range from natural and soft-glam looks to traditional, peach, matte, and more defined bridal styles. The final look can be customized according to your wedding attire, jewellery, ceremony, and personal preference.",
-    },
-    {
-        q: "What is the difference between HD and airbrush makeup?",
-        a: "HD makeup uses finely blended makeup techniques for a polished, camera-friendly finish, while airbrush makeup is applied using an airbrush device to create a lightweight, finely distributed layer. The appropriate option depends on your requirements and preferred finish.",
-    },
-    {
-        q: "How early should I book bridal makeup?",
-        a: "For weddings and peak wedding dates, we recommend booking in advance because availability can vary by date and service requirements. Contact KNK with your wedding date to check availability.",
-    },
-    {
-        q: "Does KNK offer engagement and party makeup?",
-        a: "Yes. KNK offers makeup services for engagement ceremonies, parties, receptions, and other special occasions, with looks customized according to the event and personal style.",
-    },
-    {
-        q: "Does KNK provide bridal hairstyling and draping?",
-        a: "Bridal preparation can include hairstyling and draping services depending on the selected service or package. Confirm the exact inclusions with KNK when booking.",
-    },
-    {
-        q: "How can I book a makeup appointment?",
-        a: "You can use the appointment/booking option on the website and provide your preferred service, KNK location, and date. The team can then confirm availability and appointment details.",
-    },
-    {
-        q: "Where can I get KNK makeup services in Lucknow?",
-        a: "KNK Awadh Salon & Academy has makeup and beauty service locations in Mahanagar, Gomti Nagar and Hazratganj, Lucknow.",
-    },
-    {
-        q: "How can I check current makeup pricing?",
-        a: "Makeup pricing can vary according to the service, occasion, selected options and requirements. Contact KNK with your preferred service and date to confirm current pricing and availability.",
-    },
-];
+const defaultFaqs = DEFAULT_MAKEUP_SECTIONS.faq.items;
 
-export default function MakeupFAQ() {
+export default function MakeupFAQ({ data }) {
+    const content = { ...DEFAULT_MAKEUP_SECTIONS.faq, ...(data || {}) };
+    const rawFaqs = (Array.isArray(content.items) && content.items.length > 0) ? content.items : defaultFaqs;
+    const faqs = Array.isArray(rawFaqs) ? rawFaqs : [];
     const [openIndex, setOpenIndex] = useState(0);
 
     function toggleFaq(index) {
@@ -79,19 +42,19 @@ export default function MakeupFAQ() {
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-14">
-                    <Eyebrow>FREQUENTLY ASKED QUESTIONS</Eyebrow>
+                    <Eyebrow>{content.eyebrow || content.badge || "FREQUENTLY ASKED QUESTIONS"}</Eyebrow>
                     <h2
                         className="mt-4 font-['Cormorant_Garamond',serif] text-[34px] sm:text-[46px] md:text-[54px] font-medium leading-[1.08] tracking-[-0.03em]"
                         style={{ color: INK }}
                     >
-                        Frequently Asked Questions{" "}
+                        {content.heading || content.heading_line1 || "Common Questions About Makeup Services"}{" "}
                         <span className="italic" style={{ color: GOLD }}>
-                            About Makeup Services
+                            {content.headingHighlight || content.heading_highlight || "in Lucknow"}
                         </span>
                     </h2>
                     <GoldDivider center />
                     <p className="mt-5 font-['Inter',sans-serif] text-[13.5px] sm:text-[14.5px] text-[#6b6055] max-w-xl mx-auto">
-                        Clear answers to common questions about bridal artistry, bookings, draping, and consultations at KNK Lucknow studios.
+                        {content.description}
                     </p>
                 </div>
 

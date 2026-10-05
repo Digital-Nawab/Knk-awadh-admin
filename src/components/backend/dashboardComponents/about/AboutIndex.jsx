@@ -61,36 +61,25 @@ function ImageUploader({ label, value, onChange, accept = "image/*", hidePath = 
                 )}
 
                 <div className="flex-1 w-full space-y-1.5">
-                    {hidePath ? (
-                        <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                            type="button"
+                            onClick={() => fileRef.current?.click()}
+                            disabled={uploading}
+                            className="px-4 py-2 rounded-xl bg-gold/15 text-gold-deep border border-gold/30 hover:bg-gold hover:text-white font-sans text-xs tracking-wider uppercase font-semibold transition-all disabled:opacity-50 cursor-pointer"
+                        >
+                            {uploading ? "Uploading..." : (value ? "Change Photo" : "Upload Photo")}
+                        </button>
+                        {value && (
                             <button
                                 type="button"
-                                onClick={() => fileRef.current?.click()}
-                                disabled={uploading}
-                                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-gold/15 text-gold-deep border border-gold/30 hover:bg-gold hover:text-white font-sans text-xs tracking-wider uppercase font-semibold transition-all disabled:opacity-50 text-center"
+                                onClick={() => onChange("")}
+                                className="px-3.5 py-2 rounded-xl border border-rose-200 text-rose-600 bg-rose-50/60 hover:bg-rose-100 font-sans text-xs tracking-wider uppercase font-semibold transition-all cursor-pointer"
                             >
-                                {uploading ? "Uploading..." : (value ? "Change Photo" : "Upload Photo")}
+                                Remove
                             </button>
-                        </div>
-                    ) : (
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="text"
-                                value={value || ""}
-                                onChange={(e) => onChange(e.target.value)}
-                                placeholder="/assets/images/about/... or URL"
-                                className="flex-1 px-3.5 py-2 rounded-xl border border-border text-xs text-ink focus:outline-none focus:border-gold bg-secondary/30"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => fileRef.current?.click()}
-                                disabled={uploading}
-                                className="shrink-0 px-4 py-2 rounded-xl bg-gold/15 text-gold-deep border border-gold/30 hover:bg-gold hover:text-white font-sans text-xs tracking-wider uppercase font-semibold transition-all disabled:opacity-50"
-                            >
-                                {uploading ? "Uploading..." : "Upload File"}
-                            </button>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
                     <input
                         ref={fileRef}

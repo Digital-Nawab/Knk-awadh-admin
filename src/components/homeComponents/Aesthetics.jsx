@@ -1,6 +1,13 @@
 import React from 'react';
+import { DEFAULT_HOME_SECTIONS } from '@/data/homeDefaults';
 
-function Aesthetics() {
+function Aesthetics({ data }) {
+    const content = { ...DEFAULT_HOME_SECTIONS.aesthetics, ...(data || {}) };
+    const rawServices = (Array.isArray(content.services) && content.services.length > 0)
+        ? content.services
+        : ((Array.isArray(content.tags) && content.tags.length > 0) ? content.tags : (DEFAULT_HOME_SECTIONS.aesthetics.services || []));
+    const serviceList = Array.isArray(rawServices) ? rawServices : [];
+
     return (
         <>
             <section
@@ -16,77 +23,53 @@ function Aesthetics() {
                     <div className="relative z-10 max-w-[620px]">
                         {/* Decorative Background Word */}
                         <span className="pointer-events-none absolute -left-12 top-1/2 hidden -translate-y-1/2 select-none font-['Cormorant_Garamond'] text-[170px] leading-none text-[#dfd0be]/70 xl:block">
-                            GLOW
+                            {content.bgWord || content.bg_watermark || "GLOW"}
                         </span>
                         <div className="relative">
                             {/* Section Number */}
                             <div className="mb-9 flex items-center gap-4">
                                 <span className="h-px w-8 bg-[#a98565]" />
                                 <span className="font-['Inter'] text-[9px] font-medium uppercase tracking-[0.35em] text-[#92745a]">
-                                    09 / Aesthetics
+                                    {content.sectionNumber || content.section_number || "09 / Aesthetics"}
                                 </span>
                             </div>
                             {/* Heading */}
                             <h2 className="font-['Cormorant_Garamond'] text-[52px] font-medium leading-[0.88] tracking-[-0.045em] text-[#29231f] sm:text-[62px] md:text-[72px] lg:text-[66px] xl:text-[78px]">
-                                KNK SKKIN
+                                {content.heading || content.heading_line1 || "KNK SKKIN"}
                                 <br />
                                 <span className="italic text-[#b58a52]">
-                                    Skin & Aesthetic Treatments in
+                                    {content.headingHighlight || content.heading_highlight || "Skin & Aesthetic Treatments in"}
                                 </span>
                                 <br />
-                                Lucknow
+                                {content.headingSuffix || content.heading_city || "Lucknow"}
                             </h2>
 
                             <p className="mt-6 max-w-xl text-sm font-medium uppercase tracking-[0.2em] text-[#6f6258] sm:text-base">
-                                Skin, Hair, Injectables &amp; Longevity
+                                {content.tagline || content.badge || "Skin, Hair, Injectables & Longevity"}
                             </p>
                             {/* Description */}
                             <p className="mt-8 max-w-[510px] font-['Inter'] text-[13px] leading-[1.85] text-[#71665d] sm:text-[14px]">
-                                Discover personalised aesthetic and skin treatments designed to
-                                refresh, restore and enhance your natural beauty. Every treatment
-                                begins with understanding your skin and ends with a glow that
-                                feels beautifully yours.
+                                {content.description}
                             </p>
                             {/* =================================================
                                 AESTHETIC SERVICES
                             ================================================== */}
                             <div className="mt-9 flex max-w-[600px] flex-wrap gap-2.5">
-                                <a
-                                    href="#facial"
-                                    className="group border border-[#cdbca6] bg-[#f6f0e7]/40 px-4 py-2.5 font-['Inter'] text-[8px] font-medium uppercase tracking-[0.14em] text-[#5c5047] transition-all duration-300 hover:border-[#a98565] hover:bg-[#a98565] hover:text-white"
-                                >
-                                    Signature Facial
-                                </a>
-                                <a
-                                    href="#skin-treatment"
-                                    className="group border border-[#cdbca6] bg-[#f6f0e7]/40 px-4 py-2.5 font-['Inter'] text-[8px] font-medium uppercase tracking-[0.14em] text-[#5c5047] transition-all duration-300 hover:border-[#a98565] hover:bg-[#a98565] hover:text-white"
-                                >
-                                    Skin Treatments
-                                </a>
-                                <a
-                                    href="#cleanup"
-                                    className="group border border-[#cdbca6] bg-[#f6f0e7]/40 px-4 py-2.5 font-['Inter'] text-[8px] font-medium uppercase tracking-[0.14em] text-[#5c5047] transition-all duration-300 hover:border-[#a98565] hover:bg-[#a98565] hover:text-white"
-                                >
-                                    Clean-Up
-                                </a>
-                                <a
-                                    href="#glow"
-                                    className="group border border-[#cdbca6] bg-[#f6f0e7]/40 px-4 py-2.5 font-['Inter'] text-[8px] font-medium uppercase tracking-[0.14em] text-[#5c5047] transition-all duration-300 hover:border-[#a98565] hover:bg-[#a98565] hover:text-white"
-                                >
-                                    Glow Treatments
-                                </a>
-                                <a
-                                    href="#de-tan"
-                                    className="group border border-[#cdbca6] bg-[#f6f0e7]/40 px-4 py-2.5 font-['Inter'] text-[8px] font-medium uppercase tracking-[0.14em] text-[#5c5047] transition-all duration-300 hover:border-[#a98565] hover:bg-[#a98565] hover:text-white"
-                                >
-                                    De-Tan
-                                </a>
-                                <a
-                                    href="#wellness"
-                                    className="group border border-[#cdbca6] bg-[#f6f0e7]/40 px-4 py-2.5 font-['Inter'] text-[8px] font-medium uppercase tracking-[0.14em] text-[#5c5047] transition-all duration-300 hover:border-[#a98565] hover:bg-[#a98565] hover:text-white"
-                                >
-                                    Beauty Wellness
-                                </a>
+                                {serviceList.map((tag, idx) => {
+                                    const title = typeof tag === 'string' ? tag : (tag?.name || tag?.title || '');
+                                    const href = typeof tag === 'object' && typeof tag?.href === 'string'
+                                        ? tag.href
+                                        : (typeof tag === 'object' && typeof tag?.link === 'string' ? tag.link : "#facial");
+                                    return (
+                                        <a
+                                            key={idx}
+                                            href={href}
+                                            className="group border border-[#cdbca6] bg-[#f6f0e7]/40 px-4 py-2.5 font-['Inter'] text-[8px] font-medium uppercase tracking-[0.14em] text-[#5c5047] transition-all duration-300 hover:border-[#a98565] hover:bg-[#a98565] hover:text-white"
+                                        >
+                                            {title}
+                                        </a>
+                                    );
+                                })}
                             </div>
                             {/* =================================================
                                 BENEFITS
@@ -94,26 +77,26 @@ function Aesthetics() {
                             <div className="mt-9 grid grid-cols-1 gap-4 border-t border-[#d5c8b9] pt-6 sm:grid-cols-3">
                                 <div>
                                     <span className="font-['Cormorant_Garamond'] text-[25px] italic text-[#a47d59]">
-                                        Personalised
+                                        {content.benefit1_title || "Personalised"}
                                     </span>
                                     <p className="mt-1 font-['Inter'] text-[8px] uppercase tracking-[0.12em] text-[#84786e]">
-                                        Skin Approach
+                                        {content.benefit1_subtitle || "Skin Approach"}
                                     </p>
                                 </div>
                                 <div>
                                     <span className="font-['Cormorant_Garamond'] text-[25px] italic text-[#a47d59]">
-                                        Gentle
+                                        {content.benefit2_title || "Gentle"}
                                     </span>
                                     <p className="mt-1 font-['Inter'] text-[8px] uppercase tracking-[0.12em] text-[#84786e]">
-                                        Premium Care
+                                        {content.benefit2_subtitle || "Premium Care"}
                                     </p>
                                 </div>
                                 <div>
                                     <span className="font-['Cormorant_Garamond'] text-[25px] italic text-[#a47d59]">
-                                        Natural
+                                        {content.benefit3_title || "Natural"}
                                     </span>
                                     <p className="mt-1 font-['Inter'] text-[8px] uppercase tracking-[0.12em] text-[#84786e]">
-                                        Looking Results
+                                        {content.benefit3_subtitle || "Looking Results"}
                                     </p>
                                 </div>
                             </div>
@@ -122,19 +105,19 @@ function Aesthetics() {
                             ================================================== */}
                             <div className="mt-11 flex flex-wrap items-center gap-7">
                                 <a
-                                    href="#book"
+                                    href={typeof content.cta_primary_link === 'string' ? content.cta_primary_link : "#book"}
                                     className="group inline-flex items-center gap-4 border-b border-[#a98251] pb-3 font-['Inter'] text-[9px] font-medium uppercase tracking-[0.22em] text-[#59483b]"
                                 >
-                                    <span>Discover Your Glow</span>
+                                    <span>{content.cta_primary_text || "Discover Your Glow"}</span>
                                     <span className="text-[18px] leading-none transition-transform duration-300 group-hover:translate-x-2">
                                         →
                                     </span>
                                 </a>
                                 <a
-                                    href="#services"
+                                    href={typeof content.cta_secondary_link === 'string' ? content.cta_secondary_link : "#services"}
                                     className="font-['Inter'] text-[9px] font-medium uppercase tracking-[0.2em] text-[#9a8878] transition-colors duration-300 hover:text-[#a47d52]"
                                 >
-                                    View Treatments
+                                    {content.cta_secondary_text || "View Treatments"}
                                 </a>
                             </div>
                         </div>
@@ -150,7 +133,7 @@ function Aesthetics() {
                             <div className="relative h-[560px] overflow-hidden  rounded-b-[2px] sm:h-[640px] lg:h-[680px]">
                                 {/* Image */}
                                 <img
-                                    src="/assets/images/new/home/services/advanced-aesthetics.webp"
+                                    src={content.image || "/assets/images/new/home/services/advanced-aesthetics.webp"}
                                     alt="Luxury aesthetic and skin treatment"
                                     width={500}
                                     height={680}
@@ -164,7 +147,7 @@ function Aesthetics() {
                                 <div className="absolute bottom-8 left-8 flex items-center gap-3">
                                     <span className="h-px w-8 bg-white/80" />
                                     <span className="font-['Inter'] text-[8px] font-medium uppercase tracking-[0.3em] text-white">
-                                        Skin &amp; Wellness
+                                        {content.badgeTitle || "Skin & Wellness"}
                                     </span>
                                 </div>
                                 {/* Floating Number */}

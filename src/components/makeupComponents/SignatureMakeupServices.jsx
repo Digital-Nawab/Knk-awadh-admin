@@ -57,7 +57,19 @@ const signatureServices = [
     },
 ];
 
-export default function SignatureMakeupServices() {
+import { DEFAULT_MAKEUP_SECTIONS } from "@/data/makeupDefaults";
+
+const defaultServices = DEFAULT_MAKEUP_SECTIONS.signature.items || DEFAULT_MAKEUP_SECTIONS.signature.services || [];
+
+export default function SignatureMakeupServices({ data }) {
+    const content = { ...DEFAULT_MAKEUP_SECTIONS.signature, ...(data || {}) };
+    const rawServices = (Array.isArray(content.items) && content.items.length > 0)
+        ? content.items
+        : ((Array.isArray(content.services) && content.services.length > 0)
+            ? content.services
+            : defaultServices);
+    const services = Array.isArray(rawServices) ? rawServices : [];
+
     return (
         <section
             id="services"
@@ -90,13 +102,14 @@ export default function SignatureMakeupServices() {
                     <div className="flex items-center justify-center gap-3">
                         <span className="h-px w-10 bg-gradient-to-r from-transparent to-[#c49a4d]" />
                         <p className="font-['Inter',sans-serif] text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.38em] text-[#a17b5a]">
-                            BESPOKE ATELIER
+                            {content.badge || "BESPOKE ATELIER"}
                         </p>
                         <span className="h-px w-10 bg-gradient-to-l from-transparent to-[#c49a4d]" />
                     </div>
 
                     <h2 className="mt-3.5 font-['Cormorant_Garamond',serif] text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight text-[#241d18]">
-                        Signature Makeup <span className="italic text-[#c49a4d]">Looks &amp; Services</span>
+                        {content.heading_line1}{" "}
+                        <span className="italic text-[#c49a4d]">{content.heading_highlight}</span>
                     </h2>
 
                     {/* Royal Gold Divider */}
@@ -107,18 +120,15 @@ export default function SignatureMakeupServices() {
                     </div>
 
                     <p className="mt-5 font-['Inter',sans-serif] text-sm sm:text-[15px] leading-relaxed text-[#685c52] max-w-2xl mx-auto">
-                        Explore KNK&apos;s signature makeup services for weddings, engagements, parties and special
-                        occasions. Each look can be customized around your outfit, event, preferred makeup style,
-                        and desired finish. Explore the complete service details, inclusions, and preparation
-                        information for each occasion.
+                        {content.description}
                     </p>
                 </div>
 
                 {/* 3 High-Fashion Editorial Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-7 lg:gap-8 items-stretch">
-                    {signatureServices.map((service) => (
+                    {services.map((service, sIdx) => (
                         <div
-                            key={service.id}
+                            key={service.id || sIdx}
                             className="group relative min-h-[580px] sm:h-[620px] lg:h-[660px] rounded-[26px] overflow-hidden border border-[#dfd2c4] hover:border-[#c49a4d] shadow-[0_16px_45px_rgba(40,25,15,0.08)] hover:shadow-[0_25px_65px_rgba(196,154,77,0.28)] transition-all duration-700 hover:-translate-y-2 flex flex-col justify-between"
                         >
                             {/* Full-Height Portrait Background Image */}
@@ -185,7 +195,10 @@ export default function SignatureMakeupServices() {
                                         Highlights
                                     </p>
                                     <div className="flex flex-wrap gap-1.5">
-                                        {service.highlights.map((h, i) => (
+                                        {(Array.isArray(service.highlights)
+                                            ? service.highlights
+                                            : (typeof service.highlights === 'string' ? service.highlights.split(',').map(s => s.trim()).filter(Boolean) : [])
+                                        ).map((h, i) => (
                                             <span
                                                 key={i}
                                                 className="font-['Inter',sans-serif] text-[9.5px] tracking-wider uppercase px-2.5 py-1 rounded-full bg-[#cda882]/20 border border-[#cda882]/40 text-[#f5db99]"
