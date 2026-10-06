@@ -183,14 +183,15 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
         setErrorMsg("");
 
         // Frontend validation
-        if (!name.trim() || name.trim().length < 2) {
-            setErrorMsg("Please enter your full name.");
+        const cleanName = name.replace(/[^a-zA-Z\s]/g, "").trim();
+        if (!cleanName || cleanName.length < 2) {
+            setErrorMsg("Please enter your full name (alphabets only, no numbers or special characters).");
             return;
         }
 
-        const cleanPhone = phone.replace(/[^\d+]/g, "");
-        if (!cleanPhone || cleanPhone.length < 10) {
-            setErrorMsg("Please enter a valid 10-digit mobile number.");
+        const cleanPhone = phone.replace(/\D/g, "");
+        if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
+            setErrorMsg("Please enter a valid mobile number (10 to 13 digits, numbers only).");
             return;
         }
 
@@ -328,7 +329,7 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
                                     required
                                     placeholder="e.g. Radhika Sharma"
                                     value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    onChange={(e) => setName(e.target.value.replace(/[^a-zA-Z\s]/g, ""))}
                                     className="w-full rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-xs text-ink placeholder:text-muted/60 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
                                 />
                             </div>
@@ -339,9 +340,10 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
                                 <input
                                     type="tel"
                                     required
-                                    placeholder="10-digit mobile number"
+                                    maxLength={13}
+                                    placeholder="10-13 digit mobile number"
                                     value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
+                                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 13))}
                                     className="w-full rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-xs text-ink placeholder:text-muted/60 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold font-mono"
                                 />
                             </div>

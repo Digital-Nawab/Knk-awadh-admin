@@ -19,23 +19,45 @@ function BookingForm({ whatsappText, whatsappNumber }) {
 
     function handleChange(e) {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        let sanitizedValue = value;
+        if (name === "name") {
+            sanitizedValue = value.replace(/[^a-zA-Z\s]/g, "");
+        } else if (name === "mobile") {
+            sanitizedValue = value.replace(/\D/g, "").slice(0, 13);
+        }
+        setForm((prev) => ({ ...prev, [name]: sanitizedValue }));
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
-        if (!form.name || !form.mobile || !form.service || !form.location) return;
+        setErrorMsg("");
+
+        const cleanName = form.name.replace(/[^a-zA-Z\s]/g, "").trim();
+        if (!cleanName || cleanName.length < 2) {
+            setErrorMsg("Please enter your full name (alphabets only, no numbers or special characters).");
+            return;
+        }
+
+        const cleanPhone = form.mobile.replace(/\D/g, "");
+        if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
+            setErrorMsg("Please enter a valid mobile number (10 to 13 digits, numbers only).");
+            return;
+        }
+
+        if (!form.service || !form.location) {
+            setErrorMsg("Please select your preferred service and salon location.");
+            return;
+        }
 
         setLoading(true);
-        setErrorMsg("");
         try {
             const res = await fetch("/api/bookings", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     form_type: "about_page_booking",
-                    name: form.name.trim(),
-                    phone: form.mobile.trim(),
+                    name: cleanName,
+                    phone: cleanPhone,
                     email: form.email.trim() || null,
                     service: form.service,
                     location: form.location,
@@ -99,11 +121,12 @@ function BookingForm({ whatsappText, whatsappNumber }) {
                     <input
                         type="tel"
                         name="mobile"
+                        maxLength={13}
                         value={form.mobile}
                         onChange={handleChange}
                         required
                         className="w-full bg-cream border border-border rounded-lg px-4 py-3 font-['Inter'] text-sm text-[#29231f] placeholder:text-[#a3978c] outline-none focus:border-[#b58a52] transition-colors"
-                        placeholder="+91 | Enter mobile number"
+                        placeholder="10-13 digit mobile number"
                     />
                 </div>
 

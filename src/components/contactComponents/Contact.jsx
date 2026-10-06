@@ -151,7 +151,13 @@ export default function Contact() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        let sanitizedValue = value;
+        if (name === "name") {
+            sanitizedValue = value.replace(/[^a-zA-Z\s]/g, "");
+        } else if (name === "mobile") {
+            sanitizedValue = value.replace(/\D/g, "").slice(0, 13);
+        }
+        setForm((prev) => ({ ...prev, [name]: sanitizedValue }));
         if (errorMsg) setErrorMsg("");
     };
 
@@ -161,15 +167,15 @@ export default function Contact() {
         setSuccessMsg("");
 
         // Validation
-        const trimmedName = form.name.trim();
+        const trimmedName = form.name.replace(/[^a-zA-Z\s]/g, "").trim();
         if (!trimmedName || trimmedName.length < 2) {
-            setErrorMsg("Please enter your full name (minimum 2 characters).");
+            setErrorMsg("Please enter your full name (alphabets only, no numbers or special characters).");
             return;
         }
 
-        const cleanPhone = form.mobile.replace(/[^\d+]/g, "");
-        if (!cleanPhone || cleanPhone.replace(/\D/g, "").length < 10) {
-            setErrorMsg("Please enter a valid 10-digit mobile number.");
+        const cleanPhone = form.mobile.replace(/\D/g, "");
+        if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
+            setErrorMsg("Please enter a valid mobile number (10 to 13 digits, numbers only).");
             return;
         }
 
@@ -544,10 +550,10 @@ export default function Contact() {
                                             type="tel"
                                             name="mobile"
                                             required
-                                            maxLength={14}
+                                            maxLength={13}
                                             value={form.mobile}
                                             onChange={handleChange}
-                                            placeholder="10-digit phone number"
+                                            placeholder="10-13 digit phone number"
                                             className="w-full rounded-xl border border-border bg-[#FBF7F0]/70 px-4 py-3 font-sans text-xs text-ink placeholder:text-muted/60 focus:border-gold focus:bg-white focus:outline-none transition-colors"
                                         />
                                     </div>

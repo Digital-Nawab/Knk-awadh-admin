@@ -51,21 +51,28 @@ export default function BookingForm({ initialService = "" }) {
 
     function handleChange(e) {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        let sanitizedValue = value;
+        if (name === "name") {
+            sanitizedValue = value.replace(/[^a-zA-Z\s]/g, "");
+        } else if (name === "mobile") {
+            sanitizedValue = value.replace(/\D/g, "").slice(0, 13);
+        }
+        setForm((prev) => ({ ...prev, [name]: sanitizedValue }));
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
         setErrorMsg("");
 
-        if (!form.name.trim() || form.name.trim().length < 2) {
-            setErrorMsg("Please enter your full name.");
+        const cleanName = form.name.replace(/[^a-zA-Z\s]/g, "").trim();
+        if (!cleanName || cleanName.length < 2) {
+            setErrorMsg("Please enter your full name (alphabets only, no numbers or special characters).");
             return;
         }
 
-        const cleanPhone = form.mobile.replace(/[^\d+]/g, "");
-        if (!cleanPhone || cleanPhone.length < 10) {
-            setErrorMsg("Please enter a valid 10-digit mobile number.");
+        const cleanPhone = form.mobile.replace(/\D/g, "");
+        if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
+            setErrorMsg("Please enter a valid mobile number (10 to 13 digits, numbers only).");
             return;
         }
 
@@ -184,10 +191,11 @@ export default function BookingForm({ initialService = "" }) {
                 <input
                     name="mobile"
                     type="tel"
+                    maxLength={13}
                     value={form.mobile}
                     onChange={handleChange}
                     required
-                    placeholder="+91 10-digit mobile number"
+                    placeholder="10-13 digit mobile number"
                     className="w-full bg-[#fbf7f0] border border-[#d8cabb] focus:border-[#b58a52] rounded-xl px-4 py-3.5 font-['Inter',sans-serif] text-[13.5px] outline-none transition-colors text-[#29231f] placeholder:text-[#a89b8d]"
                 />
             </div>

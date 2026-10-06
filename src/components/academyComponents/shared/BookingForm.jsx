@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { INK, MUTED, GOLD, LINE, courseOptions } from "./constants";
 import { Sparkles, ShieldCheck, Clock, CheckCircle2, Send, ArrowRight } from "lucide-react";
 
 export default function BookingForm() {
+    const router = useRouter();
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -21,13 +23,31 @@ export default function BookingForm() {
 
     function handleChange(e) {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        let sanitizedValue = value;
+        if (name === "name") {
+            sanitizedValue = value.replace(/[^a-zA-Z\s]/g, "");
+        } else if (name === "mobile") {
+            sanitizedValue = value.replace(/\D/g, "").slice(0, 13);
+        }
+        setForm((prev) => ({ ...prev, [name]: sanitizedValue }));
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
         setError("");
         if (!form.name || !form.mobile || !form.course) return;
+
+        const cleanName = form.name.replace(/[^a-zA-Z\s]/g, "").trim();
+        if (!cleanName || cleanName.length < 2) {
+            setError("Please enter your name (alphabets only, no numbers or special characters).");
+            return;
+        }
+
+        const cleanPhone = form.mobile.replace(/\D/g, "");
+        if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
+            setError("Please enter a valid mobile number (10 to 13 digits, numbers only).");
+            return;
+        }
 
         setLoading(true);
         try {
@@ -36,19 +56,28 @@ export default function BookingForm() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     form_type: "academy",
-                    name: form.name,
-                    phone: form.mobile,
+                    name: cleanName,
+                    phone: cleanPhone,
                     email: form.email,
                     city: form.city,
                     course: form.course,
+                    service: form.course,
+                    location: form.city ? `Academy (${form.city})` : "KNK Academy Lucknow",
                     message: form.message,
                     hp_company_url: form.hp_company_url,
                     form_started_at: formStartedAt,
                 }),
             });
             const data = await res.json();
-            if (res.ok) {
-                setSubmitted(true);
+            if (res.ok && data.success) {
+                const queryParams = new URLSearchParams({
+                    bookingId: data.bookingId ? String(data.bookingId) : "",
+                    service: form.course || "Academy Course",
+                    name: form.name.trim(),
+                    date: new Date().toISOString().split("T")[0],
+                    location: form.city ? `Academy (${form.city})` : "KNK Academy Lucknow",
+                });
+                router.push(`/thank-you?${queryParams.toString()}`);
             } else {
                 setError(data.error || "Failed to submit application. Please try again.");
             }
@@ -140,9 +169,10 @@ export default function BookingForm() {
                         onChange={handleChange}
                         required
                         type="tel"
+                        maxLength={13}
                         className="w-full bg-[#fbf7f0] border rounded-xl px-4 py-3 font-['Inter'] text-[13.5px] outline-none transition-all focus:border-[#b58a52] focus:bg-white"
                         style={{ borderColor: LINE, color: INK }}
-                        placeholder="+91 98765 43210"
+                        placeholder="10-13 digit mobile number"
                     />
                 </div>
 

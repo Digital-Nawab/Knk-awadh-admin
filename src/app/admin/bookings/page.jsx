@@ -87,6 +87,7 @@ export default function AdminBookingsPage() {
             case "popup_modal":
                 return { label: "Popup Modal", badge: "bg-purple-100 text-purple-800" };
             case "makeup":
+            case "makeup_page_booking":
                 return { label: "Bridal Makeup", badge: "bg-rose-100 text-rose-800" };
             case "academy":
                 return { label: "Academy Admission", badge: "bg-blue-100 text-blue-800" };

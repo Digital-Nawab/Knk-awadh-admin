@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 /* ---------- Shared style tokens ---------- */
 
@@ -277,35 +278,100 @@ function SectionHeading({ eyebrow, line1, line2, center = false, size = "lg" }) 
 /* ---------- Booking form ---------- */
 
 function BookingForm() {
-    const [submitted, setSubmitted] = useState(false);
-    const [form, setForm] = useState({ name: "", email: "", mobile: "", city: "", course: "", message: "" });
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
+    const [formStartedAt] = useState(Date.now());
+    const [form, setForm] = useState({ name: "", email: "", mobile: "", city: "", course: "", message: "", hp_company_url: "" });
 
     function handleChange(e) {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        let sanitizedValue = value;
+        if (name === "name") {
+            sanitizedValue = value.replace(/[^a-zA-Z\s]/g, "");
+        } else if (name === "mobile") {
+            sanitizedValue = value.replace(/\D/g, "").slice(0, 13);
+        }
+        setForm((prev) => ({ ...prev, [name]: sanitizedValue }));
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
+        setErrorMsg("");
         if (!form.name || !form.mobile || !form.course) return;
-        setSubmitted(true);
-    }
 
-    if (submitted) {
-        return (
-            <div className="bg-[#fffdf9] border rounded-2xl p-10 text-center" style={{ borderColor: LINE }}>
-                <p className="font-['Cormorant_Garamond'] text-2xl font-medium mb-2" style={{ color: INK }}>
-                    Request received.
-                </p>
-                <p className="font-['Inter'] text-[13px]" style={{ color: MUTED }}>
-                    Our academy team will call you shortly to confirm your admission slot.
-                </p>
-            </div>
-        );
+        const cleanName = form.name.replace(/[^a-zA-Z\s]/g, "").trim();
+        if (!cleanName || cleanName.length < 2) {
+            setErrorMsg("Please enter your name (alphabets only, no numbers or special characters).");
+            return;
+        }
+
+        const cleanPhone = form.mobile.replace(/\D/g, "");
+        if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
+            setErrorMsg("Please enter a valid contact number (10 to 13 digits, numbers only).");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const res = await fetch("/api/bookings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    form_type: "academy",
+                    name: form.name.trim(),
+                    phone: cleanPhone,
+                    email: form.email.trim() || null,
+                    city: form.city.trim() || null,
+                    course: form.course,
+                    service: form.course,
+                    location: form.city.trim() ? `Academy (${form.city.trim()})` : "KNK Academy Lucknow",
+                    message: form.message.trim() || null,
+                    hp_company_url: form.hp_company_url || null,
+                    form_started_at: formStartedAt,
+                }),
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                const queryParams = new URLSearchParams({
+                    bookingId: data.bookingId ? String(data.bookingId) : "",
+                    service: form.course || "Academy Course",
+                    name: form.name.trim(),
+                    date: new Date().toISOString().split("T")[0],
+                    location: form.city.trim() ? `Academy (${form.city.trim()})` : "KNK Academy Lucknow",
+                });
+                router.push(`/thank-you?${queryParams.toString()}`);
+            } else {
+                setErrorMsg(data.error || "Failed to submit request. Please try again.");
+            }
+        } catch {
+            setErrorMsg("Network error. Please try again or reach out via WhatsApp.");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
         <form onSubmit={handleSubmit} className="bg-[#fffdf9] border rounded-2xl p-8 md:p-10 grid sm:grid-cols-2 gap-5" style={{ borderColor: LINE }}>
+            {/* Honeypot */}
+            <input
+                type="text"
+                name="hp_company_url"
+                value={form.hp_company_url}
+                onChange={handleChange}
+                className="hidden"
+                tabIndex={-1}
+                autoComplete="off"
+            />
+
+            {errorMsg && (
+                <div className="sm:col-span-2">
+                    <p className="font-['Inter'] text-xs text-rose-600 bg-rose-50 border border-rose-200 px-4 py-2.5 rounded-lg">
+                        {errorMsg}
+                    </p>
+                </div>
+            )}
+
             <div className="sm:col-span-1">
                 <label className="font-['Inter'] text-[11px] tracking-[0.15em] uppercase mb-2 block" style={{ color: MUTED }}>Your Name *</label>
                 <input
@@ -318,10 +384,15 @@ function BookingForm() {
             <div className="sm:col-span-1">
                 <label className="font-['Inter'] text-[11px] tracking-[0.15em] uppercase mb-2 block" style={{ color: MUTED }}>Contact Number *</label>
                 <input
-                    name="mobile" value={form.mobile} onChange={handleChange} required
+                    name="mobile"
+                    type="tel"
+                    maxLength={13}
+                    value={form.mobile}
+                    onChange={handleChange}
+                    required
                     className="w-full bg-[#fbf7f0] border rounded-lg px-4 py-3 font-['Inter'] text-sm outline-none transition-colors"
                     style={{ borderColor: LINE, color: INK }}
-                    placeholder="+91"
+                    placeholder="10-13 digit number"
                 />
             </div>
             <div className="sm:col-span-1">
@@ -367,10 +438,11 @@ function BookingForm() {
             <div className="sm:col-span-2">
                 <button
                     type="submit"
-                    className="w-full sm:w-auto inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-10 py-4 rounded-full text-[#fbf7f0] transition-transform duration-300 hover:scale-105"
+                    disabled={loading}
+                    className="w-full sm:w-auto inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-10 py-4 rounded-full text-[#fbf7f0] transition-transform duration-300 hover:scale-105 disabled:opacity-60"
                     style={{ backgroundColor: GOLD }}
                 >
-                    Book An Appointment
+                    {loading ? "Submitting..." : "Book An Appointment"}
                 </button>
             </div>
         </form>

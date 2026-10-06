@@ -38,6 +38,22 @@ function LuxuryBooking({ data }) {
         const payload = Object.fromEntries(formData.entries());
         payload.form_type = "luxury_booking";
 
+        const cleanName = (payload.name || "").replace(/[^a-zA-Z\s]/g, "").trim();
+        if (!cleanName || cleanName.length < 2) {
+            setStatusMessage({ type: "error", text: "Please enter your full name (alphabets only, no numbers or special characters)." });
+            setLoading(false);
+            return;
+        }
+
+        const cleanPhone = (payload.phone || "").replace(/\D/g, "");
+        if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
+            setStatusMessage({ type: "error", text: "Please enter a valid mobile number (10 to 13 digits, numbers only)." });
+            setLoading(false);
+            return;
+        }
+        payload.name = cleanName;
+        payload.phone = cleanPhone;
+
         try {
             const res = await fetch("/api/bookings", {
                 method: "POST",
@@ -146,6 +162,9 @@ function LuxuryBooking({ data }) {
                                             type="text"
                                             required=""
                                             placeholder=" "
+                                            onInput={(e) => {
+                                                e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+                                            }}
                                             className="peer w-full border-0 border-b border-[#d6cec4] bg-transparent px-0 pb-3 pt-2 font-['Inter'] text-[13px] text-[#302a26] outline-none transition-all duration-300 focus:border-[#b58a52]"
                                         />
                                         <label
@@ -163,7 +182,11 @@ function LuxuryBooking({ data }) {
                                             name="phone"
                                             type="tel"
                                             required=""
+                                            maxLength={13}
                                             placeholder=" "
+                                            onInput={(e) => {
+                                                e.target.value = e.target.value.replace(/\D/g, "").slice(0, 13);
+                                            }}
                                             className="peer w-full border-0 border-b border-[#d6cec4] bg-transparent px-0 pb-3 pt-2 font-['Inter'] text-[13px] text-[#302a26] outline-none transition-all duration-300 focus:border-[#b58a52]"
                                         />
                                         <label

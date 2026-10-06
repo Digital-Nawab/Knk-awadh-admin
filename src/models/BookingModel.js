@@ -60,6 +60,8 @@ const BookingModel = {
         if (formType && formType !== "all") {
             if (formType === "contact_us" || formType === "contact") {
                 query += " AND (form_type = 'contact_us' OR form_type = 'contact')";
+            } else if (formType === "makeup" || formType === "makeup_page_booking") {
+                query += " AND (form_type = 'makeup' OR form_type = 'makeup_page_booking')";
             } else {
                 query += " AND form_type = ?";
                 params.push(formType);

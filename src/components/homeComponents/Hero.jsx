@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 function Hero({ initialHero = null }) {
+  const router = useRouter();
   const today = new Date().toISOString().split("T")[0];
   const [formStartedAt] = useState(Date.now());
   const [loading, setLoading] = useState(false);
@@ -67,6 +69,22 @@ function Hero({ initialHero = null }) {
     const payload = Object.fromEntries(formData.entries());
     payload.form_type = "hero_concierge";
 
+    const cleanName = (payload.name || "").replace(/[^a-zA-Z\s]/g, "").trim();
+    if (!cleanName || cleanName.length < 2) {
+      setStatusMessage({ type: "error", text: "Please enter your name (alphabets only, no numbers or special characters)." });
+      setLoading(false);
+      return;
+    }
+
+    const cleanPhone = (payload.phone || "").replace(/\D/g, "");
+    if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
+      setStatusMessage({ type: "error", text: "Please enter a valid mobile number (10 to 13 digits, numbers only)." });
+      setLoading(false);
+      return;
+    }
+    payload.name = cleanName;
+    payload.phone = cleanPhone;
+
     try {
       const res = await fetch("/api/bookings", {
         method: "POST",
@@ -74,9 +92,17 @@ function Hero({ initialHero = null }) {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data.success) {
         setStatusMessage({ type: "success", text: data.message || "Your appointment request has been reserved!" });
         e.target.reset();
+        const queryParams = new URLSearchParams({
+          bookingId: data.bookingId ? String(data.bookingId) : "",
+          service: payload.service || "Luxury Treatment",
+          name: payload.name || "",
+          date: payload.date || "",
+          location: payload.location || "",
+        });
+        router.push(`/thank-you?${queryParams.toString()}`);
       } else {
         setStatusMessage({ type: "error", text: data.error || "Failed to submit booking. Please call us." });
       }
@@ -301,6 +327,9 @@ function Hero({ initialHero = null }) {
                       name="name"
                       placeholder="Your name"
                       required=""
+                      onInput={(e) => {
+                        e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+                      }}
                       className="h-9 w-full border-0 border-b border-[#d8d0c6] bg-transparent px-0 pb-2 font-['Inter'] text-[11px] text-[#3e3833] placeholder-[#aaa19a] outline-none transition focus:border-[#b58a52]"
                     />
                   </div>
@@ -316,8 +345,12 @@ function Hero({ initialHero = null }) {
                       type="tel"
                       id="phone"
                       name="phone"
-                      placeholder="Mobile number"
+                      maxLength={13}
+                      placeholder="10-13 digit mobile number"
                       required=""
+                      onInput={(e) => {
+                        e.target.value = e.target.value.replace(/\D/g, "").slice(0, 13);
+                      }}
                       className="h-9 w-full border-0 border-b border-[#d8d0c6] bg-transparent px-0 pb-2 font-['Inter'] text-[11px] text-[#3e3833] placeholder-[#aaa19a] outline-none transition focus:border-[#b58a52]"
                     />
                   </div>

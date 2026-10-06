@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
     Sparkles, UserRound, GraduationCap, Camera, Wind, Scissors,
     Hand, Shirt, Layers, PenTool, Flower2, ChevronDown, ChevronLeft, ChevronRight,
@@ -25,27 +26,51 @@ const CATEGORY_ICON = {
 };
 
 function BookingModal({ open, onClose, courseTitle }) {
-    const [form, setForm] = useState({ name: "", email: "", mobile: "", city: "", course: "", message: "" });
+    const router = useRouter();
+    const [form, setForm] = useState({ name: "", email: "", mobile: "", city: "", course: "", message: "", hp_company_url: "" });
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
+    const [formStartedAt] = useState(Date.now());
 
     React.useEffect(() => {
         if (open) setForm((f) => ({ ...f, course: courseTitle || "" }));
     }, [open, courseTitle]);
 
     React.useEffect(() => {
-        if (!open) setSubmitted(false);
+        if (!open) {
+            setSubmitted(false);
+            setErrorMsg("");
+        }
     }, [open]);
 
     if (!open) return null;
 
     function handleChange(e) {
         const { name, value } = e.target;
-        setForm((f) => ({ ...f, [name]: value }));
+        let sanitizedValue = value;
+        if (name === "name") {
+            sanitizedValue = value.replace(/[^a-zA-Z\s]/g, "");
+        } else if (name === "mobile") {
+            sanitizedValue = value.replace(/\D/g, "").slice(0, 13);
+        }
+        setForm((f) => ({ ...f, [name]: sanitizedValue }));
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
+        setErrorMsg("");
+        const cleanName = form.name.replace(/[^a-zA-Z\s]/g, "").trim();
+        if (!cleanName || cleanName.length < 2) {
+            setErrorMsg("Please enter your name (alphabets only, no numbers or special characters).");
+            return;
+        }
+        const cleanPhone = form.mobile.replace(/\D/g, "");
+        if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 13) {
+            setErrorMsg("Please enter a valid mobile number (10 to 13 digits, numbers only).");
+            return;
+        }
+
         setLoading(true);
         try {
             const res = await fetch("/api/bookings", {
@@ -53,22 +78,34 @@ function BookingModal({ open, onClose, courseTitle }) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     form_type: "academy",
-                    name: form.name,
-                    phone: form.mobile,
-                    email: form.email,
-                    city: form.city,
+                    name: form.name.trim(),
+                    phone: cleanPhone,
+                    email: form.email.trim() || null,
+                    city: form.city.trim() || null,
                     course: form.course,
-                    message: form.message,
-                    form_started_at: Date.now(),
+                    service: form.course,
+                    location: form.city.trim() ? `Academy (${form.city.trim()})` : "KNK Academy Lucknow",
+                    message: form.message.trim() || null,
+                    hp_company_url: form.hp_company_url || null,
+                    form_started_at: formStartedAt,
                 }),
             });
-            if (res.ok) {
-                setSubmitted(true);
+            const data = await res.json();
+            if (res.ok && data.success) {
+                onClose();
+                const queryParams = new URLSearchParams({
+                    bookingId: data.bookingId ? String(data.bookingId) : "",
+                    service: form.course || "Academy Course",
+                    name: form.name.trim(),
+                    date: new Date().toISOString().split("T")[0],
+                    location: form.city.trim() ? `Academy (${form.city.trim()})` : "KNK Academy Lucknow",
+                });
+                router.push(`/thank-you?${queryParams.toString()}`);
             } else {
-                setSubmitted(true); // fallback graceful message
+                setErrorMsg(data.error || "Failed to submit booking. Please try again.");
             }
         } catch {
-            setSubmitted(true);
+            setErrorMsg("Network error. Please try again or contact us directly.");
         } finally {
             setLoading(false);
         }
@@ -126,6 +163,20 @@ function BookingModal({ open, onClose, courseTitle }) {
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="grid gap-3.5">
+                            <input
+                                type="text"
+                                name="hp_company_url"
+                                value={form.hp_company_url}
+                                onChange={handleChange}
+                                className="hidden"
+                                tabIndex={-1}
+                                autoComplete="off"
+                            />
+                            {errorMsg && (
+                                <p className="font-['Inter'] text-xs text-rose-600 bg-rose-50 border border-rose-200 px-3.5 py-2 rounded-lg">
+                                    {errorMsg}
+                                </p>
+                            )}
                             <div className="grid sm:grid-cols-2 gap-3.5">
                                 <div>
                                     <label className="block font-['Inter'] text-[10px] uppercase tracking-[0.16em] text-[#71665c] mb-1">
@@ -149,9 +200,10 @@ function BookingModal({ open, onClose, courseTitle }) {
                                         required
                                         type="tel"
                                         name="mobile"
+                                        maxLength={13}
                                         value={form.mobile}
                                         onChange={handleChange}
-                                        placeholder="+91 Mobile number"
+                                        placeholder="10-13 digit mobile number"
                                         className="w-full rounded-xl border bg-[#fbf7f0] px-4 py-2.5 font-['Inter'] text-[13px] outline-none transition-colors focus:border-[#b58a52]"
                                         style={{ borderColor: LINE, color: INK }}
                                     />

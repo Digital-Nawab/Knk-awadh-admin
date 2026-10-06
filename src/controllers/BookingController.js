@@ -65,9 +65,8 @@ export async function submitBooking(request) {
         }
 
         // ================= INPUT VALIDATION & SANITIZATION =================
-        const name = cleanString(body.name);
+        const rawName = cleanString(body.name);
         const rawPhone = cleanString(body.phone || body.mobile);
-        const cleanPhone = rawPhone.replace(/[^\d+]/g, "");
         const email = cleanString(body.email);
         const formType = cleanString(body.form_type || "luxury_booking");
         const isContactForm = formType === "contact_us" || formType === "contact";
@@ -79,12 +78,14 @@ export async function submitBooking(request) {
         const city = cleanString(body.city) || null;
         const message = cleanString(body.message || body.notes) || null;
 
-        if (!name || name.length < 2) {
-            return { status: 400, body: { error: "Please provide your full name." } };
+        if (!rawName || /[^a-zA-Z\s]/.test(rawName) || rawName.trim().length < 2) {
+            return { status: 400, body: { error: "Please provide a valid full name (alphabets only, no numbers or special characters)." } };
         }
+        const name = rawName.trim();
 
-        if (!cleanPhone || cleanPhone.length < 10) {
-            return { status: 400, body: { error: "Please enter a valid 10-digit phone number." } };
+        const cleanPhone = rawPhone.replace(/\D/g, "");
+        if (!rawPhone || /\D/.test(rawPhone.replace(/^\+/, "")) || cleanPhone.length < 10 || cleanPhone.length > 13) {
+            return { status: 400, body: { error: "Please enter a valid phone number (10 to 13 digits, numbers only)." } };
         }
 
         if (!serviceOrCourse) {
