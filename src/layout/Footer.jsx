@@ -58,7 +58,7 @@ function Footer() {
                     </svg>
                 </div>
 
-                <div className="relative max-w-7xl mx-auto px-5 sm:px-10 z-10">
+                <div className="relative max-w-7xl mx-auto px-5 sm:px-10 z-10 ">
                     {/* =========================================================================
                         MAIN STRUCTURED MULTI-COLUMN FOOTER
                         Mobile: 2 columns (Brand full width, Services & Explore side-by-side, Branches full width)
