@@ -149,6 +149,9 @@ function Footer() {
                                 <li>
                                     <Link href="/blog" className="hover:text-[#b58a52] transition-colors py-0.5 inline-block">Blog</Link>
                                 </li>
+                                {/* <li>
+                                    <Link href="/blog" className="hover:text-[#b58a52] transition-colors py-0.5 inline-block">Blog</Link>
+                                </li> */}
                                 <li>
                                     <Link href="/knk-interior" className="text-[#EAD9AE] hover:text-[#b58a52] transition-colors flex items-center gap-1 py-0.5">
                                         <span>KNK Interior</span>
