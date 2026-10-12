@@ -138,13 +138,14 @@ export default function AdminBookingsPage() {
             raw === "makeup_landing_page" ||
             raw === "landing_page" ||
             raw === "landing_page_bridal" ||
-            raw === "bridal_landing"
+            raw === "bridal_landing" ||
+            raw === "makeup-artist-lucknow"
         ) {
             return {
                 channel: "bridal_landing",
                 channelName: "Bridal Landing Page",
                 badgeText: "Bridal Landing Page",
-                path: "/makeup-landing-page",
+                path: "/makeup-artist-lucknow",
                 badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
                 borderAccent: "border-l-rose-500",
             };
@@ -155,13 +156,14 @@ export default function AdminBookingsPage() {
             raw === "salon_landing_page" ||
             raw === "salon_landing_modal" ||
             raw === "salon-landing-page" ||
-            raw === "salon_landing"
+            raw === "salon_landing" ||
+            raw === "salon-services-lucknow"
         ) {
             return {
                 channel: "salon_landing",
                 channelName: "Salon Landing Page",
                 badgeText: "Salon Landing Page",
-                path: "/salon-landing-page",
+                path: "/salon-services-lucknow",
                 badgeClass: "bg-amber-50 text-amber-800 border-amber-200",
                 borderAccent: "border-l-amber-500",
             };
@@ -290,7 +292,7 @@ export default function AdminBookingsPage() {
                             Bridal Landing
                         </span>
                         <span className="text-[10px] font-mono text-muted">
-                            /makeup-landing-page
+                            /makeup-artist-lucknow
                         </span>
                     </div>
                     <p className="font-display text-3xl font-bold text-rose-700 mt-2">
@@ -315,7 +317,7 @@ export default function AdminBookingsPage() {
                             Salon Landing
                         </span>
                         <span className="text-[10px] font-mono text-muted">
-                            /salon-landing-page
+                            /salon-services-lucknow
                         </span>
                     </div>
                     <p className="font-display text-3xl font-bold text-amber-800 mt-2">

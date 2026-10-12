@@ -58,12 +58,12 @@ const BookingModel = {
         }
 
         if (formType && formType !== "all") {
-            if (formType === "bridal_landing" || formType === "bridal_landing_page" || formType === "landing-page" || formType === "makeup-landing-page" || formType === "makeup_landing_page") {
-                query += " AND (form_type = 'bridal_landing_page' OR form_type = 'bridal_landing_modal' OR form_type = 'makeup_landing_page' OR form_type = 'landing_page' OR form_type = 'landing_page_bridal')";
-            } else if (formType === "salon_landing" || formType === "salon_landing_page" || formType === "salon-landing-page") {
-                query += " AND (form_type = 'salon_landing_page' OR form_type = 'salon_landing_modal' OR form_type = 'salon-landing-page')";
+            if (formType === "bridal_landing" || formType === "bridal_landing_page" || formType === "landing-page" || formType === "makeup-landing-page" || formType === "makeup_landing_page" || formType === "makeup-artist-lucknow") {
+                query += " AND (form_type = 'bridal_landing_page' OR form_type = 'bridal_landing_modal' OR form_type = 'makeup_landing_page' OR form_type = 'landing_page' OR form_type = 'landing_page_bridal' OR form_type = 'makeup-artist-lucknow' OR form_type = 'makeup-landing-page')";
+            } else if (formType === "salon_landing" || formType === "salon_landing_page" || formType === "salon-landing-page" || formType === "salon-services-lucknow") {
+                query += " AND (form_type = 'salon_landing_page' OR form_type = 'salon_landing_modal' OR form_type = 'salon-landing-page' OR form_type = 'salon-services-lucknow')";
             } else if (formType === "website") {
-                query += " AND form_type NOT IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page')";
+                query += " AND form_type NOT IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page', 'makeup-artist-lucknow', 'salon-services-lucknow')";
             } else if (formType === "contact_us" || formType === "contact") {
                 query += " AND (form_type = 'contact_us' OR form_type = 'contact')";
             } else if (formType === "makeup" || formType === "makeup_page_booking") {
@@ -110,9 +110,9 @@ const BookingModel = {
         const [pendingRows] = await db.query("SELECT COUNT(*) as pending FROM bookings WHERE status = 'pending'");
         const [confirmedRows] = await db.query("SELECT COUNT(*) as confirmed FROM bookings WHERE status = 'confirmed'");
         const [todayRows] = await db.query("SELECT COUNT(*) as today FROM bookings WHERE DATE(created_at) = CURDATE()");
-        const [bridalRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal')");
-        const [salonRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('salon_landing_page', 'salon_landing_modal', 'salon-landing-page')");
-        const [websiteRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type NOT IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page')");
+        const [bridalRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'makeup-artist-lucknow', 'makeup-landing-page')");
+        const [salonRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('salon_landing_page', 'salon_landing_modal', 'salon-landing-page', 'salon-services-lucknow')");
+        const [websiteRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type NOT IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page', 'makeup-artist-lucknow', 'salon-services-lucknow')");
 
         return {
             total: totalRows[0]?.total || 0,

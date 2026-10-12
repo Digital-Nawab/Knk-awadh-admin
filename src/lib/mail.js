@@ -12,10 +12,10 @@ const FORM_NAMES = {
     academy_booking: "Academy Masterclass Booking",
     academy_hero_inquiry: "Academy Hero Inquiry",
     modal_booking: "Quick Appointment Modal",
-    bridal_landing_page: "Bridal Landing Page (/landing-page)",
-    bridal_landing_modal: "Bridal Landing Page Modal (/landing-page)",
-    salon_landing_page: "Salon Landing Page (/salon-landing-page)",
-    salon_landing_modal: "Salon Landing Page Modal (/salon-landing-page)",
+    bridal_landing_page: "Bridal Landing Page (/makeup-artist-lucknow)",
+    bridal_landing_modal: "Bridal Landing Page Modal (/makeup-artist-lucknow)",
+    salon_landing_page: "Salon Landing Page (/salon-services-lucknow)",
+    salon_landing_modal: "Salon Landing Page Modal (/salon-services-lucknow)",
 };
 
 function formatFormName(formType) {

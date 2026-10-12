@@ -159,7 +159,7 @@ export default function BookingModal() {
       }
 
       closeBookingModal();
-      router.push("/salon-landing-page/thank-you");
+      router.push("/salon-services-lucknow/thank-you");
     } catch (err) {
       console.error("Booking API error:", err);
       setIsSubmitting(false);
@@ -182,7 +182,7 @@ export default function BookingModal() {
       }
 
       closeBookingModal();
-      router.push("/salon-landing-page/thank-you");
+      router.push("/salon-services-lucknow/thank-you");
     }
   };
 

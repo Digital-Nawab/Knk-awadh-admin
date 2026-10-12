@@ -9,7 +9,11 @@ import { useBookingModal } from "./BookingContext";
 
 export default function BridalNavbar({ onOpenSearch }) {
   const pathname = usePathname();
-  const isLandingPage = pathname === "/salon-landing-page" || pathname === "/salon-landing-page/";
+  const isLandingPage =
+    pathname === "/salon-services-lucknow" ||
+    pathname === "/salon-services-lucknow/" ||
+    pathname === "/salon-landing-page" ||
+    pathname === "/salon-landing-page/";
   const { openBookingModal } = useBookingModal();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -24,21 +28,21 @@ export default function BridalNavbar({ onOpenSearch }) {
   }, []);
 
   const navLinks = [
-    { label: "Home", href: isLandingPage ? "#hero" : "/salon-landing-page" },
-    { label: "Services", href: isLandingPage ? "#services" : "/salon-landing-page#services", hasDropdown: true },
-    { label: "About", href: isLandingPage ? "#why-choose" : "/salon-landing-page#why-choose" },
-    { label: "Gallery", href: isLandingPage ? "#portfolio" : "/salon-landing-page#portfolio" },
-    { label: "Locations", href: isLandingPage ? "#locations" : "/salon-landing-page#locations" },
-    { label: "Contact", href: isLandingPage ? "#booking" : "/salon-landing-page#booking" },
+    { label: "Home", href: isLandingPage ? "#hero" : "/salon-services-lucknow" },
+    { label: "Services", href: isLandingPage ? "#services" : "/salon-services-lucknow#services", hasDropdown: true },
+    { label: "About", href: isLandingPage ? "#why-choose" : "/salon-services-lucknow#why-choose" },
+    { label: "Gallery", href: isLandingPage ? "#portfolio" : "/salon-services-lucknow#portfolio" },
+    { label: "Locations", href: isLandingPage ? "#locations" : "/salon-services-lucknow#locations" },
+    { label: "Contact", href: isLandingPage ? "#booking" : "/salon-services-lucknow#booking" },
   ];
 
   const serviceDropdown = [
-    { title: "Hair Services", href: isLandingPage ? "#services" : "/salon-landing-page#services" },
-    { title: "Makeup Services", href: isLandingPage ? "#services" : "/salon-landing-page#services" },
-    { title: "Skin and Facial", href: isLandingPage ? "#services" : "/salon-landing-page#services" },
-    { title: "Nail Services", href: isLandingPage ? "#services" : "/salon-landing-page#services" },
-    { title: "Beauty Services", href: isLandingPage ? "#services" : "/salon-landing-page#services" },
-    { title: "Men's Grooming", href: isLandingPage ? "#services" : "/salon-landing-page#services" },
+    { title: "Hair Services", href: isLandingPage ? "#services" : "/salon-services-lucknow#services" },
+    { title: "Makeup Services", href: isLandingPage ? "#services" : "/salon-services-lucknow#services" },
+    { title: "Skin and Facial", href: isLandingPage ? "#services" : "/salon-services-lucknow#services" },
+    { title: "Nail Services", href: isLandingPage ? "#services" : "/salon-services-lucknow#services" },
+    { title: "Beauty Services", href: isLandingPage ? "#services" : "/salon-services-lucknow#services" },
+    { title: "Men's Grooming", href: isLandingPage ? "#services" : "/salon-services-lucknow#services" },
   ];
 
   return (
@@ -53,7 +57,7 @@ export default function BridalNavbar({ onOpenSearch }) {
         <div className="flex items-center justify-between h-20">
           {/* Brand Logo */}
           <Link
-            href={isLandingPage ? "#hero" : "/salon-landing-page"}
+            href={isLandingPage ? "#hero" : "/salon-services-lucknow"}
             className="group flex items-center focus:outline-none"
             aria-label="KNK Awadh Salon and Academy - Home"
           >
@@ -83,7 +87,7 @@ export default function BridalNavbar({ onOpenSearch }) {
                     type="button"
                     onClick={() => {
                       if (!isLandingPage) {
-                        window.location.href = "/salon-landing-page#services";
+                        window.location.href = "/salon-services-lucknow#services";
                         return;
                       }
                       const el = document.getElementById("services");

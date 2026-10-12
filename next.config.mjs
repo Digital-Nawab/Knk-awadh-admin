@@ -1,11 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-// Ensure static assets exist at both /landing-page and /makeup-landing-page for cached redirects
+// Ensure static assets exist across aliases
 try {
-  const srcDir = path.resolve('public/landing-page');
-  const destDir = path.resolve('public/makeup-landing-page');
-  if (fs.existsSync(srcDir)) {
+  const srcDir = path.resolve('public/makeup-landing-page');
+  const destDir = path.resolve('public/landing-page');
+  if (fs.existsSync(srcDir) && !fs.existsSync(destDir)) {
     fs.cpSync(srcDir, destDir, { recursive: true });
   }
 } catch (e) {
@@ -35,12 +35,32 @@ const nextConfig = {
       },
       {
         source: '/landing-page',
-        destination: '/makeup-landing-page',
+        destination: '/makeup-artist-lucknow',
         permanent: true,
       },
       {
         source: '/landing-page/thank-you',
-        destination: '/makeup-landing-page/thank-you',
+        destination: '/makeup-artist-lucknow/thank-you',
+        permanent: true,
+      },
+      {
+        source: '/makeup-landing-page',
+        destination: '/makeup-artist-lucknow',
+        permanent: true,
+      },
+      {
+        source: '/makeup-landing-page/thank-you',
+        destination: '/makeup-artist-lucknow/thank-you',
+        permanent: true,
+      },
+      {
+        source: '/salon-landing-page',
+        destination: '/salon-services-lucknow',
+        permanent: true,
+      },
+      {
+        source: '/salon-landing-page/thank-you',
+        destination: '/salon-services-lucknow/thank-you',
         permanent: true,
       },
       {

@@ -160,7 +160,7 @@ export default function BookingModal() {
       }
 
       closeBookingModal();
-      router.push("/makeup-landing-page/thank-you");
+      router.push("/makeup-artist-lucknow/thank-you");
     } catch (err) {
       console.error("Booking modal submission error:", err);
       setIsSubmitting(false);
@@ -183,7 +183,7 @@ export default function BookingModal() {
       }
 
       closeBookingModal();
-      router.push("/makeup-landing-page/thank-you");
+      router.push("/makeup-artist-lucknow/thank-you");
     }
   };
 

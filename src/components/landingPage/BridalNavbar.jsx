@@ -9,7 +9,11 @@ import { useBookingModal } from "@/components/landingPage/BookingContext";
 
 export default function BridalNavbar({ onOpenSearch }) {
   const pathname = usePathname();
-  const isLandingPage = pathname === "/makeup-landing-page" || pathname === "/landing-page";
+  const isLandingPage =
+    pathname === "/makeup-artist-lucknow" ||
+    pathname === "/makeup-artist-lucknow/" ||
+    pathname === "/makeup-landing-page" ||
+    pathname === "/landing-page";
   const { openBookingModal } = useBookingModal();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -24,19 +28,19 @@ export default function BridalNavbar({ onOpenSearch }) {
   }, []);
 
   const navLinks = [
-    { label: "Home", href: isLandingPage ? "#hero" : "/makeup-landing-page" },
-    { label: "Services", href: isLandingPage ? "#services" : "/makeup-landing-page#services", hasDropdown: true },
-    { label: "About", href: isLandingPage ? "#why-choose" : "/makeup-landing-page#why-choose" },
-    { label: "Gallery", href: isLandingPage ? "#portfolio" : "/makeup-landing-page#portfolio" },
-    { label: "Locations", href: isLandingPage ? "#locations" : "/makeup-landing-page#locations" },
-    { label: "Contact", href: isLandingPage ? "#booking" : "/makeup-landing-page#booking" },
+    { label: "Home", href: isLandingPage ? "#hero" : "/makeup-artist-lucknow" },
+    { label: "Services", href: isLandingPage ? "#services" : "/makeup-artist-lucknow#services", hasDropdown: true },
+    { label: "About", href: isLandingPage ? "#why-choose" : "/makeup-artist-lucknow#why-choose" },
+    { label: "Gallery", href: isLandingPage ? "#portfolio" : "/makeup-artist-lucknow#portfolio" },
+    { label: "Locations", href: isLandingPage ? "#locations" : "/makeup-artist-lucknow#locations" },
+    { label: "Contact", href: isLandingPage ? "#booking" : "/makeup-artist-lucknow#booking" },
   ];
 
   const serviceDropdown = [
-    { title: "HD Bridal Makeup", desc: "4K Camera-Ready Radiance", href: isLandingPage ? "#services" : "/makeup-landing-page#services" },
-    { title: "Airbrush Makeup", desc: "18-Hour Waterproof Perfection", href: isLandingPage ? "#services" : "/makeup-landing-page#services" },
-    { title: "Engagement & Sagan", desc: "Romantic Soft-Glam Look", href: isLandingPage ? "#services" : "/makeup-landing-page#services" },
-    { title: "Reception Glam", desc: "Regal Evening Artistry", href: isLandingPage ? "#services" : "/makeup-landing-page#services" },
+    { title: "HD Bridal Makeup", desc: "4K Camera-Ready Radiance", href: isLandingPage ? "#services" : "/makeup-artist-lucknow#services" },
+    { title: "Airbrush Makeup", desc: "18-Hour Waterproof Perfection", href: isLandingPage ? "#services" : "/makeup-artist-lucknow#services" },
+    { title: "Engagement & Sagan", desc: "Romantic Soft-Glam Look", href: isLandingPage ? "#services" : "/makeup-artist-lucknow#services" },
+    { title: "Reception Glam", desc: "Regal Evening Artistry", href: isLandingPage ? "#services" : "/makeup-artist-lucknow#services" },
   ];
 
   return (
@@ -51,7 +55,7 @@ export default function BridalNavbar({ onOpenSearch }) {
         <div className="flex items-center justify-between h-20">
           {/* Brand Logo */}
           <Link
-            href={isLandingPage ? "#hero" : "/makeup-landing-page"}
+            href={isLandingPage ? "#hero" : "/makeup-artist-lucknow"}
             className="group flex items-center focus:outline-none"
             aria-label="KNK Awadh Salon and Academy - Home"
           >
@@ -81,7 +85,7 @@ export default function BridalNavbar({ onOpenSearch }) {
                     type="button"
                     onClick={() => {
                       if (!isLandingPage) {
-                        window.location.href = "/makeup-landing-page#services";
+                        window.location.href = "/makeup-artist-lucknow#services";
                         return;
                       }
                       const el = document.getElementById("services");

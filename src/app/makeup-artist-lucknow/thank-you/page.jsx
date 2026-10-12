@@ -127,7 +127,7 @@ function BridalThankYouContent() {
                 {/* Action Buttons */}
                 <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 font-sans">
                     <Link
-                        href="/makeup-landing-page"
+                        href="/makeup-artist-lucknow"
                         className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#B3203F] hover:bg-[#8f152f] text-white text-xs font-semibold tracking-wider uppercase transition-all shadow-md cursor-pointer"
                     >
                         <ArrowLeft className="w-3.5 h-3.5" />

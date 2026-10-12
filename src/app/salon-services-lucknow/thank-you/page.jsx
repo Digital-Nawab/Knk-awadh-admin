@@ -112,7 +112,7 @@ function SalonThankYouContent() {
                 {/* Action Buttons */}
                 <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3 font-sans">
                     <Link
-                        href="/salon-landing-page"
+                        href="/salon-services-lucknow"
                         className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#191715] hover:bg-black text-white text-xs font-semibold tracking-wider uppercase transition-all shadow-md cursor-pointer"
                     >
                         <ArrowLeft className="w-3.5 h-3.5" />

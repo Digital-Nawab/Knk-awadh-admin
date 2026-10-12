@@ -8,7 +8,11 @@ import { useBookingModal } from "@/components/landingPage/BookingContext";
 
 export default function BridalFooter() {
   const pathname = usePathname();
-  const isLandingPage = pathname === "/makeup-landing-page" || pathname === "/landing-page";
+  const isLandingPage =
+    pathname === "/makeup-artist-lucknow" ||
+    pathname === "/makeup-artist-lucknow/" ||
+    pathname === "/makeup-landing-page" ||
+    pathname === "/landing-page";
   const { openBookingModal } = useBookingModal();
   const branches = [
     {
@@ -37,7 +41,7 @@ export default function BridalFooter() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 pb-5 sm:pb-6 border-b border-[#EAE2D5]">
           {/* Brand Info */}
           <div className="md:col-span-1 lg:col-span-3 space-y-2.5">
-            <Link href={isLandingPage ? "#hero" : "/makeup-landing-page"} className="inline-block group focus:outline-none">
+            <Link href={isLandingPage ? "#hero" : "/makeup-artist-lucknow"} className="inline-block group focus:outline-none">
               <div className="relative h-9 sm:h-11 w-24 sm:w-28 transition-transform duration-200 group-hover:scale-105">
                 <Image
                   src="/landing-page/images/logo.png"
@@ -99,27 +103,27 @@ export default function BridalFooter() {
               </h4>
               <ul className="space-y-1 sm:space-y-1.5 text-[#7A726B] text-[11px] sm:text-xs">
                 <li>
-                  <Link href={isLandingPage ? "#hero" : "/makeup-landing-page"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#hero" : "/makeup-artist-lucknow"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     Home
                   </Link>
                 </li>
                 <li>
-                  <Link href={isLandingPage ? "#services" : "/makeup-landing-page#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#services" : "/makeup-artist-lucknow#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     Services
                   </Link>
                 </li>
                 <li>
-                  <Link href={isLandingPage ? "#why-choose" : "/makeup-landing-page#why-choose"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#why-choose" : "/makeup-artist-lucknow#why-choose"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     About
                   </Link>
                 </li>
                 <li>
-                  <Link href={isLandingPage ? "#portfolio" : "/makeup-landing-page#portfolio"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#portfolio" : "/makeup-artist-lucknow#portfolio"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     Gallery
                   </Link>
                 </li>
                 <li>
-                  <Link href={isLandingPage ? "#locations" : "/makeup-landing-page#locations"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#locations" : "/makeup-artist-lucknow#locations"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     Locations
                   </Link>
                 </li>
@@ -133,7 +137,7 @@ export default function BridalFooter() {
                   </button>
                 </li>
                 <li>
-                  <Link href={isLandingPage ? "#booking" : "/makeup-landing-page#booking"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#booking" : "/makeup-artist-lucknow#booking"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     Contact &amp; FAQs
                   </Link>
                 </li>
@@ -147,27 +151,27 @@ export default function BridalFooter() {
               </h4>
               <ul className="space-y-1 sm:space-y-1.5 text-[#7A726B] text-[11px] sm:text-xs">
                 <li>
-                  <Link href={isLandingPage ? "#services" : "/makeup-landing-page#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#services" : "/makeup-artist-lucknow#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     HD Bridal Makeup
                   </Link>
                 </li>
                 <li>
-                  <Link href={isLandingPage ? "#services" : "/makeup-landing-page#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#services" : "/makeup-artist-lucknow#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     Airbrush Makeup
                   </Link>
                 </li>
                 <li>
-                  <Link href={isLandingPage ? "#services" : "/makeup-landing-page#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#services" : "/makeup-artist-lucknow#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     Engagement &amp; Sagan Look
                   </Link>
                 </li>
                 <li>
-                  <Link href={isLandingPage ? "#services" : "/makeup-landing-page#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#services" : "/makeup-artist-lucknow#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     Reception &amp; Cocktail Glam
                   </Link>
                 </li>
                 <li>
-                  <Link href={isLandingPage ? "#services" : "/makeup-landing-page#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
+                  <Link href={isLandingPage ? "#services" : "/makeup-artist-lucknow#services"} className="hover:text-[#B3203F] transition-colors inline-block py-0.5">
                     Pre-Bridal Skin Care Rituals
                   </Link>
                 </li>

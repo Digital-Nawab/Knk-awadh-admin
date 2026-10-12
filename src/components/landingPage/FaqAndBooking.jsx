@@ -140,7 +140,7 @@ export default function FaqAndBooking() {
         }
       }
 
-      router.push("/makeup-landing-page/thank-you");
+      router.push("/makeup-artist-lucknow/thank-you");
     } catch (err) {
       console.error("Booking submission error:", err);
       setIsSubmitting(false);
@@ -162,7 +162,7 @@ export default function FaqAndBooking() {
         }
       }
 
-      router.push("/makeup-landing-page/thank-you");
+      router.push("/makeup-artist-lucknow/thank-you");
     }
   };
 
