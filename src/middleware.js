@@ -21,8 +21,8 @@ export async function middleware(req) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    if (pathname === "/login" && isValid) {
-        return NextResponse.redirect(new URL("/admin", req.url));
+    if ((pathname === "/login" || pathname === "/admin") && isValid) {
+        return NextResponse.redirect(new URL("/admin/dashboard", req.url));
     }
 
     const res = NextResponse.next();
@@ -35,5 +35,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-    matcher: ["/admin/:path*", "/login"],
+    matcher: ["/admin", "/admin/:path*", "/login"],
 };

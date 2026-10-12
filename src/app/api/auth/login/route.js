@@ -10,8 +10,6 @@ export async function POST(req) {
             return NextResponse.json({ error: result.error }, { status: result.status });
         }
 
-        // Only set secure=true if request is actually served over HTTPS.
-        // On live servers accessed via plain HTTP (e.g. http://IP:3000), browsers reject cookies with secure=true.
         const isHttps =
             req.headers.get("x-forwarded-proto") === "https" ||
             req.nextUrl.protocol === "https:";

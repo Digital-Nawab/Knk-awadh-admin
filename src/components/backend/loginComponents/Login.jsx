@@ -29,8 +29,8 @@ export default function Login() {
             return;
         }
 
-        router.push("/admin/dashboard");
-        router.refresh();
+        // Full navigation ensures cookie is immediately sent by browser on subsequent document request
+        window.location.href = "/admin/dashboard";
     };
 
     return (
