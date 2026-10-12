@@ -20,7 +20,7 @@ export const authController = {
 
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || "knk_awadh_jwt_secret_key_2026_secure",
             { expiresIn: "7d" }
         );
 

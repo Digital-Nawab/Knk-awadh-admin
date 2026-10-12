@@ -16,9 +16,21 @@
   --color-rose: #E8CFC6;
   --color-primary: #241D18;
 
+  --color-crimson: #b3203f;
+  --color-crimson-dark: #8f152f;
+  --color-noir: #0e0d0c;
+  --color-noir-soft: #171513;
+  --color-noir-card: #1c1a17;
+  --color-sand: #f5f0e8;
+  --color-canvas: #faf8f5;
+  --color-border-subtle: #eae4d9;
+
   /* Fonts */
   --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
   --font-sans: var(--font-inter), "Inter", Jost, ui-sans-serif, sans-serif;
+  --font-serif: var(--font-serif), "Cormorant Garamond", "Playfair Display", Georgia, serif;
+  --font-playfair: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --font-script: var(--font-script), "Alex Brush", "Great Vibes", cursive;
 
   /* Shadows */
   --shadow-luxe: 0 24px 60px -24px rgba(201, 162, 74, 0.45);
@@ -52,4 +64,52 @@
 
 @utility bg-gradient-cream {
   background-image: radial-gradient(120% 90% at 80% 0%, rgba(238, 220, 180, 0.55), transparent 60%);
+}
+
+/* Editorial responsive typography utilities for Landing Page */
+.font-editorial {
+  font-family: var(--font-serif, "Cormorant Garamond", Georgia, serif);
+}
+
+.font-playfair {
+  font-family: var(--font-playfair, "Playfair Display", Georgia, serif);
+}
+
+.font-script {
+  font-family: var(--font-script, "Alex Brush", "Great Vibes", cursive);
+}
+
+.text-editorial-hero {
+  font-size: clamp(2.5rem, 6.2vw, 5.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.text-editorial-headline {
+  font-size: clamp(2rem, 4.2vw, 3.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.text-editorial-subhead {
+  font-size: clamp(1.5rem, 2.8vw, 2.5rem);
+  line-height: 1.2;
+}
+
+.tracking-editorial {
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.tracking-editorial-wide {
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+/* Subtle image hover zoom */
+.img-luxury-zoom {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .img-luxury-zoom {
+  transform: scale(1.05);
 }

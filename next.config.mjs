@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+// Reload trigger: 18:57:45
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -17,6 +18,16 @@ const nextConfig = {
       {
         source: '/men-grooming/:path*',
         destination: '/services/men-grooming',
+        permanent: true,
+      },
+      {
+        source: '/landing-page',
+        destination: '/makeup-landing-page',
+        permanent: true,
+      },
+      {
+        source: '/landing-page/:path*',
+        destination: '/makeup-landing-page/:path*',
         permanent: true,
       },
       {

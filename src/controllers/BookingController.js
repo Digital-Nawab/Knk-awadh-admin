@@ -1,4 +1,6 @@
 import BookingModel from "@/models/BookingModel";
+import { sendLeadEmail } from "@/lib/mail";
+// Recompiled at 18:40:00
 
 // In-memory IP submission rate limiter (resets every 15 mins)
 const submissionTracker = new Map();
@@ -115,6 +117,27 @@ export async function submitBooking(request) {
             message: message || null,
             ipAddress: clientIp,
         });
+
+        // Send email notification to tanukashyap889@gmail.com
+        try {
+            await sendLeadEmail({
+                id: booking.id,
+                formType,
+                name,
+                phone: cleanPhone,
+                email: email || null,
+                serviceOrCourse: serviceOrCourse || null,
+                branchLocation: branchLocation || null,
+                bookingDate: bookingDate || null,
+                bookingTime: bookingTime || null,
+                guests,
+                city: city || null,
+                message: message || null,
+                ipAddress: clientIp,
+            });
+        } catch (emailErr) {
+            console.error("Non-blocking lead email notification error:", emailErr);
+        }
 
         return {
             status: 201,

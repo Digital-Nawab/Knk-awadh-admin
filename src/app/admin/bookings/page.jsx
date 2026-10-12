@@ -2,16 +2,26 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { Search, RefreshCw, Copy, Check, X, ExternalLink } from "lucide-react";
 
 export default function AdminBookingsPage() {
     const [bookings, setBookings] = useState([]);
-    const [stats, setStats] = useState({ total: 0, pending: 0, confirmed: 0, today: 0 });
+    const [stats, setStats] = useState({
+        total: 0,
+        pending: 0,
+        confirmed: 0,
+        today: 0,
+        bridalLanding: 0,
+        salonLanding: 0,
+        website: 0,
+    });
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [typeFilter, setTypeFilter] = useState("all");
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [updatingId, setUpdatingId] = useState(null);
+    const [copiedPhoneId, setCopiedPhoneId] = useState(null);
 
     const fetchBookings = useCallback(async () => {
         try {
@@ -25,7 +35,17 @@ export default function AdminBookingsPage() {
             if (res.ok) {
                 const data = await res.json();
                 setBookings(data.bookings || []);
-                setStats(data.stats || { total: 0, pending: 0, confirmed: 0, today: 0 });
+                setStats(
+                    data.stats || {
+                        total: 0,
+                        pending: 0,
+                        confirmed: 0,
+                        today: 0,
+                        bridalLanding: 0,
+                        salonLanding: 0,
+                        website: 0,
+                    }
+                );
             }
         } catch (err) {
             console.error("Error fetching bookings:", err);
@@ -56,6 +76,25 @@ export default function AdminBookingsPage() {
                 if (selectedBooking && selectedBooking.id === id) {
                     setSelectedBooking((prev) => ({ ...prev, status: newStatus }));
                 }
+                setStats((prev) => {
+                    const prevStatus = bookings.find((b) => b.id === id)?.status || "pending";
+                    if (prevStatus === newStatus) return prev;
+                    return {
+                        ...prev,
+                        pending:
+                            newStatus === "pending"
+                                ? prev.pending + 1
+                                : prevStatus === "pending"
+                                ? Math.max(0, prev.pending - 1)
+                                : prev.pending,
+                        confirmed:
+                            newStatus === "confirmed"
+                                ? prev.confirmed + 1
+                                : prevStatus === "confirmed"
+                                ? Math.max(0, prev.confirmed - 1)
+                                : prev.confirmed,
+                    };
+                });
             }
         } catch (err) {
             console.error("Error updating status:", err);
@@ -71,202 +110,440 @@ export default function AdminBookingsPage() {
             if (res.ok) {
                 setBookings((prev) => prev.filter((b) => b.id !== id));
                 if (selectedBooking?.id === id) setSelectedBooking(null);
+                setStats((prev) => ({
+                    ...prev,
+                    total: Math.max(0, prev.total - 1),
+                }));
             }
         } catch (err) {
             console.error("Error deleting booking:", err);
         }
     };
 
-    const formatFormType = (type) => {
-        switch (type) {
-            case "hero_concierge":
-                return { label: "Hero Concierge", badge: "bg-amber-100 text-amber-800" };
-            case "luxury_booking":
-                return { label: "Luxury Studio", badge: "bg-stone-100 text-stone-800" };
-            case "modal_booking":
-            case "popup_modal":
-                return { label: "Popup Modal", badge: "bg-purple-100 text-purple-800" };
-            case "makeup":
-            case "makeup_page_booking":
-                return { label: "Bridal Makeup", badge: "bg-rose-100 text-rose-800" };
-            case "academy":
-                return { label: "Academy Admission", badge: "bg-blue-100 text-blue-800" };
-            case "contact_us":
-            case "contact":
-                return { label: "Contact Us", badge: "bg-teal-100 text-teal-800" };
-            case "about_page_booking":
-            case "about":
-                return { label: "About Page", badge: "bg-orange-100 text-orange-800" };
-            default:
-                return { label: type || "General", badge: "bg-gray-100 text-gray-800" };
-        }
+    const copyPhoneToClipboard = (id, phone) => {
+        if (!phone) return;
+        navigator.clipboard.writeText(phone);
+        setCopiedPhoneId(id);
+        setTimeout(() => setCopiedPhoneId(null), 2000);
     };
+
+    // Clean, clear categorization without emojis or clutter
+    const formatFormType = useCallback((type) => {
+        const raw = (type || "").toLowerCase().trim();
+
+        // 1. Bridal Landing Page leads
+        if (
+            raw === "bridal_landing_page" ||
+            raw === "bridal_landing_modal" ||
+            raw === "makeup_landing_page" ||
+            raw === "landing_page" ||
+            raw === "landing_page_bridal" ||
+            raw === "bridal_landing"
+        ) {
+            return {
+                channel: "bridal_landing",
+                channelName: "Bridal Landing Page",
+                badgeText: "Bridal Landing Page",
+                path: "/makeup-landing-page",
+                badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
+                borderAccent: "border-l-rose-500",
+            };
+        }
+
+        // 2. Salon Landing Page leads
+        if (
+            raw === "salon_landing_page" ||
+            raw === "salon_landing_modal" ||
+            raw === "salon-landing-page" ||
+            raw === "salon_landing"
+        ) {
+            return {
+                channel: "salon_landing",
+                channelName: "Salon Landing Page",
+                badgeText: "Salon Landing Page",
+                path: "/salon-landing-page",
+                badgeClass: "bg-amber-50 text-amber-800 border-amber-200",
+                borderAccent: "border-l-amber-500",
+            };
+        }
+
+        // 3. Main Website Leads
+        let originName = "Main Website";
+        let path = "/";
+
+        if (raw === "hero_concierge") {
+            originName = "Website Concierge";
+            path = "/#concierge";
+        } else if (raw === "luxury_booking") {
+            originName = "Luxury Studio Form";
+            path = "/#booking";
+        } else if (raw === "modal_booking" || raw === "popup_modal") {
+            originName = "Website Popup";
+            path = "/";
+        } else if (raw === "makeup" || raw === "makeup_page_booking") {
+            originName = "Bridal Makeup Page";
+            path = "/makeup";
+        } else if (raw === "academy") {
+            originName = "Academy Admission";
+            path = "/academy";
+        } else if (raw === "contact_us" || raw === "contact") {
+            originName = "Contact Us Page";
+            path = "/contact-us";
+        } else if (raw === "about_page_booking" || raw === "about") {
+            originName = "About Page";
+            path = "/about";
+        } else if (type) {
+            originName = `Website: ${type.replace(/_/g, " ")}`;
+        }
+
+        return {
+            channel: "website",
+            channelName: "Main Website",
+            badgeText: originName,
+            path: path,
+            badgeClass: "bg-stone-100 text-stone-700 border-stone-200",
+            borderAccent: "border-l-stone-400",
+        };
+    }, []);
 
     const formatStatusBadge = (status) => {
         switch (status) {
             case "confirmed":
-                return "bg-emerald-100 text-emerald-800 border-emerald-300";
+                return "bg-emerald-50 text-emerald-700 border-emerald-200";
             case "completed":
-                return "bg-blue-100 text-blue-800 border-blue-300";
+                return "bg-blue-50 text-blue-700 border-blue-200";
             case "cancelled":
-                return "bg-red-100 text-red-800 border-red-300";
+                return "bg-rose-50 text-rose-700 border-rose-200";
             default:
-                return "bg-amber-100 text-amber-800 border-amber-300";
+                return "bg-amber-50 text-amber-700 border-amber-200";
         }
     };
 
+    const isFiltered = typeFilter !== "all" || statusFilter !== "all" || search.trim() !== "";
+
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#e2dbd2] pb-6">
+        <div className="max-w-7xl mx-auto space-y-5">
+            {/* Header: Clean & Minimal */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e2dbd2] pb-5">
                 <div>
-                    <span className="font-sans text-[11px] tracking-[0.25em] uppercase text-gold-deep font-semibold">
-                        Lead Management
-                    </span>
-                    <h1 className="font-display text-4xl italic text-ink mt-1">
+                    <h1 className="font-display text-3xl text-ink font-semibold">
                         Bookings &amp; Inquiries
                     </h1>
                     <p className="font-sans text-xs text-muted mt-1">
-                        Live reservations from Concierge, Bridal Studio, and Beauty Academy.
+                        Live lead stream from Main Website, Bridal Landing Page, and Salon Landing Page.
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+
+                <div className="flex items-center gap-2">
                     <button
+                        type="button"
                         onClick={fetchBookings}
-                        className="px-4 py-2 border border-border bg-white rounded-lg font-sans text-xs tracking-wider uppercase text-ink hover:border-gold hover:text-gold-deep transition-colors"
+                        disabled={loading}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-white hover:bg-[#faf7f2] text-ink border border-border shadow-2xs transition-colors cursor-pointer disabled:opacity-60"
                     >
-                        ↻ Refresh
+                        <RefreshCw className={`w-3.5 h-3.5 text-muted ${loading ? "animate-spin" : ""}`} />
+                        <span>{loading ? "Updating..." : "Refresh"}</span>
                     </button>
                 </div>
             </div>
 
-            {/* Metrics cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white p-5 rounded-xl border border-[#e8e2d5] shadow-sm">
-                    <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-muted">Today's Leads</p>
-                    <p className="font-display text-3xl italic text-ink mt-2">{stats.today}</p>
+            {/* Clean Metrics: Exactly 4 Cards in ONE Row */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                {/* 1. Total Leads */}
+                <div
+                    onClick={() => setTypeFilter("all")}
+                    className={`p-4 rounded-xl border bg-white transition-all cursor-pointer ${
+                        typeFilter === "all"
+                            ? "border-ink shadow-xs ring-1 ring-ink"
+                            : "border-[#e8e2d5] hover:border-[#c9a24a]"
+                    }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-[11px] uppercase tracking-wider font-semibold text-muted">
+                            Total Leads
+                        </span>
+                        {stats.pending > 0 && (
+                            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                                {stats.pending} pending
+                            </span>
+                        )}
+                    </div>
+                    <p className="font-display text-3xl font-bold text-ink mt-2">
+                        {stats.total || 0}
+                    </p>
+                    <p className="text-[11px] text-muted mt-1">
+                        All channels combined
+                    </p>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-[#e8e2d5] shadow-sm">
-                    <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-amber-700">Pending Review</p>
-                    <p className="font-display text-3xl italic text-amber-600 mt-2">{stats.pending}</p>
+
+                {/* 2. Bridal Landing Page */}
+                <div
+                    onClick={() => setTypeFilter(typeFilter === "bridal_landing" ? "all" : "bridal_landing")}
+                    className={`p-4 rounded-xl border bg-white transition-all cursor-pointer ${
+                        typeFilter === "bridal_landing" || typeFilter === "bridal_landing_page"
+                            ? "border-rose-500 shadow-xs ring-1 ring-rose-500 bg-rose-50/20"
+                            : "border-[#e8e2d5] hover:border-rose-300"
+                    }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-[11px] uppercase tracking-wider font-semibold text-rose-800">
+                            Bridal Landing
+                        </span>
+                        <span className="text-[10px] font-mono text-muted">
+                            /makeup-landing-page
+                        </span>
+                    </div>
+                    <p className="font-display text-3xl font-bold text-rose-700 mt-2">
+                        {stats.bridalLanding || 0}
+                    </p>
+                    <p className="text-[11px] text-muted mt-1">
+                        Bridal studio campaign leads
+                    </p>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-[#e8e2d5] shadow-sm">
-                    <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-emerald-700">Confirmed</p>
-                    <p className="font-display text-3xl italic text-emerald-600 mt-2">{stats.confirmed}</p>
+
+                {/* 3. Salon Landing Page */}
+                <div
+                    onClick={() => setTypeFilter(typeFilter === "salon_landing" ? "all" : "salon_landing")}
+                    className={`p-4 rounded-xl border bg-white transition-all cursor-pointer ${
+                        typeFilter === "salon_landing" || typeFilter === "salon_landing_page"
+                            ? "border-amber-500 shadow-xs ring-1 ring-amber-500 bg-amber-50/20"
+                            : "border-[#e8e2d5] hover:border-amber-300"
+                    }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-[11px] uppercase tracking-wider font-semibold text-amber-900">
+                            Salon Landing
+                        </span>
+                        <span className="text-[10px] font-mono text-muted">
+                            /salon-landing-page
+                        </span>
+                    </div>
+                    <p className="font-display text-3xl font-bold text-amber-800 mt-2">
+                        {stats.salonLanding || 0}
+                    </p>
+                    <p className="text-[11px] text-muted mt-1">
+                        Salon services campaign leads
+                    </p>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-[#e8e2d5] shadow-sm">
-                    <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-muted">Total All Time</p>
-                    <p className="font-display text-3xl italic text-ink mt-2">{stats.total}</p>
+
+                {/* 4. Main Website */}
+                <div
+                    onClick={() => setTypeFilter(typeFilter === "website" ? "all" : "website")}
+                    className={`p-4 rounded-xl border bg-white transition-all cursor-pointer ${
+                        typeFilter === "website"
+                            ? "border-stone-800 shadow-xs ring-1 ring-stone-800 bg-stone-50/40"
+                            : "border-[#e8e2d5] hover:border-stone-400"
+                    }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-[11px] uppercase tracking-wider font-semibold text-stone-700">
+                            Main Website
+                        </span>
+                        <span className="text-[10px] font-mono text-muted">
+                            knkawadh.com
+                        </span>
+                    </div>
+                    <p className="font-display text-3xl font-bold text-stone-800 mt-2">
+                        {stats.website || 0}
+                    </p>
+                    <p className="text-[11px] text-muted mt-1">
+                        Concierge, Studio &amp; Contact forms
+                    </p>
                 </div>
             </div>
 
-            {/* Filters Bar */}
-            <div className="bg-white p-4 rounded-xl border border-[#e8e2d5] flex flex-wrap items-center justify-between gap-4 shadow-sm">
-                <div className="flex items-center gap-3 flex-1 min-w-[260px]">
-                    <div className="relative w-full max-w-sm">
+            {/* Filter Bar: Simple & Clear */}
+            <div className="bg-white p-3.5 rounded-xl border border-[#e8e2d5] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+                {/* Clean Segmented Tabs (No emojis) */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                    <button
+                        type="button"
+                        onClick={() => setTypeFilter("all")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                            typeFilter === "all"
+                                ? "bg-ink text-white font-semibold"
+                                : "text-muted hover:text-ink hover:bg-[#faf7f2]"
+                        }`}
+                    >
+                        All Sources ({stats.total || 0})
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setTypeFilter("bridal_landing")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                            typeFilter === "bridal_landing" || typeFilter === "bridal_landing_page"
+                                ? "bg-rose-700 text-white font-semibold"
+                                : "text-rose-800 hover:bg-rose-50"
+                        }`}
+                    >
+                        Bridal Landing ({stats.bridalLanding || 0})
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setTypeFilter("salon_landing")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                            typeFilter === "salon_landing" || typeFilter === "salon_landing_page"
+                                ? "bg-amber-800 text-white font-semibold"
+                                : "text-amber-900 hover:bg-amber-50"
+                        }`}
+                    >
+                        Salon Landing ({stats.salonLanding || 0})
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setTypeFilter("website")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                            typeFilter === "website"
+                                ? "bg-stone-800 text-white font-semibold"
+                                : "text-stone-800 hover:bg-stone-100"
+                        }`}
+                    >
+                        Main Website ({stats.website || 0})
+                    </button>
+                </div>
+
+                {/* Search & Status Filter */}
+                <div className="flex flex-wrap items-center gap-2.5">
+                    <div className="relative min-w-[220px]">
+                        <Search className="w-3.5 h-3.5 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
                         <input
                             type="text"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search client, phone, or service..."
-                            className="w-full pl-9 pr-4 py-2 border border-border rounded-lg text-xs font-sans focus:outline-none focus:border-gold"
+                            placeholder="Search client, phone, service..."
+                            className="w-full pl-8 pr-7 py-1.5 bg-[#faf7f2] border border-border rounded-lg text-xs font-sans text-ink placeholder-muted focus:outline-none focus:border-gold focus:bg-white transition-all"
                         />
-                        <span className="absolute left-3 top-2.5 text-muted text-xs">🔍</span>
-                    </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3 text-xs">
-                    <div className="flex items-center gap-2">
-                        <span className="text-muted font-sans text-[11px] uppercase tracking-wider">Source:</span>
-                        <select
-                            value={typeFilter}
-                            onChange={(e) => setTypeFilter(e.target.value)}
-                            className="border border-border rounded-lg px-3 py-1.5 font-sans bg-white focus:outline-none focus:border-gold"
-                        >
-                            <option value="all">All Sources</option>
-                            <option value="modal_booking">Popup Modal</option>
-                            <option value="hero_concierge">Hero Concierge</option>
-                            <option value="luxury_booking">Luxury Studio</option>
-                            <option value="makeup">Bridal Makeup</option>
-                            <option value="academy">Academy Admission</option>
-                            <option value="about_page_booking">About Page</option>
-                            <option value="contact_us">Contact Us</option>
-                        </select>
+                        {search && (
+                            <button
+                                type="button"
+                                onClick={() => setSearch("")}
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-ink cursor-pointer"
+                            >
+                                <X className="w-3 h-3" />
+                            </button>
+                        )}
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <span className="text-muted font-sans text-[11px] uppercase tracking-wider">Status:</span>
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="border border-border rounded-lg px-3 py-1.5 font-sans bg-white focus:outline-none focus:border-gold"
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="px-2.5 py-1.5 bg-white border border-border rounded-lg text-xs font-sans text-ink focus:outline-none focus:border-gold cursor-pointer"
+                    >
+                        <option value="all">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+
+                    {isFiltered && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setTypeFilter("all");
+                                setStatusFilter("all");
+                                setSearch("");
+                            }}
+                            className="text-xs text-rose-700 hover:underline font-medium cursor-pointer px-1"
                         >
-                            <option value="all">All Statuses</option>
-                            <option value="pending">Pending</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                    </div>
+                            Reset
+                        </button>
+                    )}
                 </div>
             </div>
 
-            {/* Bookings Table */}
-            <div className="bg-white rounded-xl border border-[#e8e2d5] overflow-hidden shadow-sm">
+            {/* Bookings Table: Simple, Spacious, Clear */}
+            <div className="bg-white rounded-xl border border-[#e8e2d5] shadow-2xs overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-[#fcfaf7] border-b border-[#e8e2d5] font-sans text-[10px] tracking-[0.18em] uppercase text-muted">
+                            <tr className="bg-[#fcfaf7] border-b border-[#e8e2d5] font-sans text-[10px] tracking-[0.16em] uppercase text-muted">
                                 <th className="py-3.5 px-4 font-semibold">Client</th>
-                                <th className="py-3.5 px-4 font-semibold">Source</th>
-                                <th className="py-3.5 px-4 font-semibold">Service / Course</th>
+                                <th className="py-3.5 px-4 font-semibold">Lead Source</th>
+                                <th className="py-3.5 px-4 font-semibold">Service / Inquiry</th>
                                 <th className="py-3.5 px-4 font-semibold">Date &amp; Time</th>
-                                <th className="py-3.5 px-4 font-semibold">Branch / City</th>
+                                <th className="py-3.5 px-4 font-semibold">Branch</th>
                                 <th className="py-3.5 px-4 font-semibold">Status</th>
                                 <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
                             </tr>
                         </thead>
+
                         <tbody className="divide-y divide-[#f2ede4] font-sans text-xs">
                             {loading ? (
                                 <tr>
                                     <td colSpan={7} className="py-12 text-center text-muted">
-                                        Loading bookings...
+                                        Loading leads...
                                     </td>
                                 </tr>
                             ) : bookings.length === 0 ? (
                                 <tr>
                                     <td colSpan={7} className="py-12 text-center text-muted">
-                                        No bookings found matching your filters.
+                                        No leads found matching your criteria.
                                     </td>
                                 </tr>
                             ) : (
                                 bookings.map((item) => {
                                     const source = formatFormType(item.form_type);
+                                    const isUpdating = updatingId === item.id;
+                                    const isCopied = copiedPhoneId === item.id;
+
                                     return (
-                                        <tr key={item.id} className="hover:bg-[#faf7f2] transition-colors">
-                                            <td className="py-3.5 px-4">
-                                                <p className="font-semibold text-ink">{item.name}</p>
-                                                <a
-                                                    href={`tel:${item.phone}`}
-                                                    className="text-gold-deep hover:underline font-mono text-[11px] block"
-                                                >
-                                                    {item.phone}
-                                                </a>
+                                        <tr
+                                            key={item.id}
+                                            className={`hover:bg-[#faf7f2] transition-colors border-l-3 ${source.borderAccent}`}
+                                        >
+                                            {/* Client */}
+                                            <td className="py-3 px-4">
+                                                <p className="font-semibold text-ink text-sm">
+                                                    {item.name}
+                                                </p>
+                                                <div className="flex items-center gap-1.5 mt-0.5">
+                                                    <a
+                                                        href={`tel:${item.phone}`}
+                                                        className="text-gold-deep hover:underline font-mono text-xs"
+                                                    >
+                                                        {item.phone}
+                                                    </a>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => copyPhoneToClipboard(item.id, item.phone)}
+                                                        className="text-muted hover:text-ink cursor-pointer"
+                                                        title="Copy phone"
+                                                    >
+                                                        {isCopied ? (
+                                                            <Check className="w-3 h-3 text-emerald-600" />
+                                                        ) : (
+                                                            <Copy className="w-3 h-3" />
+                                                        )}
+                                                    </button>
+                                                </div>
                                                 {item.email && (
                                                     <p className="text-[11px] text-muted truncate max-w-[160px]">
                                                         {item.email}
                                                     </p>
                                                 )}
                                             </td>
-                                            <td className="py-3.5 px-4">
-                                                <span
-                                                    className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-medium tracking-wide uppercase ${source.badge}`}
-                                                >
-                                                    {source.label}
-                                                </span>
+
+                                            {/* Lead Source: Simple, Bold & Distinct Badge */}
+                                            <td className="py-3 px-4 whitespace-nowrap">
+                                                <div className="flex flex-col items-start gap-1">
+                                                    <span
+                                                        className={`inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold border ${source.badgeClass}`}
+                                                    >
+                                                        {source.badgeText}
+                                                    </span>
+                                                    <span className="text-[10px] text-muted font-mono">
+                                                        {source.path}
+                                                    </span>
+                                                </div>
                                             </td>
-                                            <td className="py-3.5 px-4">
-                                                <p className="font-medium text-ink max-w-[180px] truncate">
+
+                                            {/* Service / Inquiry */}
+                                            <td className="py-3 px-4 max-w-[190px]">
+                                                <p className="font-medium text-ink truncate">
                                                     {item.service_or_course || "—"}
                                                 </p>
                                                 {item.guests > 1 && (
@@ -275,21 +552,31 @@ export default function AdminBookingsPage() {
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="py-3.5 px-4 whitespace-nowrap">
-                                                <p className="text-ink">{item.booking_date || "Flexible"}</p>
-                                                <p className="text-[10px] text-muted">{item.booking_time || ""}</p>
+
+                                            {/* Date & Time */}
+                                            <td className="py-3 px-4 whitespace-nowrap">
+                                                <p className="text-ink font-medium">
+                                                    {item.booking_date || "Flexible"}
+                                                </p>
+                                                <p className="text-[10px] text-muted">
+                                                    {item.booking_time || "Any time"}
+                                                </p>
                                             </td>
-                                            <td className="py-3.5 px-4 text-muted">
+
+                                            {/* Branch */}
+                                            <td className="py-3 px-4 text-muted whitespace-nowrap">
                                                 {item.branch_location || item.city || "Lucknow"}
                                             </td>
-                                            <td className="py-3.5 px-4">
+
+                                            {/* Status */}
+                                            <td className="py-3 px-4 whitespace-nowrap">
                                                 <select
                                                     value={item.status}
-                                                    disabled={updatingId === item.id}
+                                                    disabled={isUpdating}
                                                     onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                                                    className={`border text-[11px] font-medium rounded-md px-2 py-1 outline-none uppercase tracking-wider cursor-pointer ${formatStatusBadge(
+                                                    className={`border text-[11px] font-semibold rounded-md px-2 py-1 outline-none uppercase tracking-wider cursor-pointer ${formatStatusBadge(
                                                         item.status
-                                                    )}`}
+                                                    )} ${isUpdating ? "opacity-50" : ""}`}
                                                 >
                                                     <option value="pending">Pending</option>
                                                     <option value="confirmed">Confirmed</option>
@@ -297,16 +584,21 @@ export default function AdminBookingsPage() {
                                                     <option value="cancelled">Cancelled</option>
                                                 </select>
                                             </td>
-                                            <td className="py-3.5 px-4 text-right whitespace-nowrap space-x-2">
+
+                                            {/* Actions */}
+                                            <td className="py-3 px-4 text-right whitespace-nowrap space-x-2">
                                                 <button
+                                                    type="button"
                                                     onClick={() => setSelectedBooking(item)}
-                                                    className="px-2.5 py-1 bg-cream hover:bg-gold-soft/50 text-ink rounded border border-border text-[11px] transition-colors"
+                                                    className="px-2.5 py-1 bg-white hover:bg-[#faf7f2] text-ink rounded border border-border text-xs font-medium transition cursor-pointer"
                                                 >
                                                     Details
                                                 </button>
+
                                                 <button
+                                                    type="button"
                                                     onClick={() => handleDelete(item.id)}
-                                                    className="px-2.5 py-1 bg-white hover:bg-red-50 text-red-600 rounded border border-red-200 text-[11px] transition-colors"
+                                                    className="px-2.5 py-1 text-red-600 hover:bg-red-50 rounded text-xs transition cursor-pointer"
                                                 >
                                                     Delete
                                                 </button>
@@ -318,108 +610,139 @@ export default function AdminBookingsPage() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Footer Count */}
+                <div className="bg-[#fcfaf7] px-4 py-2.5 border-t border-[#e8e2d5] text-xs text-muted flex items-center justify-between">
+                    <span>
+                        Showing {bookings.length} of {stats.total || 0} leads
+                    </span>
+                    <span className="font-mono text-[11px]">
+                        Bridal: {stats.bridalLanding || 0} | Salon: {stats.salonLanding || 0} | Website: {stats.website || 0}
+                    </span>
+                </div>
             </div>
 
-            {/* Details Modal */}
-            {selectedBooking && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-                    <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 border border-border shadow-2xl space-y-6 relative max-h-[90vh] overflow-y-auto">
-                        <button
-                            onClick={() => setSelectedBooking(null)}
-                            className="absolute top-5 right-5 text-muted hover:text-ink text-xl font-bold"
-                        >
-                            ✕
-                        </button>
-                        <div>
-                            <span className="font-sans text-[10px] tracking-[0.25em] uppercase text-gold-deep font-semibold">
-                                Booking #{selectedBooking.id}
-                            </span>
-                            <h2 className="font-display text-2xl italic text-ink mt-1">
-                                {selectedBooking.name}
-                            </h2>
-                            <p className="text-xs text-muted">
-                                Received on: {new Date(selectedBooking.created_at).toLocaleString("en-IN")}
-                            </p>
-                        </div>
+            {/* Lead Details Modal: Clean & Clear */}
+            {selectedBooking && (() => {
+                const source = formatFormType(selectedBooking.form_type);
+                const cleanPhone = selectedBooking.phone.replace(/[^\d]/g, "");
 
-                        <div className="grid grid-cols-2 gap-4 text-xs font-sans bg-[#faf7f2] p-4 rounded-xl border border-border">
-                            <div>
-                                <span className="text-[10px] uppercase text-muted tracking-wider block">Phone:</span>
-                                <a href={`tel:${selectedBooking.phone}`} className="font-bold text-ink hover:underline">
-                                    {selectedBooking.phone}
-                                </a>
-                            </div>
-                            <div>
-                                <span className="text-[10px] uppercase text-muted tracking-wider block">Email:</span>
-                                <span className="text-ink">{selectedBooking.email || "Not provided"}</span>
-                            </div>
-                            <div>
-                                <span className="text-[10px] uppercase text-muted tracking-wider block">Form Source:</span>
-                                <span className="font-medium text-ink">
-                                    {formatFormType(selectedBooking.form_type).label}
-                                </span>
-                            </div>
-                            <div>
-                                <span className="text-[10px] uppercase text-muted tracking-wider block">Branch / City:</span>
-                                <span className="text-ink">
-                                    {selectedBooking.branch_location || selectedBooking.city || "Lucknow"}
-                                </span>
-                            </div>
-                            <div>
-                                <span className="text-[10px] uppercase text-muted tracking-wider block">Service / Course:</span>
-                                <span className="font-bold text-gold-deep">
-                                    {selectedBooking.service_or_course || "General Inquiry"}
-                                </span>
-                            </div>
-                            <div>
-                                <span className="text-[10px] uppercase text-muted tracking-wider block">Appointment Slot:</span>
-                                <span className="text-ink">
-                                    {selectedBooking.booking_date || "Flexible"} {selectedBooking.booking_time ? `(${selectedBooking.booking_time})` : ""}
-                                </span>
-                            </div>
-                        </div>
+                return (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+                        <div className="bg-white rounded-xl max-w-lg w-full p-6 border border-border shadow-xl space-y-5 relative max-h-[90vh] overflow-y-auto">
+                            <button
+                                onClick={() => setSelectedBooking(null)}
+                                className="absolute top-4 right-4 text-muted hover:text-ink p-1 cursor-pointer"
+                                aria-label="Close dialog"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
 
-                        {selectedBooking.message && (
                             <div>
-                                <span className="text-[10px] uppercase text-muted tracking-wider block mb-1">
-                                    Client Notes / Message:
+                                <span className="font-mono text-[10px] uppercase text-muted tracking-wider block">
+                                    Lead #{selectedBooking.id}
                                 </span>
-                                <p className="text-xs text-ink bg-cream p-3 rounded-lg border border-border leading-relaxed">
-                                    {selectedBooking.message}
+                                <h2 className="font-display text-2xl text-ink font-semibold mt-0.5">
+                                    {selectedBooking.name}
+                                </h2>
+                                <p className="text-xs text-muted">
+                                    Received: {new Date(selectedBooking.created_at).toLocaleString("en-IN")}
                                 </p>
                             </div>
-                        )}
 
-                        <div className="flex items-center justify-between pt-4 border-t border-border">
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs font-medium text-muted">Status:</span>
-                                <select
-                                    value={selectedBooking.status}
-                                    onChange={(e) => handleStatusChange(selectedBooking.id, e.target.value)}
-                                    className={`border text-xs rounded-md px-2.5 py-1 uppercase tracking-wider font-semibold ${formatStatusBadge(
-                                        selectedBooking.status
-                                    )}`}
-                                >
-                                    <option value="pending">Pending</option>
-                                    <option value="confirmed">Confirmed</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
+                            {/* Clear Lead Source Banner */}
+                            <div className="p-3 rounded-lg bg-[#faf7f2] border border-border flex items-center justify-between">
+                                <div>
+                                    <span className="text-[10px] uppercase text-muted tracking-wider font-semibold block">
+                                        Source Channel:
+                                    </span>
+                                    <span className={`inline-block mt-1 px-2.5 py-0.5 rounded text-xs font-semibold border ${source.badgeClass}`}>
+                                        {source.badgeText}
+                                    </span>
+                                </div>
+                                <span className="text-xs font-mono text-muted">
+                                    {source.path}
+                                </span>
                             </div>
-                            <a
-                                href={`https://wa.me/${selectedBooking.phone.replace(/[^\d]/g, "")}?text=${encodeURIComponent(
-                                    `Hello ${selectedBooking.name}, this is KNK Salon Awadh following up on your appointment request.`
-                                )}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="px-4 py-2 bg-[#25D366] text-white rounded-lg text-xs font-semibold hover:opacity-90 flex items-center gap-1.5"
-                            >
-                                WhatsApp Client ↗
-                            </a>
+
+                            <div className="grid grid-cols-2 gap-3 text-xs bg-[#faf7f2] p-4 rounded-lg border border-border">
+                                <div>
+                                    <span className="text-[10px] uppercase text-muted tracking-wider block">Phone:</span>
+                                    <a href={`tel:${selectedBooking.phone}`} className="font-semibold text-ink hover:underline font-mono">
+                                        {selectedBooking.phone}
+                                    </a>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] uppercase text-muted tracking-wider block">Email:</span>
+                                    <span className="text-ink">{selectedBooking.email || "—"}</span>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] uppercase text-muted tracking-wider block">Service:</span>
+                                    <span className="font-semibold text-gold-deep">
+                                        {selectedBooking.service_or_course || "General Inquiry"}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] uppercase text-muted tracking-wider block">Date &amp; Time:</span>
+                                    <span className="text-ink">
+                                        {selectedBooking.booking_date || "Flexible"} {selectedBooking.booking_time ? `(${selectedBooking.booking_time})` : ""}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] uppercase text-muted tracking-wider block">Branch:</span>
+                                    <span className="text-ink font-medium">
+                                        {selectedBooking.branch_location || selectedBooking.city || "Lucknow"}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] uppercase text-muted tracking-wider block">Guests:</span>
+                                    <span className="text-ink">{selectedBooking.guests || 1}</span>
+                                </div>
+                            </div>
+
+                            {selectedBooking.message && (
+                                <div>
+                                    <span className="text-[10px] uppercase text-muted tracking-wider block mb-1">
+                                        Client Message / Notes:
+                                    </span>
+                                    <p className="text-xs text-ink bg-[#faf7f2] p-3 rounded-lg border border-border leading-relaxed">
+                                        {selectedBooking.message}
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="flex items-center justify-between pt-3 border-t border-border">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs text-muted font-medium">Status:</span>
+                                    <select
+                                        value={selectedBooking.status}
+                                        onChange={(e) => handleStatusChange(selectedBooking.id, e.target.value)}
+                                        className={`border text-xs rounded-md px-2.5 py-1 uppercase tracking-wider font-semibold cursor-pointer ${formatStatusBadge(
+                                            selectedBooking.status
+                                        )}`}
+                                    >
+                                        <option value="pending">Pending</option>
+                                        <option value="confirmed">Confirmed</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+
+                                <a
+                                    href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+                                        `Hello ${selectedBooking.name}, this is KNK Salon Awadh following up on your appointment request.`
+                                    )}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-4 py-2 bg-[#25D366] text-white rounded-lg text-xs font-semibold hover:opacity-90 transition cursor-pointer"
+                                >
+                                    WhatsApp Client ↗
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                );
+            })()}
         </div>
     );
 }

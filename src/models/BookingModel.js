@@ -58,7 +58,13 @@ const BookingModel = {
         }
 
         if (formType && formType !== "all") {
-            if (formType === "contact_us" || formType === "contact") {
+            if (formType === "bridal_landing" || formType === "bridal_landing_page" || formType === "landing-page" || formType === "makeup-landing-page" || formType === "makeup_landing_page") {
+                query += " AND (form_type = 'bridal_landing_page' OR form_type = 'bridal_landing_modal' OR form_type = 'makeup_landing_page' OR form_type = 'landing_page' OR form_type = 'landing_page_bridal')";
+            } else if (formType === "salon_landing" || formType === "salon_landing_page" || formType === "salon-landing-page") {
+                query += " AND (form_type = 'salon_landing_page' OR form_type = 'salon_landing_modal' OR form_type = 'salon-landing-page')";
+            } else if (formType === "website") {
+                query += " AND form_type NOT IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page')";
+            } else if (formType === "contact_us" || formType === "contact") {
                 query += " AND (form_type = 'contact_us' OR form_type = 'contact')";
             } else if (formType === "makeup" || formType === "makeup_page_booking") {
                 query += " AND (form_type = 'makeup' OR form_type = 'makeup_page_booking')";
@@ -69,9 +75,9 @@ const BookingModel = {
         }
 
         if (search) {
-            query += " AND (name LIKE ? OR phone LIKE ? OR email LIKE ? OR service_or_course LIKE ?)";
+            query += " AND (name LIKE ? OR phone LIKE ? OR email LIKE ? OR service_or_course LIKE ? OR form_type LIKE ?)";
             const searchTerm = `%${search}%`;
-            params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+            params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
         }
 
         query += " ORDER BY created_at DESC";
@@ -104,12 +110,18 @@ const BookingModel = {
         const [pendingRows] = await db.query("SELECT COUNT(*) as pending FROM bookings WHERE status = 'pending'");
         const [confirmedRows] = await db.query("SELECT COUNT(*) as confirmed FROM bookings WHERE status = 'confirmed'");
         const [todayRows] = await db.query("SELECT COUNT(*) as today FROM bookings WHERE DATE(created_at) = CURDATE()");
+        const [bridalRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal')");
+        const [salonRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('salon_landing_page', 'salon_landing_modal', 'salon-landing-page')");
+        const [websiteRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type NOT IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page')");
 
         return {
             total: totalRows[0]?.total || 0,
             pending: pendingRows[0]?.pending || 0,
             confirmed: confirmedRows[0]?.confirmed || 0,
             today: todayRows[0]?.today || 0,
+            bridalLanding: bridalRows[0]?.count || 0,
+            salonLanding: salonRows[0]?.count || 0,
+            website: websiteRows[0]?.count || 0,
         };
     },
 };
