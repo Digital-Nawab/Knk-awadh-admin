@@ -1,5 +1,18 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Ensure static assets exist at both /landing-page and /makeup-landing-page for cached redirects
+try {
+  const srcDir = path.resolve('public/landing-page');
+  const destDir = path.resolve('public/makeup-landing-page');
+  if (fs.existsSync(srcDir)) {
+    fs.cpSync(srcDir, destDir, { recursive: true });
+  }
+} catch (e) {
+  console.error('Asset sync error:', e);
+}
+
 /** @type {import('next').NextConfig} */
-// Reload trigger: 18:57:45
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -26,8 +39,8 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/landing-page/:path*',
-        destination: '/makeup-landing-page/:path*',
+        source: '/landing-page/thank-you',
+        destination: '/makeup-landing-page/thank-you',
         permanent: true,
       },
       {
