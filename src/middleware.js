@@ -18,7 +18,11 @@ export async function middleware(req) {
     }
 
     if (pathname.startsWith("/admin") && !isValid) {
-        return NextResponse.redirect(new URL("/login", req.url));
+        const loginUrl = new URL("/login", req.url);
+        if (token) {
+            loginUrl.searchParams.set("error", "session_expired");
+        }
+        return NextResponse.redirect(loginUrl);
     }
 
     if ((pathname === "/login" || pathname === "/admin") && isValid) {

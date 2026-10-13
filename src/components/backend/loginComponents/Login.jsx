@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
@@ -8,29 +8,55 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [form, setForm] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            const err = params.get("error");
+            if (err === "session_expired") {
+                setError("Your session has expired. Please sign in again.");
+            } else if (err === "unauthorized") {
+                setError("Please sign in to access the admin dashboard.");
+            } else if (err) {
+                setError(decodeURIComponent(err));
+            }
+        }
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        setSuccess("");
         setLoading(true);
 
-        const res = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(form),
-        });
+        try {
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            });
 
-        setLoading(false);
+            const data = await res.json().catch(() => null);
 
-        if (!res.ok) {
-            const data = await res.json();
-            setError(data.error || "Login failed");
-            return;
+            if (!res.ok) {
+                setLoading(false);
+                setError(data?.error || `Login failed (Status: ${res.status}). Please check credentials.`);
+                return;
+            }
+
+            setSuccess(data?.message || "Login successful! Redirecting to dashboard...");
+
+            // Full navigation ensures cookie is immediately sent by browser on subsequent document request
+            setTimeout(() => {
+                window.location.href = "/admin/dashboard";
+            }, 500);
+        } catch (err) {
+            console.error("Login request error:", err);
+            setLoading(false);
+            setError(err?.message || "Unable to connect to server. Please check network connection.");
         }
-
-        // Full navigation ensures cookie is immediately sent by browser on subsequent document request
-        window.location.href = "/admin/dashboard";
     };
 
     return (
@@ -111,10 +137,24 @@ export default function Login() {
                     </p>
 
                     {error && (
-                        <p className="mt-4 font-sans text-[13px] text-red-600">{error}</p>
+                        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 font-sans text-[13px] flex items-start gap-2.5">
+                            <svg className="w-4 h-4 shrink-0 text-red-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="leading-snug">{error}</span>
+                        </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="mt-10 space-y-7">
+                    {success && (
+                        <div className="mt-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 font-sans text-[13px] flex items-start gap-2.5">
+                            <svg className="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="leading-snug">{success}</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="mt-8 space-y-7">
                         <div>
                             <label className="block font-sans text-[11px] tracking-[0.15em] uppercase text-muted mb-2">
                                 Email
@@ -164,10 +204,16 @@ export default function Login() {
 
                         <button
                             type="submit"
-                            disabled={loading}
-                            className="w-full bg-gold text-cream font-sans text-[11px] tracking-[0.2em] uppercase py-4 rounded-full shadow-luxe transition-transform duration-300 hover:scale-[1.02] disabled:opacity-50"
+                            disabled={loading || Boolean(success)}
+                            className="w-full bg-gold text-cream font-sans text-[11px] tracking-[0.2em] uppercase py-4 rounded-full shadow-luxe transition-transform duration-300 hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
-                            {loading ? "Signing in..." : "Sign In"}
+                            {loading && (
+                                <svg className="animate-spin h-3.5 w-3.5 text-cream" viewBox="0 0 24 24" fill="none">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                            )}
+                            <span>{success ? "Redirecting..." : loading ? "Signing in..." : "Sign In"}</span>
                         </button>
                     </form>
 
