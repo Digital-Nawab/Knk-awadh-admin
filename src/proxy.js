@@ -3,7 +3,7 @@ import { jwtVerify } from "jose";
 
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "knk_awadh_jwt_secret_key_2026_secure");
 
-export async function middleware(req) {
+export async function proxy(req) {
     const token = req.cookies.get("token")?.value;
     const { pathname } = req.nextUrl;
 
@@ -37,6 +37,8 @@ export async function middleware(req) {
 
     return res;
 }
+
+export default proxy;
 
 export const config = {
     matcher: ["/admin", "/admin/:path*", "/login"],
