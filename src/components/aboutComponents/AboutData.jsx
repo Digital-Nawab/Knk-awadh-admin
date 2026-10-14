@@ -47,7 +47,7 @@ export const services = [
         text: "Facials, microblading, and selected aesthetic services tailored to individual beauty and skincare needs.",
         img: "/assets/images/about/skincare-aesthetics.webp",
         cta: "Explore Skin & Aesthetics →",
-        href: "https://soft-focus-affair-nextjs.vercel.app/",
+        href: "/skin-aesthetics",
     },
     {
         title: "4. Body Massage",

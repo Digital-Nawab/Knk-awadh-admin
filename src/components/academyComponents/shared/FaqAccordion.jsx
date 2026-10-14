@@ -73,14 +73,14 @@ export default function FaqAccordion() {
 
                 <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2.5 shrink-0 w-full sm:w-auto">
                     <a
-                        href="tel:+918881000552"
+                        href="tel:+918881000664"
                         className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-[#29231f] text-white text-[11px] font-semibold uppercase tracking-wider hover:bg-[#b58a52] transition-colors text-center"
                     >
                         <Phone size={12} />
                         <span>Call Us</span>
                     </a>
                     <a
-                        href="https://wa.me/918881000552?text=Hello,%20I%20have%20a%20question%20regarding%20KNK%20Academy%20courses."
+                        href="https://wa.me/918881000664?text=Hello,%20I%20have%20a%20question%20regarding%20KNK%20Academy%20courses."
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-[#d0bda4] bg-white text-[#29231f] text-[11px] font-semibold uppercase tracking-wider hover:border-[#b58a52] transition-colors text-center"

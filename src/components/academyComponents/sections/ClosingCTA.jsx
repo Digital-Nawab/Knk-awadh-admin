@@ -44,16 +44,16 @@ export default function ClosingCTA() {
 
                     <div className="mt-9 flex flex-col sm:flex-row justify-center items-center gap-3.5 sm:gap-4 w-full sm:w-auto">
                         <a
-                            href="tel:+918881000552"
+                            href="tel:+918881000664"
                             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 font-['Inter'] text-[11px] font-semibold tracking-[0.2em] uppercase px-6 sm:px-8 py-3.5 sm:py-4 rounded-full text-[#241d18] shadow-lg transition-transform duration-300 hover:scale-105"
                             style={{ backgroundColor: GOLD }}
                         >
                             <Phone className="size-3.5 text-[#241d18]" />
-                            <span>Call: +91 88810 00552</span>
+                            <span>Call: +91 88810 00664</span>
                         </a>
 
                         <a
-                            href="https://wa.me/918881000552?text=Hi%20there,%20I'm%20interested%20in%20enrolling%20at%20KNK%20Makeup%20Academy."
+                            href="https://wa.me/918881000664?text=Hi%20there,%20I'm%20interested%20in%20enrolling%20at%20KNK%20Makeup%20Academy."
                             target="_blank"
                             rel="noopener noreferrer"
                             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 font-['Inter'] text-[11px] font-semibold tracking-[0.2em] uppercase px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-[#ead9ae]/50 text-[#fbf7f0] bg-white/5 transition-all duration-300 hover:bg-white/15"

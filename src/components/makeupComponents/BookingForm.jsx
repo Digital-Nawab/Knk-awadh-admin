@@ -126,14 +126,19 @@ export default function BookingForm({ initialService = "" }) {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                const queryParams = new URLSearchParams({
-                    bookingId: data.bookingId ? String(data.bookingId) : "",
-                    service: form.service,
-                    name: form.name.trim(),
-                    date: form.date,
-                    location: locationToSend,
-                });
-                router.push(`/thank-you?${queryParams.toString()}`);
+                try {
+                    sessionStorage.setItem("last_booking", JSON.stringify({
+                        bookingId: data.bookingId ? String(data.bookingId) : "",
+                        requestNumber: data.bookingId ? String(data.bookingId) : "",
+                        service: form.service,
+                        name: form.name.trim(),
+                        date: form.date,
+                        location: locationToSend,
+                    }));
+                } catch {
+                    // ignore storage errors
+                }
+                router.push("/thank-you");
             } else {
                 setErrorMsg(data.error || "Failed to reserve appointment. Please try again.");
             }

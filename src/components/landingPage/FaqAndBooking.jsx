@@ -129,6 +129,7 @@ export default function FaqAndBooking() {
             "knk_bridal_thankyou",
             JSON.stringify({
               bookingId: data?.bookingId ? String(data.bookingId) : "",
+              requestNumber: data?.requestNumber ? String(data.requestNumber) : "",
               service: formData.service,
               name: formData.name.trim(),
               date: formData.date,
@@ -140,7 +141,8 @@ export default function FaqAndBooking() {
         }
       }
 
-      router.push("/makeup-artist-lucknow/thank-you");
+      const reqNumQuery = data?.requestNumber ? `?requestNumber=${data.requestNumber}` : "";
+      router.push(`/makeup-artist-lucknow/thank-you${reqNumQuery}`);
     } catch (err) {
       console.error("Booking submission error:", err);
       setIsSubmitting(false);

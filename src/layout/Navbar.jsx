@@ -184,7 +184,7 @@ function Navbar() {
                         Academy
                     </Link>
                     <Link
-                        href="https://soft-focus-affair-nextjs.vercel.app/"
+                        href="/skin-aesthetics"
                         className="relative whitespace-nowrap transition-colors hover:text-gold after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all hover:after:w-full"
                     >
                         Skin & Aesthetics
@@ -376,7 +376,7 @@ function Navbar() {
                     Academy
                 </Link>
                 <Link
-                    href="https://soft-focus-affair-nextjs.vercel.app/"
+                    href="/skin-aesthetics"
                     onClick={() => setMenuOpen(false)}
                     className="rounded-lg px-2 py-3 hover:bg-secondary"
                 >

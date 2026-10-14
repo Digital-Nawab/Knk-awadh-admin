@@ -2,7 +2,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@/components/knk/*": ["./src/components/skin/knk/*"],
+      "@/components/ui/*": ["./src/components/skin/ui/*"],
+      "@/components/ClientProviders": ["./src/components/skin/ClientProviders"],
+      "@/components/NavLink": ["./src/components/skin/NavLink"],
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "temp-skin"]
 }

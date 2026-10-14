@@ -1,16 +1,233 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { Search, RefreshCw, Copy, Check, X, ExternalLink, ChevronDown } from "lucide-react";
+import {
+    Search,
+    RefreshCw,
+    Copy,
+    Check,
+    X,
+    ExternalLink,
+    ChevronDown,
+    Trash2,
+    Download,
+    CheckSquare,
+    Square,
+    Filter,
+    ArrowUpDown,
+    CheckCircle2,
+    Clock,
+    UserCheck,
+    PhoneCall,
+    XCircle,
+    Calendar,
+    Phone,
+    Mail,
+    MapPin,
+    AlertCircle,
+} from "lucide-react";
+
+// Standard lead and booking status pipeline order:
+// 1. Pending — New incoming inquiry or submission
+// 2. Assigned — Routed or assigned to a specific staff member or branch
+// 3. Follow-up — Contact made, waiting for client confirmation/consultation
+// 4. Confirmed / Booked — Appointment or service officially finalized
+// 5. Completed — Service successfully delivered
+// 6. Cancelled — Client or salon called off booking
+export const LEAD_STATUS_PIPELINE = [
+    {
+        key: "pending",
+        label: "Pending",
+        desc: "New incoming inquiry",
+        badgeClass: "bg-amber-50 text-amber-800 border-amber-300",
+        dotClass: "bg-amber-500",
+    },
+    {
+        key: "assigned",
+        label: "Assigned",
+        desc: "Assigned to staff/branch",
+        badgeClass: "bg-indigo-50 text-indigo-700 border-indigo-250",
+        dotClass: "bg-indigo-500",
+    },
+    {
+        key: "follow_up",
+        label: "Follow-up",
+        desc: "Contact made, awaiting reply",
+        badgeClass: "bg-sky-50 text-sky-700 border-sky-300",
+        dotClass: "bg-sky-500",
+    },
+    {
+        key: "confirmed",
+        label: "Confirmed / Booked",
+        desc: "Appointment finalized",
+        badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-300",
+        dotClass: "bg-emerald-500",
+    },
+    {
+        key: "completed",
+        label: "Completed",
+        desc: "Service delivered",
+        badgeClass: "bg-teal-50 text-teal-800 border-teal-300",
+        dotClass: "bg-teal-600",
+    },
+    {
+        key: "cancelled",
+        label: "Cancelled",
+        desc: "Inquiry or booking called off",
+        badgeClass: "bg-rose-50 text-rose-700 border-rose-300",
+        dotClass: "bg-rose-500",
+    },
+];
+
+export function getStatusMeta(statusKey) {
+    const raw = (statusKey || "").toLowerCase().trim();
+    if (raw === "follow-up") return LEAD_STATUS_PIPELINE.find((s) => s.key === "follow_up");
+    if (raw === "booked") return LEAD_STATUS_PIPELINE.find((s) => s.key === "confirmed");
+    return (
+        LEAD_STATUS_PIPELINE.find((s) => s.key === raw) || {
+            key: raw || "pending",
+            label: raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : "Pending",
+            desc: "Lead inquiry",
+            badgeClass: "bg-stone-50 text-stone-700 border-stone-300",
+            dotClass: "bg-stone-400",
+        }
+    );
+}
+
+// Clean categorization mapping for lead origins: Home page, Popup, Landing page, Website
+export function formatLeadSource(formType) {
+    const raw = (formType || "").toLowerCase().trim();
+
+    // 1. Bridal Landing Page leads
+    if (
+        raw === "bridal_landing_page" ||
+        raw === "bridal_landing_modal" ||
+        raw === "makeup_landing_page" ||
+        raw === "landing_page" ||
+        raw === "landing_page_bridal" ||
+        raw === "bridal_landing" ||
+        raw === "makeup-artist-lucknow"
+    ) {
+        return {
+            group: "landing_page",
+            groupName: "Landing Page",
+            channel: "bridal_landing",
+            channelName: "Bridal Landing Page",
+            badgeText: "Landing: Bridal Studio",
+            path: "/makeup-artist-lucknow",
+            badgeClass: "bg-rose-50 text-rose-800 border-rose-300",
+            borderAccent: "border-l-rose-500",
+        };
+    }
+
+    // 2. Salon Landing Page leads
+    if (
+        raw === "salon_landing_page" ||
+        raw === "salon_landing_modal" ||
+        raw === "salon-landing-page" ||
+        raw === "salon_landing" ||
+        raw === "salon-services-lucknow"
+    ) {
+        return {
+            group: "landing_page",
+            groupName: "Landing Page",
+            channel: "salon_landing",
+            channelName: "Salon Landing Page",
+            badgeText: "Landing: Salon Services",
+            path: "/salon-services-lucknow",
+            badgeClass: "bg-amber-50 text-amber-900 border-amber-300",
+            borderAccent: "border-l-amber-500",
+        };
+    }
+
+    // 3. Home Page Leads
+    if (raw === "hero_concierge" || raw === "home_concierge") {
+        return {
+            group: "home_page",
+            groupName: "Home Page",
+            channel: "home_page",
+            channelName: "Home Page Concierge",
+            badgeText: "Home: Hero Concierge",
+            path: "/#concierge",
+            badgeClass: "bg-amber-50 text-amber-800 border-amber-250",
+            borderAccent: "border-l-amber-600",
+        };
+    }
+
+    if (raw === "luxury_booking" || raw === "home") {
+        return {
+            group: "home_page",
+            groupName: "Home Page",
+            channel: "home_page",
+            channelName: "Home Page Studio Form",
+            badgeText: "Home: Luxury Studio",
+            path: "/#booking",
+            badgeClass: "bg-amber-50 text-amber-800 border-amber-250",
+            borderAccent: "border-l-amber-600",
+        };
+    }
+
+    // 4. Website Popup Modal Leads
+    if (raw === "modal_booking" || raw === "popup_modal" || raw === "booking_modal") {
+        return {
+            group: "popup",
+            groupName: "Website Popup",
+            channel: "popup",
+            channelName: "Website Popup Modal",
+            badgeText: "Popup: Booking Modal",
+            path: "/",
+            badgeClass: "bg-purple-50 text-purple-800 border-purple-250",
+            borderAccent: "border-l-purple-500",
+        };
+    }
+
+    // 5. Other Website Pages
+    let originName = "Main Website";
+    let path = "/";
+
+    if (raw === "makeup" || raw === "makeup_page_booking") {
+        originName = "Bridal Makeup Page";
+        path = "/makeup";
+    } else if (raw === "academy") {
+        originName = "Academy Admission";
+        path = "/academy";
+    } else if (raw === "contact_us" || raw === "contact") {
+        originName = "Contact Us Page";
+        path = "/contact-us";
+    } else if (raw === "about_page_booking" || raw === "about") {
+        originName = "About Page";
+        path = "/about";
+    } else if (formType) {
+        originName = `Website: ${formType.replace(/_/g, " ")}`;
+    }
+
+    return {
+        group: "website",
+        groupName: "Main Website",
+        channel: "website",
+        channelName: originName,
+        badgeText: originName,
+        path: path,
+        badgeClass: "bg-stone-100 text-stone-700 border-stone-300",
+        borderAccent: "border-l-stone-400",
+    };
+}
 
 export default function AdminBookingsPage() {
     const [bookings, setBookings] = useState([]);
     const [stats, setStats] = useState({
         total: 0,
         pending: 0,
+        assigned: 0,
+        follow_up: 0,
         confirmed: 0,
+        completed: 0,
+        cancelled: 0,
         today: 0,
+        homePage: 0,
+        popup: 0,
+        landingPages: 0,
         bridalLanding: 0,
         salonLanding: 0,
         website: 0,
@@ -22,12 +239,24 @@ export default function AdminBookingsPage() {
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [updatingId, setUpdatingId] = useState(null);
     const [copiedPhoneId, setCopiedPhoneId] = useState(null);
-    const [visibleCount, setVisibleCount] = useState(10);
+    const [visibleCount, setVisibleCount] = useState(15);
 
-    // Reset visible count to 10 whenever filters or search change
+    // Multiple selection state for batch operations
+    const [selectedIds, setSelectedIds] = useState(new Set());
+    const [isDeletingMultiple, setIsDeletingMultiple] = useState(false);
+    const [actionNotice, setActionNotice] = useState(null);
+    const [showExportMenu, setShowExportMenu] = useState(false);
+
+    // Reset visible count and clear selection when filters change
     useEffect(() => {
-        setVisibleCount(10);
+        setVisibleCount(15);
+        setSelectedIds(new Set());
     }, [statusFilter, typeFilter, search]);
+
+    const showNotice = (msg, type = "success") => {
+        setActionNotice({ msg, type });
+        setTimeout(() => setActionNotice(null), 4000);
+    };
 
     const fetchBookings = useCallback(async () => {
         try {
@@ -41,20 +270,13 @@ export default function AdminBookingsPage() {
             if (res.ok) {
                 const data = await res.json();
                 setBookings(data.bookings || []);
-                setStats(
-                    data.stats || {
-                        total: 0,
-                        pending: 0,
-                        confirmed: 0,
-                        today: 0,
-                        bridalLanding: 0,
-                        salonLanding: 0,
-                        website: 0,
-                    }
-                );
+                if (data.stats) {
+                    setStats((prev) => ({ ...prev, ...data.stats }));
+                }
             }
         } catch (err) {
             console.error("Error fetching bookings:", err);
+            showNotice("Failed to load leads. Please check your internet connection.", "error");
         } finally {
             setLoading(false);
         }
@@ -67,6 +289,7 @@ export default function AdminBookingsPage() {
         return () => clearTimeout(timer);
     }, [fetchBookings]);
 
+    // Update single lead status
     const handleStatusChange = async (id, newStatus) => {
         try {
             setUpdatingId(id);
@@ -82,48 +305,216 @@ export default function AdminBookingsPage() {
                 if (selectedBooking && selectedBooking.id === id) {
                     setSelectedBooking((prev) => ({ ...prev, status: newStatus }));
                 }
-                setStats((prev) => {
-                    const prevStatus = bookings.find((b) => b.id === id)?.status || "pending";
-                    if (prevStatus === newStatus) return prev;
-                    return {
-                        ...prev,
-                        pending:
-                            newStatus === "pending"
-                                ? prev.pending + 1
-                                : prevStatus === "pending"
-                                ? Math.max(0, prev.pending - 1)
-                                : prev.pending,
-                        confirmed:
-                            newStatus === "confirmed"
-                                ? prev.confirmed + 1
-                                : prevStatus === "confirmed"
-                                ? Math.max(0, prev.confirmed - 1)
-                                : prev.confirmed,
-                    };
-                });
+                showNotice(`Lead #${id} status updated to ${getStatusMeta(newStatus).label}.`);
+                // Re-fetch stats in background
+                fetch(`/api/bookings?status=all&formType=all`)
+                    .then((r) => r.json())
+                    .then((d) => d.stats && setStats(d.stats))
+                    .catch(() => {});
+            } else {
+                showNotice("Failed to update status on server.", "error");
             }
         } catch (err) {
             console.error("Error updating status:", err);
+            showNotice("Network error updating status.", "error");
         } finally {
             setUpdatingId(null);
         }
     };
 
+    // Single delete
     const handleDelete = async (id) => {
-        if (!confirm("Are you sure you want to delete this booking lead?")) return;
+        if (!confirm(`Are you sure you want to permanently delete lead #${id}?`)) return;
         try {
             const res = await fetch(`/api/bookings/${id}`, { method: "DELETE" });
             if (res.ok) {
                 setBookings((prev) => prev.filter((b) => b.id !== id));
+                setSelectedIds((prev) => {
+                    const next = new Set(prev);
+                    next.delete(id);
+                    return next;
+                });
                 if (selectedBooking?.id === id) setSelectedBooking(null);
                 setStats((prev) => ({
                     ...prev,
                     total: Math.max(0, prev.total - 1),
                 }));
+                showNotice(`Lead #${id} deleted.`);
+            } else {
+                showNotice("Failed to delete lead.", "error");
             }
         } catch (err) {
             console.error("Error deleting booking:", err);
+            showNotice("Network error deleting lead.", "error");
         }
+    };
+
+    // Multiple Delete (Bulk Delete)
+    const handleBulkDelete = async () => {
+        const count = selectedIds.size;
+        if (count === 0) return;
+
+        const confirmMsg = `Are you sure you want to permanently delete ${count} selected lead(s)? This action cannot be undone.`;
+        if (!confirm(confirmMsg)) return;
+
+        try {
+            setIsDeletingMultiple(true);
+            const idList = Array.from(selectedIds);
+            const res = await fetch("/api/bookings", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ids: idList }),
+            });
+
+            if (res.ok) {
+                const deletedSet = new Set(idList);
+                setBookings((prev) => prev.filter((b) => !deletedSet.has(b.id)));
+                setSelectedIds(new Set());
+                if (selectedBooking && deletedSet.has(selectedBooking.id)) {
+                    setSelectedBooking(null);
+                }
+                setStats((prev) => ({
+                    ...prev,
+                    total: Math.max(0, prev.total - count),
+                }));
+                showNotice(`Successfully deleted ${count} lead(s).`);
+            } else {
+                showNotice("Failed to delete selected leads. Please try again.", "error");
+            }
+        } catch (err) {
+            console.error("Error in bulk delete:", err);
+            showNotice("Network error during bulk delete.", "error");
+        } finally {
+            setIsDeletingMultiple(false);
+        }
+    };
+
+    // Row selection toggle
+    const toggleSelectRow = (id) => {
+        setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+            return next;
+        });
+    };
+
+    // Select all visible or select all filtered
+    const displayedBookings = useMemo(() => {
+        return bookings.slice(0, visibleCount);
+    }, [bookings, visibleCount]);
+
+    const isAllVisibleSelected =
+        displayedBookings.length > 0 &&
+        displayedBookings.every((b) => selectedIds.has(b.id));
+
+    const toggleSelectAllVisible = () => {
+        if (isAllVisibleSelected) {
+            setSelectedIds((prev) => {
+                const next = new Set(prev);
+                displayedBookings.forEach((b) => next.delete(b.id));
+                return next;
+            });
+        } else {
+            setSelectedIds((prev) => {
+                const next = new Set(prev);
+                displayedBookings.forEach((b) => next.add(b.id));
+                return next;
+            });
+        }
+    };
+
+    const selectAllFiltered = () => {
+        const next = new Set(bookings.map((b) => b.id));
+        setSelectedIds(next);
+        showNotice(`Selected all ${bookings.length} matching leads.`);
+    };
+
+    const clearSelection = () => {
+        setSelectedIds(new Set());
+    };
+
+    // =========================================================================
+    // EXPORT TO CSV / EXCEL
+    // =========================================================================
+    const exportLeadsToCSV = (leadsToExport, filenameSuffix = "") => {
+        if (!leadsToExport || leadsToExport.length === 0) {
+            showNotice("No leads available to export.", "error");
+            return;
+        }
+
+        const headers = [
+            "Lead ID",
+            "Submission Date",
+            "Submission Time",
+            "Client Name",
+            "Phone Number",
+            "Email Address",
+            "Lead Channel",
+            "Form Type",
+            "Selected Service",
+            "Preferred Date",
+            "Preferred Time",
+            "Salon Branch / City",
+            "Guests",
+            "Pipeline Status",
+            "Client Message / Notes",
+            "IP Address",
+        ];
+
+        const escapeCSV = (val) => {
+            if (val === null || val === undefined) return '""';
+            const str = String(val).replace(/"/g, '""');
+            return `"${str}"`;
+        };
+
+        const rows = leadsToExport.map((lead) => {
+            const source = formatLeadSource(lead.form_type);
+            const statusMeta = getStatusMeta(lead.status);
+            const created = lead.created_at ? new Date(lead.created_at) : null;
+            const subDate = created ? created.toISOString().split("T")[0] : "";
+            const subTime = created ? created.toLocaleTimeString("en-IN") : "";
+
+            return [
+                lead.id,
+                subDate,
+                subTime,
+                lead.name || "",
+                lead.phone || "",
+                lead.email || "",
+                source.groupName,
+                source.badgeText,
+                lead.service_or_course || "General Inquiry",
+                lead.booking_date || "Flexible",
+                lead.booking_time || "",
+                lead.branch_location || lead.city || "Lucknow",
+                lead.guests || 1,
+                statusMeta.label,
+                lead.message || "",
+                lead.ip_address || "",
+            ].map(escapeCSV).join(",");
+        });
+
+        // Add UTF-8 BOM so Excel automatically recognizes unicode formatting
+        const csvContent = "\uFEFF" + [headers.map(escapeCSV).join(","), ...rows].join("\r\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const todayStr = new Date().toISOString().split("T")[0];
+        link.href = url;
+        link.setAttribute(
+            "download",
+            `KNK_Awadh_Leads_${filenameSuffix ? filenameSuffix + "_" : ""}${todayStr}.csv`
+        );
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        setShowExportMenu(false);
+        showNotice(`Exported ${leadsToExport.length} leads to CSV successfully.`);
     };
 
     const copyPhoneToClipboard = (id, phone) => {
@@ -133,119 +524,122 @@ export default function AdminBookingsPage() {
         setTimeout(() => setCopiedPhoneId(null), 2000);
     };
 
-    // Clean, clear categorization without emojis or clutter
-    const formatFormType = useCallback((type) => {
-        const raw = (type || "").toLowerCase().trim();
-
-        // 1. Bridal Landing Page leads
-        if (
-            raw === "bridal_landing_page" ||
-            raw === "bridal_landing_modal" ||
-            raw === "makeup_landing_page" ||
-            raw === "landing_page" ||
-            raw === "landing_page_bridal" ||
-            raw === "bridal_landing" ||
-            raw === "makeup-artist-lucknow"
-        ) {
-            return {
-                channel: "bridal_landing",
-                channelName: "Bridal Landing Page",
-                badgeText: "Bridal Landing Page",
-                path: "/makeup-artist-lucknow",
-                badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
-                borderAccent: "border-l-rose-500",
-            };
-        }
-
-        // 2. Salon Landing Page leads
-        if (
-            raw === "salon_landing_page" ||
-            raw === "salon_landing_modal" ||
-            raw === "salon-landing-page" ||
-            raw === "salon_landing" ||
-            raw === "salon-services-lucknow"
-        ) {
-            return {
-                channel: "salon_landing",
-                channelName: "Salon Landing Page",
-                badgeText: "Salon Landing Page",
-                path: "/salon-services-lucknow",
-                badgeClass: "bg-amber-50 text-amber-800 border-amber-200",
-                borderAccent: "border-l-amber-500",
-            };
-        }
-
-        // 3. Main Website Leads
-        let originName = "Main Website";
-        let path = "/";
-
-        if (raw === "hero_concierge") {
-            originName = "Website Concierge";
-            path = "/#concierge";
-        } else if (raw === "luxury_booking") {
-            originName = "Luxury Studio Form";
-            path = "/#booking";
-        } else if (raw === "modal_booking" || raw === "popup_modal") {
-            originName = "Website Popup";
-            path = "/";
-        } else if (raw === "makeup" || raw === "makeup_page_booking") {
-            originName = "Bridal Makeup Page";
-            path = "/makeup";
-        } else if (raw === "academy") {
-            originName = "Academy Admission";
-            path = "/academy";
-        } else if (raw === "contact_us" || raw === "contact") {
-            originName = "Contact Us Page";
-            path = "/contact-us";
-        } else if (raw === "about_page_booking" || raw === "about") {
-            originName = "About Page";
-            path = "/about";
-        } else if (type) {
-            originName = `Website: ${type.replace(/_/g, " ")}`;
-        }
-
-        return {
-            channel: "website",
-            channelName: "Main Website",
-            badgeText: originName,
-            path: path,
-            badgeClass: "bg-stone-100 text-stone-700 border-stone-200",
-            borderAccent: "border-l-stone-400",
-        };
-    }, []);
-
-    const formatStatusBadge = (status) => {
-        switch (status) {
-            case "confirmed":
-                return "bg-emerald-50 text-emerald-700 border-emerald-200";
-            case "completed":
-                return "bg-blue-50 text-blue-700 border-blue-200";
-            case "cancelled":
-                return "bg-rose-50 text-rose-700 border-rose-200";
-            default:
-                return "bg-amber-50 text-amber-700 border-amber-200";
-        }
-    };
-
     const isFiltered = typeFilter !== "all" || statusFilter !== "all" || search.trim() !== "";
-    const displayedBookings = bookings.slice(0, visibleCount);
     const hasMore = visibleCount < bookings.length;
     const remainingCount = Math.max(0, bookings.length - visibleCount);
 
     return (
         <div className="max-w-7xl mx-auto space-y-5">
+            {/* Action Feedback Banner */}
+            {actionNotice && (
+                <div
+                    className={`p-3 rounded-xl border text-xs font-medium flex items-center justify-between transition-all ${
+                        actionNotice.type === "error"
+                            ? "bg-rose-50 text-rose-800 border-rose-200"
+                            : "bg-emerald-50 text-emerald-800 border-emerald-200"
+                    }`}
+                >
+                    <div className="flex items-center gap-2">
+                        {actionNotice.type === "error" ? (
+                            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                        ) : (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        )}
+                        <span>{actionNotice.msg}</span>
+                    </div>
+                    <button
+                        onClick={() => setActionNotice(null)}
+                        className="text-stone-500 hover:text-stone-800 p-0.5 cursor-pointer"
+                    >
+                        <X className="w-3.5 h-3.5" />
+                    </button>
+                </div>
+            )}
+
             {/* Header: Clean & Minimal */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e2dbd2] pb-5">
                 <div>
                     <h1 className="font-display text-3xl text-ink font-semibold">
-                        Bookings &amp; Inquiries
+                        Bookings &amp; Leads Management
                     </h1>
                     <p className="font-sans text-xs text-muted mt-1">
-                        Live lead stream from Main Website, Bridal Landing Page, and Salon Landing Page.
+                        Track, assign, and manage live inquiries from Home Page, Popup Modals, and Campaign Landing Pages.
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                    {/* Leads Export Menu */}
+                    <div className="relative">
+                        <button
+                            type="button"
+                            onClick={() => setShowExportMenu((prev) => !prev)}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-white hover:bg-[#faf7f2] text-ink border border-border shadow-2xs transition-colors cursor-pointer"
+                        >
+                            <Download className="w-3.5 h-3.5 text-gold-deep" />
+                            <span>Export Leads</span>
+                            <ChevronDown className="w-3 h-3 text-muted" />
+                        </button>
+
+                        {showExportMenu && (
+                            <>
+                                <div
+                                    className="fixed inset-0 z-20"
+                                    onClick={() => setShowExportMenu(false)}
+                                />
+                                <div className="absolute right-0 top-full mt-1.5 w-60 rounded-xl bg-white border border-border shadow-luxe py-1.5 z-30 text-xs font-sans">
+                                    <button
+                                        type="button"
+                                        onClick={() => exportLeadsToCSV(bookings, "filtered")}
+                                        className="w-full text-left px-3.5 py-2 hover:bg-[#faf7f2] text-ink flex items-center justify-between cursor-pointer"
+                                    >
+                                        <span>Export Filtered Leads</span>
+                                        <span className="font-mono text-[10px] text-muted bg-[#f2ede4] px-1.5 py-0.5 rounded">
+                                            {bookings.length}
+                                        </span>
+                                    </button>
+
+                                    {selectedIds.size > 0 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const selList = bookings.filter((b) => selectedIds.has(b.id));
+                                                exportLeadsToCSV(selList, "selected");
+                                            }}
+                                            className="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-emerald-800 font-semibold flex items-center justify-between cursor-pointer"
+                                        >
+                                            <span>Export Selected Leads</span>
+                                            <span className="font-mono text-[10px] bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded">
+                                                {selectedIds.size}
+                                            </span>
+                                        </button>
+                                    )}
+
+                                    <button
+                                        type="button"
+                                        onClick={async () => {
+                                            try {
+                                                const res = await fetch("/api/bookings?status=all&formType=all");
+                                                if (res.ok) {
+                                                    const d = await res.json();
+                                                    exportLeadsToCSV(d.bookings || bookings, "all");
+                                                }
+                                            } catch {
+                                                exportLeadsToCSV(bookings, "all");
+                                            }
+                                        }}
+                                        className="w-full text-left px-3.5 py-2 hover:bg-[#faf7f2] text-ink flex items-center justify-between border-t border-[#f2ede4] cursor-pointer"
+                                    >
+                                        <span>Export All Leads (Full DB)</span>
+                                        <span className="font-mono text-[10px] text-muted bg-[#f2ede4] px-1.5 py-0.5 rounded">
+                                            {stats.total || bookings.length}
+                                        </span>
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Refresh */}
                     <button
                         type="button"
                         onClick={fetchBookings}
@@ -253,12 +647,12 @@ export default function AdminBookingsPage() {
                         className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-white hover:bg-[#faf7f2] text-ink border border-border shadow-2xs transition-colors cursor-pointer disabled:opacity-60"
                     >
                         <RefreshCw className={`w-3.5 h-3.5 text-muted ${loading ? "animate-spin" : ""}`} />
-                        <span>{loading ? "Updating..." : "Refresh"}</span>
+                        <span>{loading ? "Refreshing..." : "Refresh"}</span>
                     </button>
                 </div>
             </div>
 
-            {/* Clean Metrics: Exactly 4 Cards in ONE Row */}
+            {/* Metrics: Lead Sources Breakdown (Home page, Popup, Landing page, Website) */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
                 {/* 1. Total Leads */}
                 <div
@@ -274,7 +668,7 @@ export default function AdminBookingsPage() {
                             Total Leads
                         </span>
                         {stats.pending > 0 && (
-                            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                            <span className="text-[10px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-250">
                                 {stats.pending} pending
                             </span>
                         )}
@@ -283,89 +677,137 @@ export default function AdminBookingsPage() {
                         {stats.total || 0}
                     </p>
                     <p className="text-[11px] text-muted mt-1">
-                        All channels combined
+                        All channels &amp; campaigns combined
                     </p>
                 </div>
 
-                {/* 2. Bridal Landing Page */}
+                {/* 2. Home Page Leads */}
                 <div
-                    onClick={() => setTypeFilter(typeFilter === "bridal_landing" ? "all" : "bridal_landing")}
+                    onClick={() => setTypeFilter(typeFilter === "home_page" ? "all" : "home_page")}
                     className={`p-4 rounded-xl border bg-white transition-all cursor-pointer ${
-                        typeFilter === "bridal_landing" || typeFilter === "bridal_landing_page"
-                            ? "border-rose-500 shadow-xs ring-1 ring-rose-500 bg-rose-50/20"
-                            : "border-[#e8e2d5] hover:border-rose-300"
-                    }`}
-                >
-                    <div className="flex items-center justify-between">
-                        <span className="text-[11px] uppercase tracking-wider font-semibold text-rose-800">
-                            Bridal Landing
-                        </span>
-                        <span className="text-[10px] font-mono text-muted">
-                            /makeup-artist-lucknow
-                        </span>
-                    </div>
-                    <p className="font-display text-3xl font-bold text-rose-700 mt-2">
-                        {stats.bridalLanding || 0}
-                    </p>
-                    <p className="text-[11px] text-muted mt-1">
-                        Bridal studio campaign leads
-                    </p>
-                </div>
-
-                {/* 3. Salon Landing Page */}
-                <div
-                    onClick={() => setTypeFilter(typeFilter === "salon_landing" ? "all" : "salon_landing")}
-                    className={`p-4 rounded-xl border bg-white transition-all cursor-pointer ${
-                        typeFilter === "salon_landing" || typeFilter === "salon_landing_page"
-                            ? "border-amber-500 shadow-xs ring-1 ring-amber-500 bg-amber-50/20"
-                            : "border-[#e8e2d5] hover:border-amber-300"
+                        typeFilter === "home_page"
+                            ? "border-amber-700 shadow-xs ring-1 ring-amber-700 bg-amber-50/20"
+                            : "border-[#e8e2d5] hover:border-amber-400"
                     }`}
                 >
                     <div className="flex items-center justify-between">
                         <span className="text-[11px] uppercase tracking-wider font-semibold text-amber-900">
-                            Salon Landing
+                            Home Page
                         </span>
                         <span className="text-[10px] font-mono text-muted">
-                            /salon-services-lucknow
+                            Concierge + Studio
                         </span>
                     </div>
                     <p className="font-display text-3xl font-bold text-amber-800 mt-2">
-                        {stats.salonLanding || 0}
+                        {stats.homePage || 0}
                     </p>
                     <p className="text-[11px] text-muted mt-1">
-                        Salon services campaign leads
+                        Hero concierge &amp; luxury booking
                     </p>
                 </div>
 
-                {/* 4. Main Website */}
+                {/* 3. Popup Modal Leads */}
                 <div
-                    onClick={() => setTypeFilter(typeFilter === "website" ? "all" : "website")}
+                    onClick={() => setTypeFilter(typeFilter === "popup" ? "all" : "popup")}
                     className={`p-4 rounded-xl border bg-white transition-all cursor-pointer ${
-                        typeFilter === "website"
-                            ? "border-stone-800 shadow-xs ring-1 ring-stone-800 bg-stone-50/40"
-                            : "border-[#e8e2d5] hover:border-stone-400"
+                        typeFilter === "popup"
+                            ? "border-purple-600 shadow-xs ring-1 ring-purple-600 bg-purple-50/20"
+                            : "border-[#e8e2d5] hover:border-purple-300"
                     }`}
                 >
                     <div className="flex items-center justify-between">
-                        <span className="text-[11px] uppercase tracking-wider font-semibold text-stone-700">
-                            Main Website
+                        <span className="text-[11px] uppercase tracking-wider font-semibold text-purple-900">
+                            Popup Modal
                         </span>
                         <span className="text-[10px] font-mono text-muted">
-                            knkawadh.com
+                            Site-wide Popup
                         </span>
                     </div>
-                    <p className="font-display text-3xl font-bold text-stone-800 mt-2">
-                        {stats.website || 0}
+                    <p className="font-display text-3xl font-bold text-purple-800 mt-2">
+                        {stats.popup || 0}
                     </p>
                     <p className="text-[11px] text-muted mt-1">
-                        Concierge, Studio &amp; Contact forms
+                        Book Appointment button popups
+                    </p>
+                </div>
+
+                {/* 4. Landing Pages (Bridal + Salon) */}
+                <div
+                    onClick={() => setTypeFilter(typeFilter === "landing_page" ? "all" : "landing_page")}
+                    className={`p-4 rounded-xl border bg-white transition-all cursor-pointer ${
+                        typeFilter === "landing_page"
+                            ? "border-rose-600 shadow-xs ring-1 ring-rose-600 bg-rose-50/20"
+                            : "border-[#e8e2d5] hover:border-rose-400"
+                    }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-[11px] uppercase tracking-wider font-semibold text-rose-900">
+                            Landing Pages
+                        </span>
+                        <span className="text-[10px] font-mono text-muted">
+                            Bridal + Salon Ads
+                        </span>
+                    </div>
+                    <p className="font-display text-3xl font-bold text-rose-700 mt-2">
+                        {stats.landingPages || (stats.bridalLanding + stats.salonLanding) || 0}
+                    </p>
+                    <p className="text-[11px] text-muted mt-1">
+                        Dedicated ads campaign pages
                     </p>
                 </div>
             </div>
 
-            {/* Filter Bar: Simple & Clear */}
+            {/* Standard Pipeline Ribbon (Pending, Assigned, Follow-up, Confirmed / Booked, Completed, Cancelled) */}
+            <div className="bg-white p-3 rounded-xl border border-[#e8e2d5] shadow-2xs">
+                <div className="flex items-center justify-between mb-2 px-1">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+                        Standard Lead &amp; Booking Pipeline Flow
+                    </span>
+                    <span className="text-[10px] text-muted">
+                        Click any status to filter leads
+                    </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                    {LEAD_STATUS_PIPELINE.map((pStep, idx) => {
+                        const countKey = pStep.key === "follow_up" ? "follow_up" : pStep.key;
+                        const count = stats[countKey] ?? 0;
+                        const isCurrent = statusFilter === pStep.key;
+
+                        return (
+                            <button
+                                key={pStep.key}
+                                type="button"
+                                onClick={() => setStatusFilter(isCurrent ? "all" : pStep.key)}
+                                className={`text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
+                                    isCurrent
+                                        ? "ring-1 ring-gold border-gold bg-[#faf7f2] shadow-xs"
+                                        : "border-[#f0eae0] hover:border-border hover:bg-[#fcfaf7]"
+                                }`}
+                            >
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-mono text-muted font-semibold">
+                                        0{idx + 1}
+                                    </span>
+                                    <span className={`h-2 w-2 rounded-full ${pStep.dotClass}`} />
+                                </div>
+                                <p className="font-semibold text-ink text-xs mt-1 truncate">
+                                    {pStep.label}
+                                </p>
+                                <div className="flex items-center justify-between mt-1 text-[11px]">
+                                    <span className="text-muted text-[10px]">{pStep.desc}</span>
+                                    <span className="font-mono font-bold text-ink">
+                                        {count}
+                                    </span>
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Filter Bar: Source tabs & Search */}
             <div className="bg-white p-3.5 rounded-xl border border-[#e8e2d5] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-                {/* Clean Segmented Tabs (No emojis) */}
+                {/* Source Tabs */}
                 <div className="flex flex-wrap items-center gap-1.5">
                     <button
                         type="button"
@@ -381,26 +823,38 @@ export default function AdminBookingsPage() {
 
                     <button
                         type="button"
-                        onClick={() => setTypeFilter("bridal_landing")}
+                        onClick={() => setTypeFilter("home_page")}
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                            typeFilter === "bridal_landing" || typeFilter === "bridal_landing_page"
-                                ? "bg-rose-700 text-white font-semibold"
-                                : "text-rose-800 hover:bg-rose-50"
-                        }`}
-                    >
-                        Bridal Landing ({stats.bridalLanding || 0})
-                    </button>
-
-                    <button
-                        type="button"
-                        onClick={() => setTypeFilter("salon_landing")}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                            typeFilter === "salon_landing" || typeFilter === "salon_landing_page"
+                            typeFilter === "home_page"
                                 ? "bg-amber-800 text-white font-semibold"
                                 : "text-amber-900 hover:bg-amber-50"
                         }`}
                     >
-                        Salon Landing ({stats.salonLanding || 0})
+                        Home Page ({stats.homePage || 0})
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setTypeFilter("popup")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                            typeFilter === "popup"
+                                ? "bg-purple-800 text-white font-semibold"
+                                : "text-purple-900 hover:bg-purple-50"
+                        }`}
+                    >
+                        Popup ({stats.popup || 0})
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setTypeFilter("landing_page")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                            typeFilter === "landing_page"
+                                ? "bg-rose-800 text-white font-semibold"
+                                : "text-rose-900 hover:bg-rose-50"
+                        }`}
+                    >
+                        Landing Pages ({stats.landingPages || (stats.bridalLanding + stats.salonLanding) || 0})
                     </button>
 
                     <button
@@ -412,7 +866,7 @@ export default function AdminBookingsPage() {
                                 : "text-stone-800 hover:bg-stone-100"
                         }`}
                     >
-                        Main Website ({stats.website || 0})
+                        Other Website ({stats.website || 0})
                     </button>
                 </div>
 
@@ -443,11 +897,12 @@ export default function AdminBookingsPage() {
                         onChange={(e) => setStatusFilter(e.target.value)}
                         className="px-2.5 py-1.5 bg-white border border-border rounded-lg text-xs font-sans text-ink focus:outline-none focus:border-gold cursor-pointer"
                     >
-                        <option value="all">All Statuses</option>
-                        <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="all">All Statuses ({bookings.length})</option>
+                        {LEAD_STATUS_PIPELINE.map((status) => (
+                            <option key={status.key} value={status.key}>
+                                {status.label}
+                            </option>
+                        ))}
                     </select>
 
                     {isFiltered && (
@@ -466,18 +921,94 @@ export default function AdminBookingsPage() {
                 </div>
             </div>
 
+            {/* Bulk Action Sticky Bar (when 1 or more leads selected) */}
+            {selectedIds.size > 0 && (
+                <div className="bg-ink text-white px-4 py-3 rounded-xl shadow-luxe flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="flex items-center gap-3">
+                        <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="font-semibold text-xs sm:text-sm">
+                            {selectedIds.size} lead{selectedIds.size > 1 ? "s" : ""} selected
+                        </span>
+                        {selectedIds.size < bookings.length && (
+                            <button
+                                type="button"
+                                onClick={selectAllFiltered}
+                                className="text-[11px] text-gold underline hover:text-gold-light cursor-pointer font-medium ml-1"
+                            >
+                                Select all {bookings.length} leads
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        {/* Export Selected */}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const selList = bookings.filter((b) => selectedIds.has(b.id));
+                                exportLeadsToCSV(selList, "selected");
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-medium transition cursor-pointer"
+                        >
+                            <Download className="w-3.5 h-3.5" />
+                            <span>Export ({selectedIds.size})</span>
+                        </button>
+
+                        {/* Multiple Delete */}
+                        <button
+                            type="button"
+                            onClick={handleBulkDelete}
+                            disabled={isDeletingMultiple}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer disabled:opacity-50"
+                        >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>
+                                {isDeletingMultiple
+                                    ? "Deleting..."
+                                    : `Delete Selected (${selectedIds.size})`}
+                            </span>
+                        </button>
+
+                        {/* Clear Selection */}
+                        <button
+                            type="button"
+                            onClick={clearSelection}
+                            className="px-2.5 py-1.5 text-white/70 hover:text-white text-xs cursor-pointer"
+                        >
+                            Deselect
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Bookings Table: Simple, Spacious, Clear */}
             <div className="bg-white rounded-xl border border-[#e8e2d5] shadow-2xs overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-[#fcfaf7] border-b border-[#e8e2d5] font-sans text-[10px] tracking-[0.16em] uppercase text-muted">
-                                <th className="py-3.5 px-4 font-semibold">Client</th>
-                                <th className="py-3.5 px-4 font-semibold">Lead Source</th>
-                                <th className="py-3.5 px-4 font-semibold">Service / Inquiry</th>
-                                <th className="py-3.5 px-4 font-semibold">Date &amp; Time</th>
-                                <th className="py-3.5 px-4 font-semibold">Branch</th>
-                                <th className="py-3.5 px-4 font-semibold">Status</th>
+                                <th className="py-3.5 pl-4 pr-2 w-10">
+                                    <button
+                                        type="button"
+                                        onClick={toggleSelectAllVisible}
+                                        className="text-muted hover:text-ink cursor-pointer p-1"
+                                        title={isAllVisibleSelected ? "Deselect all visible" : "Select all visible"}
+                                    >
+                                        {isAllVisibleSelected ? (
+                                            <CheckSquare className="w-4 h-4 text-ink" />
+                                        ) : selectedIds.size > 0 ? (
+                                            <Square className="w-4 h-4 text-gold-deep" />
+                                        ) : (
+                                            <Square className="w-4 h-4 text-stone-300" />
+                                        )}
+                                    </button>
+                                </th>
+                                <th className="py-3.5 px-3 font-semibold">Client</th>
+                                <th className="py-3.5 px-3 font-semibold">Lead Source</th>
+                                <th className="py-3.5 px-3 font-semibold">Service / Inquiry</th>
+                                <th className="py-3.5 px-3 font-semibold">Date &amp; Time</th>
+                                <th className="py-3.5 px-3 font-semibold">Branch</th>
+                                <th className="py-3.5 px-3 font-semibold">Status</th>
                                 <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
                             </tr>
                         </thead>
@@ -485,29 +1016,48 @@ export default function AdminBookingsPage() {
                         <tbody className="divide-y divide-[#f2ede4] font-sans text-xs">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={7} className="py-12 text-center text-muted">
+                                    <td colSpan={8} className="py-12 text-center text-muted">
                                         Loading leads...
                                     </td>
                                 </tr>
                             ) : bookings.length === 0 ? (
                                 <tr>
-                                    <td colSpan={7} className="py-12 text-center text-muted">
+                                    <td colSpan={8} className="py-12 text-center text-muted">
                                         No leads found matching your criteria.
                                     </td>
                                 </tr>
                             ) : (
                                 displayedBookings.map((item) => {
-                                    const source = formatFormType(item.form_type);
+                                    const source = formatLeadSource(item.form_type);
+                                    const statusMeta = getStatusMeta(item.status);
                                     const isUpdating = updatingId === item.id;
                                     const isCopied = copiedPhoneId === item.id;
+                                    const isSelected = selectedIds.has(item.id);
 
                                     return (
                                         <tr
                                             key={item.id}
-                                            className={`hover:bg-[#faf7f2] transition-colors border-l-3 ${source.borderAccent}`}
+                                            className={`hover:bg-[#faf7f2] transition-colors border-l-3 ${source.borderAccent} ${
+                                                isSelected ? "bg-amber-50/30" : ""
+                                            }`}
                                         >
+                                            {/* Selection Checkbox */}
+                                            <td className="py-3 pl-4 pr-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleSelectRow(item.id)}
+                                                    className="text-muted hover:text-ink cursor-pointer p-1"
+                                                >
+                                                    {isSelected ? (
+                                                        <CheckSquare className="w-4 h-4 text-ink" />
+                                                    ) : (
+                                                        <Square className="w-4 h-4 text-stone-300 hover:text-stone-500" />
+                                                    )}
+                                                </button>
+                                            </td>
+
                                             {/* Client */}
-                                            <td className="py-3 px-4">
+                                            <td className="py-3 px-3">
                                                 <p className="font-semibold text-ink text-sm">
                                                     {item.name}
                                                 </p>
@@ -538,8 +1088,8 @@ export default function AdminBookingsPage() {
                                                 )}
                                             </td>
 
-                                            {/* Lead Source: Simple, Bold & Distinct Badge */}
-                                            <td className="py-3 px-4 whitespace-nowrap">
+                                            {/* Lead Source: Clear origin */}
+                                            <td className="py-3 px-3 whitespace-nowrap">
                                                 <div className="flex flex-col items-start gap-1">
                                                     <span
                                                         className={`inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold border ${source.badgeClass}`}
@@ -553,7 +1103,7 @@ export default function AdminBookingsPage() {
                                             </td>
 
                                             {/* Service / Inquiry */}
-                                            <td className="py-3 px-4 max-w-[190px]">
+                                            <td className="py-3 px-3 max-w-[190px]">
                                                 <p className="font-medium text-ink truncate">
                                                     {item.service_or_course || "—"}
                                                 </p>
@@ -565,7 +1115,7 @@ export default function AdminBookingsPage() {
                                             </td>
 
                                             {/* Date & Time */}
-                                            <td className="py-3 px-4 whitespace-nowrap">
+                                            <td className="py-3 px-3 whitespace-nowrap">
                                                 <p className="text-ink font-medium">
                                                     {item.booking_date || "Flexible"}
                                                 </p>
@@ -575,24 +1125,25 @@ export default function AdminBookingsPage() {
                                             </td>
 
                                             {/* Branch */}
-                                            <td className="py-3 px-4 text-muted whitespace-nowrap">
+                                            <td className="py-3 px-3 text-muted whitespace-nowrap">
                                                 {item.branch_location || item.city || "Lucknow"}
                                             </td>
 
-                                            {/* Status */}
-                                            <td className="py-3 px-4 whitespace-nowrap">
+                                            {/* Status: Standard 6 Pipeline Statuses */}
+                                            <td className="py-3 px-3 whitespace-nowrap">
                                                 <select
                                                     value={item.status}
                                                     disabled={isUpdating}
                                                     onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                                                    className={`border text-[11px] font-semibold rounded-md px-2 py-1 outline-none uppercase tracking-wider cursor-pointer ${formatStatusBadge(
-                                                        item.status
-                                                    )} ${isUpdating ? "opacity-50" : ""}`}
+                                                    className={`border text-[11px] font-semibold rounded-md px-2 py-1 outline-none uppercase tracking-wider cursor-pointer ${
+                                                        statusMeta.badgeClass
+                                                    } ${isUpdating ? "opacity-50" : ""}`}
                                                 >
-                                                    <option value="pending">Pending</option>
-                                                    <option value="confirmed">Confirmed</option>
-                                                    <option value="completed">Completed</option>
-                                                    <option value="cancelled">Cancelled</option>
+                                                    {LEAD_STATUS_PIPELINE.map((pStep) => (
+                                                        <option key={pStep.key} value={pStep.key}>
+                                                            {pStep.label}
+                                                        </option>
+                                                    ))}
                                                 </select>
                                             </td>
 
@@ -633,64 +1184,48 @@ export default function AdminBookingsPage() {
                         <div className="flex items-center gap-2">
                             <button
                                 type="button"
-                                onClick={() => setVisibleCount((prev) => prev + 10)}
+                                onClick={() => setVisibleCount((prev) => prev + 15)}
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-ink hover:bg-black text-white text-xs font-semibold rounded-lg shadow-xs transition-all duration-200 cursor-pointer hover:scale-[1.01]"
                             >
                                 <ChevronDown className="w-3.5 h-3.5" />
-                                <span>View More (+10)</span>
+                                <span>View More (+15)</span>
                                 <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">
                                     {remainingCount} left
                                 </span>
                             </button>
 
-                            {remainingCount > 10 && (
+                            {remainingCount > 15 && (
                                 <button
                                     type="button"
                                     onClick={() => setVisibleCount(bookings.length)}
                                     className="px-3 py-2 bg-white hover:bg-[#f2ede4] text-ink text-xs font-medium rounded-lg border border-border shadow-2xs transition-colors cursor-pointer"
                                 >
-                                    View All ({bookings.length})
+                                    Show All ({bookings.length})
                                 </button>
                             )}
                         </div>
                     </div>
                 )}
 
-                {!hasMore && bookings.length > 10 && (
-                    <div className="bg-[#faf7f2] px-5 py-3 border-t border-[#e8e2d5] flex items-center justify-between text-xs text-muted">
-                        <span className="flex items-center gap-1.5 text-emerald-700 font-medium">
-                            <Check className="w-3.5 h-3.5" /> All {bookings.length} leads loaded
-                        </span>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setVisibleCount(10);
-                            }}
-                            className="text-xs text-gold-deep hover:underline font-medium cursor-pointer"
-                        >
-                            Show First 10 Only
-                        </button>
-                    </div>
-                )}
-
-                {/* Footer Count */}
-                <div className="bg-[#fcfaf7] px-4 py-2.5 border-t border-[#e8e2d5] text-xs text-muted flex items-center justify-between">
+                {/* Footer summary */}
+                <div className="bg-[#fcfaf7] px-5 py-3 border-t border-[#e8e2d5] flex items-center justify-between text-xs text-muted">
                     <span>
-                        Showing {displayedBookings.length} of {bookings.length} leads {isFiltered && `(Filtered from ${stats.total || 0} total)`}
+                        Total matching leads: <strong className="text-ink">{bookings.length}</strong>
                     </span>
                     <span className="font-mono text-[11px]">
-                        Bridal: {stats.bridalLanding || 0} | Salon: {stats.salonLanding || 0} | Website: {stats.website || 0}
+                        Home: {stats.homePage || 0} | Popup: {stats.popup || 0} | Landing: {stats.landingPages || 0}
                     </span>
                 </div>
             </div>
 
-            {/* Lead Details Modal: Clean & Clear */}
+            {/* Lead Details Modal */}
             {selectedBooking && (() => {
-                const source = formatFormType(selectedBooking.form_type);
-                const cleanPhone = selectedBooking.phone.replace(/[^\d]/g, "");
+                const source = formatLeadSource(selectedBooking.form_type);
+                const statusMeta = getStatusMeta(selectedBooking.status);
+                const cleanPhone = (selectedBooking.phone || "").replace(/[^\d]/g, "");
 
                 return (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 animate-in fade-in duration-150">
                         <div className="bg-white rounded-xl max-w-lg w-full p-6 border border-border shadow-xl space-y-5 relative max-h-[90vh] overflow-y-auto">
                             <button
                                 onClick={() => setSelectedBooking(null)}
@@ -708,7 +1243,7 @@ export default function AdminBookingsPage() {
                                     {selectedBooking.name}
                                 </h2>
                                 <p className="text-xs text-muted">
-                                    Received: {new Date(selectedBooking.created_at).toLocaleString("en-IN")}
+                                    Received: {selectedBooking.created_at ? new Date(selectedBooking.created_at).toLocaleString("en-IN") : "Recent"}
                                 </p>
                             </div>
 
@@ -716,7 +1251,7 @@ export default function AdminBookingsPage() {
                             <div className="p-3 rounded-lg bg-[#faf7f2] border border-border flex items-center justify-between">
                                 <div>
                                     <span className="text-[10px] uppercase text-muted tracking-wider font-semibold block">
-                                        Source Channel:
+                                        Source Origin:
                                     </span>
                                     <span className={`inline-block mt-1 px-2.5 py-0.5 rounded text-xs font-semibold border ${source.badgeClass}`}>
                                         {source.badgeText}
@@ -727,6 +1262,7 @@ export default function AdminBookingsPage() {
                                 </span>
                             </div>
 
+                            {/* Details Grid */}
                             <div className="grid grid-cols-2 gap-3 text-xs bg-[#faf7f2] p-4 rounded-lg border border-border">
                                 <div>
                                     <span className="text-[10px] uppercase text-muted tracking-wider block">Phone:</span>
@@ -739,13 +1275,13 @@ export default function AdminBookingsPage() {
                                     <span className="text-ink">{selectedBooking.email || "—"}</span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] uppercase text-muted tracking-wider block">Service:</span>
+                                    <span className="text-[10px] uppercase text-muted tracking-wider block">Selected Service:</span>
                                     <span className="font-semibold text-gold-deep">
                                         {selectedBooking.service_or_course || "General Inquiry"}
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] uppercase text-muted tracking-wider block">Date &amp; Time:</span>
+                                    <span className="text-[10px] uppercase text-muted tracking-wider block">Preferred Date:</span>
                                     <span className="text-ink">
                                         {selectedBooking.booking_date || "Flexible"} {selectedBooking.booking_time ? `(${selectedBooking.booking_time})` : ""}
                                     </span>
@@ -773,22 +1309,36 @@ export default function AdminBookingsPage() {
                                 </div>
                             )}
 
-                            <div className="flex items-center justify-between pt-3 border-t border-border">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs text-muted font-medium">Status:</span>
+                            {/* Status Pipeline Step */}
+                            <div>
+                                <span className="text-[10px] uppercase text-muted tracking-wider block mb-1.5 font-semibold">
+                                    Pipeline Status:
+                                </span>
+                                <div className="flex items-center gap-3">
                                     <select
                                         value={selectedBooking.status}
                                         onChange={(e) => handleStatusChange(selectedBooking.id, e.target.value)}
-                                        className={`border text-xs rounded-md px-2.5 py-1 uppercase tracking-wider font-semibold cursor-pointer ${formatStatusBadge(
-                                            selectedBooking.status
-                                        )}`}
+                                        className={`flex-1 border text-xs rounded-lg px-3 py-2 uppercase tracking-wider font-semibold cursor-pointer ${
+                                            statusMeta.badgeClass
+                                        }`}
                                     >
-                                        <option value="pending">Pending</option>
-                                        <option value="confirmed">Confirmed</option>
-                                        <option value="completed">Completed</option>
-                                        <option value="cancelled">Cancelled</option>
+                                        {LEAD_STATUS_PIPELINE.map((pStep) => (
+                                            <option key={pStep.key} value={pStep.key}>
+                                                {pStep.label} — {pStep.desc}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
+                            </div>
+
+                            <div className="flex items-center justify-between pt-3 border-t border-border">
+                                <button
+                                    type="button"
+                                    onClick={() => handleDelete(selectedBooking.id)}
+                                    className="px-3 py-2 text-rose-600 hover:bg-rose-50 text-xs font-semibold rounded-lg transition cursor-pointer"
+                                >
+                                    Delete Lead
+                                </button>
 
                                 <a
                                     href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
@@ -796,9 +1346,9 @@ export default function AdminBookingsPage() {
                                     )}`}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="px-4 py-2 bg-[#25D366] text-white rounded-lg text-xs font-semibold hover:opacity-90 transition cursor-pointer"
+                                    className="px-4 py-2 bg-[#25D366] text-white rounded-lg text-xs font-semibold hover:opacity-90 transition cursor-pointer inline-flex items-center gap-1.5"
                                 >
-                                    WhatsApp Client ↗
+                                    <span>WhatsApp Client ↗</span>
                                 </a>
                             </div>
                         </div>

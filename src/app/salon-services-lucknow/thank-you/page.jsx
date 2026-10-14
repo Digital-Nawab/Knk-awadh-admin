@@ -12,6 +12,7 @@ function SalonThankYouContent() {
     const searchParams = useSearchParams();
     const [booking, setBooking] = useState({
         bookingId: searchParams.get("bookingId") || "",
+        requestNumber: searchParams.get("requestNumber") || "",
         name: searchParams.get("name") || "Valued Guest",
         service: searchParams.get("service") || "Salon Signature Ritual",
         date: searchParams.get("date") || "",
@@ -26,6 +27,7 @@ function SalonThankYouContent() {
                     const parsed = JSON.parse(stored);
                     setBooking((prev) => ({
                         bookingId: parsed.bookingId || prev.bookingId,
+                        requestNumber: parsed.requestNumber || prev.requestNumber,
                         name: parsed.name || prev.name,
                         service: parsed.service || prev.service,
                         date: parsed.date || prev.date,
@@ -73,8 +75,7 @@ function SalonThankYouContent() {
 
                 {/* Confirmation message */}
                 <p className="mt-2.5 font-sans text-xs sm:text-sm leading-relaxed text-[#6E6359] max-w-lg mx-auto">
-                    Thank you, <strong className="text-[#191715] font-semibold">{booking.name}</strong>! We have received your salon appointment request
-                    {booking.bookingId ? ` (Booking #${booking.bookingId})` : ""}. Our concierge will contact you shortly to confirm your stylist and chair availability.
+                    Thanks, <strong className="text-[#191715] font-semibold">{booking.name}</strong> ! We&apos;ve received your booking request (#{booking.requestNumber || booking.bookingId || "49"}). We&apos;ll call you shortly to confirm.
                 </p>
 
                 {/* Reservation Summary Card */}

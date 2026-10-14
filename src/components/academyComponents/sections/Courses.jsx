@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
     Sparkles, UserRound, GraduationCap, Camera, Wind, Scissors,
     Hand, Shirt, Layers, PenTool, Flower2, ChevronDown, ChevronLeft, ChevronRight,
-    X, Clock, CheckCircle2, ArrowRight, MessageCircle, BookOpen, Search
+    X, Clock, CheckCircle2, ArrowRight, BookOpen, Search
 } from "lucide-react";
 import { INK, MUTED, GOLD, GOLD_DEEP, LINE, CREAM_DEEP } from "../shared/constants";
 import { courses, courseOptions } from "../shared/constants";
@@ -93,14 +93,19 @@ function BookingModal({ open, onClose, courseTitle }) {
             const data = await res.json();
             if (res.ok && data.success) {
                 onClose();
-                const queryParams = new URLSearchParams({
-                    bookingId: data.bookingId ? String(data.bookingId) : "",
-                    service: form.course || "Academy Course",
-                    name: form.name.trim(),
-                    date: new Date().toISOString().split("T")[0],
-                    location: form.city.trim() ? `Academy (${form.city.trim()})` : "KNK Academy Lucknow",
-                });
-                router.push(`/thank-you?${queryParams.toString()}`);
+                try {
+                    sessionStorage.setItem("last_booking", JSON.stringify({
+                        bookingId: data.bookingId ? String(data.bookingId) : "",
+                        requestNumber: data.bookingId ? String(data.bookingId) : "",
+                        service: form.course || "Academy Course",
+                        name: form.name.trim(),
+                        date: new Date().toISOString().split("T")[0],
+                        location: form.city.trim() ? `Academy (${form.city.trim()})` : "KNK Academy Lucknow",
+                    }));
+                } catch {
+                    // ignore storage errors
+                }
+                router.push("/thank-you");
             } else {
                 setErrorMsg(data.error || "Failed to submit booking. Please try again.");
             }
@@ -597,21 +602,11 @@ export default function Courses() {
                                                             <span>Includes IAF Recognized Certification &amp; Live Practical Evaluation</span>
                                                         </div>
 
-                                                        <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3">
-                                                            <a
-                                                                href={`https://wa.me/918881000552?text=Hello,%20I'm%20interested%20in%20learning%20more%20about%20the%20${encodeURIComponent(c.title)}%20at%20KNK%20Academy.`}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full border border-[#25D366] text-[#128C7E] bg-white text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider hover:bg-[#25D366]/10 transition-colors text-center"
-                                                            >
-                                                                <MessageCircle className="size-3.5 shrink-0" />
-                                                                <span>WhatsApp Syllabus</span>
-                                                            </a>
-
+                                                        <div className="flex items-center justify-end">
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setModalCourse(c.title)}
-                                                                className="inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full font-['Inter'] text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider text-white shadow-sm transition-transform hover:scale-105 text-center"
+                                                                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full font-['Inter'] text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider text-white shadow-sm transition-transform hover:scale-105 text-center"
                                                                 style={{ backgroundColor: GOLD }}
                                                             >
                                                                 <span>Reserve Seat</span>

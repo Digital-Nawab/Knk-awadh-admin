@@ -128,6 +128,7 @@ export default function FaqAndBooking() {
             "knk_salon_thankyou",
             JSON.stringify({
               bookingId: data?.bookingId ? String(data.bookingId) : "",
+              requestNumber: data?.requestNumber ? String(data.requestNumber) : "",
               service: formData.service,
               name: formData.name.trim(),
               date: formData.date,
@@ -139,7 +140,8 @@ export default function FaqAndBooking() {
         }
       }
 
-      router.push("/salon-services-lucknow/thank-you");
+      const reqNumQuery = data?.requestNumber ? `?requestNumber=${data.requestNumber}` : "";
+      router.push(`/salon-services-lucknow/thank-you${reqNumQuery}`);
     } catch (err) {
       console.error("Booking API error:", err);
       setIsSubmitting(false);

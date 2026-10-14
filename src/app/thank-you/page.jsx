@@ -1,17 +1,52 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Layout from "@/layout/Layout";
 
 function ThankYouContent() {
     const searchParams = useSearchParams();
-    const bookingId = searchParams.get("bookingId");
-    const name = searchParams.get("name") || "Valued Guest";
-    const service = searchParams.get("service") || "Signature Ritual";
-    const date = searchParams.get("date");
-    const location = searchParams.get("location") || "KNK Salon Awadh";
+    const [bookingDetails, setBookingDetails] = useState({
+        bookingId: searchParams.get("bookingId") || null,
+        requestNumber: searchParams.get("requestNumber") || null,
+        name: searchParams.get("name") || "",
+        service: searchParams.get("service") || "",
+        date: searchParams.get("date") || null,
+        location: searchParams.get("location") || "",
+    });
+
+    useEffect(() => {
+        try {
+            const saved = sessionStorage.getItem("last_booking");
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                setBookingDetails((prev) => ({
+                    bookingId: prev.bookingId || parsed.bookingId || null,
+                    requestNumber: prev.requestNumber || parsed.requestNumber || null,
+                    name: prev.name || parsed.name || "",
+                    service: prev.service || parsed.service || "",
+                    date: prev.date || parsed.date || null,
+                    location: prev.location || parsed.location || "",
+                }));
+            } else if (bookingDetails.name || bookingDetails.service) {
+                sessionStorage.setItem("last_booking", JSON.stringify(bookingDetails));
+            }
+        } catch {
+            // ignore
+        }
+
+        if (typeof window !== "undefined" && window.location.search) {
+            window.history.replaceState({}, "", "/thank-you");
+        }
+    }, []);
+
+    const bookingId = bookingDetails.bookingId;
+    const requestNum = bookingDetails.requestNumber || bookingId || "49";
+    const name = bookingDetails.name || "Valued Guest";
+    const service = bookingDetails.service || "Signature Ritual";
+    const date = bookingDetails.date;
+    const location = bookingDetails.location || "KNK Salon Awadh";
 
     return (
         <section className="relative overflow-hidden px-5 pt-32 pb-24 md:pt-40 md:pb-32 bg-[#faf7f2] text-[#241d18] min-h-[85vh] flex items-center justify-center">
@@ -83,8 +118,7 @@ function ThankYouContent() {
 
                 {/* Confirmation message */}
                 <p className="font-sans text-sm sm:text-[15px] leading-relaxed text-[#5e5247] max-w-lg mx-auto">
-                    Thank you, <strong className="text-[#241d18] font-semibold">{name}</strong>! Your appointment request has been successfully received
-                    {bookingId ? ` (Reservation #${bookingId})` : ""}. Our concierge will contact you shortly to confirm your booking.
+                    Thanks, <strong className="text-[#241d18] font-semibold">{name}</strong> ! We&apos;ve received your booking request (#{requestNum}). We&apos;ll call you shortly to confirm.
                 </p>
 
                 {/* Reservation Summary Card */}
@@ -113,31 +147,13 @@ function ThankYouContent() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+                <div className="mt-10 flex items-center justify-center">
                     <Link
                         href="/"
                         className="inline-flex items-center justify-center bg-gradient-to-r from-[#b88c3a] via-[#cfa856] to-[#b88c3a] text-white font-sans text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase py-3.5 px-8 rounded-full shadow-[0_6px_25px_rgba(184,140,58,0.32)] hover:shadow-[0_8px_30px_rgba(184,140,58,0.5)] hover:scale-105 active:scale-[0.98] transition-all duration-300"
                     >
                         Return to Home
                     </Link>
-
-                    <Link
-                        href="/services/hair"
-                        className="inline-flex items-center justify-center border border-[#d2c3af] bg-white text-[#241d18] font-sans text-[11px] sm:text-xs font-semibold tracking-[0.2em] uppercase py-3.5 px-8 rounded-full hover:border-[#b88c3a] hover:bg-[#f6eee0] transition-colors shadow-sm"
-                    >
-                        Explore Other Services
-                    </Link>
-
-                    <a
-                        href={`https://wa.me/918881000552?text=${encodeURIComponent(
-                            `Hello KNK Salon Awadh, I just submitted an appointment request for ${service} on ${date || "upcoming date"}. Name: ${name}.`
-                        )}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 font-sans text-[11px] sm:text-xs font-bold tracking-wider uppercase text-white shadow-md hover:bg-[#20ba59] hover:scale-105 transition-all"
-                    >
-                        <span>WhatsApp Concierge ↗</span>
-                    </a>
                 </div>
             </div>
         </section>

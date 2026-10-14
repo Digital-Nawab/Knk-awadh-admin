@@ -1,6 +1,7 @@
 import BookingModel from "@/models/BookingModel";
 import { sendLeadEmail } from "@/lib/mail";
-// Recompiled at 18:40:00
+import { db } from "@/lib/db";
+
 
 // In-memory IP submission rate limiter (resets every 15 mins)
 const submissionTracker = new Map();
@@ -139,6 +140,24 @@ export async function submitBooking(request) {
             console.error("Non-blocking lead email notification error:", emailErr);
         }
 
+        // Calculate daily changing request number (e.g. #49 today, changes daily)
+        let requestNumber = 49;
+        try {
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 0);
+            const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+            // Changes daily based on calendar day seed
+            const dailySeed = ((dayOfYear * 13 + 37) % 50) + 25;
+            const [countRows] = await db.query(
+                "SELECT COUNT(*) as count FROM bookings WHERE DATE(created_at) = CURDATE()"
+            );
+            const todayCount = Number(countRows[0]?.count) || 1;
+            requestNumber = dailySeed + todayCount;
+        } catch {
+            const today = new Date();
+            requestNumber = 40 + today.getDate();
+        }
+
         return {
             status: 201,
             body: {
@@ -147,6 +166,7 @@ export async function submitBooking(request) {
                     ? "Thank you! Your message has been received. Our concierge team will reach out to you shortly."
                     : "Thank you! Your appointment request has been reserved. Our concierge will contact you shortly.",
                 bookingId: booking.id,
+                requestNumber: requestNumber,
             },
         };
     } catch (error) {
@@ -175,13 +195,26 @@ export async function listBookings(request) {
 export async function updateBookingStatus(id, request) {
     try {
         const { status } = await request.json();
-        const validStatuses = ["pending", "confirmed", "completed", "cancelled"];
-        if (!validStatuses.includes(status)) {
-            return { status: 400, body: { error: "Invalid booking status." } };
+        let normalizedStatus = (status || "").toLowerCase().trim();
+        if (normalizedStatus === "follow-up") normalizedStatus = "follow_up";
+        if (normalizedStatus === "booked") normalizedStatus = "confirmed";
+
+        // Standard lead and booking status pipeline order:
+        // 1. Pending -> 2. Assigned -> 3. Follow-up -> 4. Confirmed / Booked -> 5. Completed -> 6. Cancelled
+        const validStatuses = [
+            "pending",
+            "assigned",
+            "follow_up",
+            "confirmed",
+            "completed",
+            "cancelled",
+        ];
+        if (!validStatuses.includes(normalizedStatus)) {
+            return { status: 400, body: { error: "Invalid booking status. Must be pending, assigned, follow_up, confirmed, completed, or cancelled." } };
         }
 
-        await BookingModel.updateStatus(id, status);
-        return { status: 200, body: { success: true, message: `Booking status changed to ${status}.` } };
+        await BookingModel.updateStatus(id, normalizedStatus);
+        return { status: 200, body: { success: true, status: normalizedStatus, message: `Booking status changed to ${normalizedStatus}.` } };
     } catch (error) {
         console.error("Update booking status error:", error);
         return { status: 500, body: { error: "Failed to update booking status." } };
@@ -195,5 +228,22 @@ export async function deleteBooking(id) {
     } catch (error) {
         console.error("Delete booking error:", error);
         return { status: 500, body: { error: "Failed to delete booking." } };
+    }
+}
+
+export async function deleteMultipleBookings(ids) {
+    try {
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return { status: 400, body: { error: "Please provide an array of booking IDs to delete." } };
+        }
+        const numericIds = ids.map((id) => Number(id)).filter((id) => !isNaN(id) && id > 0);
+        if (numericIds.length === 0) {
+            return { status: 400, body: { error: "No valid booking IDs provided." } };
+        }
+        const result = await BookingModel.deleteMany(numericIds);
+        return { status: 200, body: { success: true, count: result.count, message: `${result.count} booking(s) deleted.` } };
+    } catch (error) {
+        console.error("Delete multiple bookings error:", error);
+        return { status: 500, body: { error: "Failed to delete bookings." } };
     }
 }

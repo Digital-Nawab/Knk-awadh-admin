@@ -333,14 +333,19 @@ function BookingForm() {
             });
             const data = await res.json();
             if (res.ok && data.success) {
-                const queryParams = new URLSearchParams({
-                    bookingId: data.bookingId ? String(data.bookingId) : "",
-                    service: form.course || "Academy Course",
-                    name: form.name.trim(),
-                    date: new Date().toISOString().split("T")[0],
-                    location: form.city.trim() ? `Academy (${form.city.trim()})` : "KNK Academy Lucknow",
-                });
-                router.push(`/thank-you?${queryParams.toString()}`);
+                try {
+                    sessionStorage.setItem("last_booking", JSON.stringify({
+                        bookingId: data.bookingId ? String(data.bookingId) : "",
+                        requestNumber: data.bookingId ? String(data.bookingId) : "",
+                        service: form.course || "Academy Course",
+                        name: form.name.trim(),
+                        date: new Date().toISOString().split("T")[0],
+                        location: form.city.trim() ? `Academy (${form.city.trim()})` : "KNK Academy Lucknow",
+                    }));
+                } catch {
+                    // ignore storage errors
+                }
+                router.push("/thank-you");
             } else {
                 setErrorMsg(data.error || "Failed to submit request. Please try again.");
             }
@@ -890,14 +895,14 @@ export default function Academy() {
                     </p>
                     <div className="mt-9 flex flex-wrap justify-center gap-4">
                         <a
-                            href="tel:+916390008020"
+                            href="tel:+918881000664"
                             className="inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full text-[#241d18] transition-transform duration-300 hover:scale-105"
                             style={{ backgroundColor: GOLD }}
                         >
                             Call Now
                         </a>
                         <a
-                            href="https://wa.me/918881000552?text=Hi%20there,%20I'm%20interested%20in%20enrolling%20at%20KNK%20Makeup%20Academy."
+                            href="https://wa.me/918881000664?text=Hi%20there,%20I'm%20interested%20in%20enrolling%20at%20KNK%20Makeup%20Academy."
                             className="inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full border border-[#4a4038] text-[#fbf7f0] transition-colors hover:bg-white/5"
                         >
                             Chat Now

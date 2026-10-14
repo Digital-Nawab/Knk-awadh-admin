@@ -64,14 +64,24 @@ function LuxuryBooking({ data }) {
             if (res.ok && data.success) {
                 setStatusMessage({ type: "success", text: data.message || "Thank you! Your appointment request has been reserved." });
                 event.target.reset();
-                const queryParams = new URLSearchParams({
-                    bookingId: data.bookingId ? String(data.bookingId) : "",
-                    service: payload.service || "Luxury Treatment",
-                    name: payload.name || "",
-                    date: payload.date || "",
-                    location: payload.location || "",
-                });
-                router.push(`/thank-you?${queryParams.toString()}`);
+                const bookingId = data.bookingId ? String(data.bookingId) : "";
+                const requestNumber = data.requestNumber ? String(data.requestNumber) : "";
+                if (typeof window !== "undefined") {
+                    try {
+                        sessionStorage.setItem(
+                            "last_booking",
+                            JSON.stringify({
+                                bookingId,
+                                requestNumber,
+                                service: payload.service || "Luxury Treatment",
+                                name: payload.name || "",
+                                date: payload.date || "",
+                                location: payload.location || "",
+                            })
+                        );
+                    } catch {}
+                }
+                router.push("/thank-you");
             } else {
                 setStatusMessage({ type: "error", text: data.error || "Failed to submit booking. Please call us." });
             }

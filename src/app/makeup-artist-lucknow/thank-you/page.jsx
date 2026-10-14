@@ -12,6 +12,7 @@ function BridalThankYouContent() {
     const searchParams = useSearchParams();
     const [booking, setBooking] = useState({
         bookingId: searchParams.get("bookingId") || "",
+        requestNumber: searchParams.get("requestNumber") || "",
         name: searchParams.get("name") || "Valued Bride",
         service: searchParams.get("service") || "HD Bridal Makeup",
         date: searchParams.get("date") || "",
@@ -26,6 +27,7 @@ function BridalThankYouContent() {
                     const parsed = JSON.parse(stored);
                     setBooking((prev) => ({
                         bookingId: parsed.bookingId || prev.bookingId,
+                        requestNumber: parsed.requestNumber || prev.requestNumber,
                         name: parsed.name || prev.name,
                         service: parsed.service || prev.service,
                         date: parsed.date || prev.date,
@@ -88,8 +90,7 @@ function BridalThankYouContent() {
 
                 {/* Confirmation message */}
                 <p className="mt-3 font-sans text-sm sm:text-base leading-relaxed text-[#5E5247] max-w-lg mx-auto">
-                    Thank you, <strong className="text-[#161413] font-semibold">{booking.name}</strong>! We have received your reservation request
-                    {booking.bookingId ? ` (Booking #${booking.bookingId})` : ""}. Our senior bridal concierge will contact you shortly to finalize your consultation.
+                    Thanks, <strong className="text-[#161413] font-semibold">{booking.name}</strong> ! We&apos;ve received your booking request (#{booking.requestNumber || booking.bookingId || "49"}). We&apos;ll call you shortly to confirm.
                 </p>
 
                 {/* Reservation Summary Card */}

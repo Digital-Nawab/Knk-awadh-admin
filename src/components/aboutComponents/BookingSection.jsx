@@ -68,14 +68,24 @@ function BookingForm({ whatsappText, whatsappNumber }) {
             });
             const data = await res.json();
             if (res.ok && data.success) {
-                const queryParams = new URLSearchParams({
-                    bookingId: data.bookingId ? String(data.bookingId) : "",
-                    service: form.service || "Luxury Treatment",
-                    name: form.name.trim(),
-                    date: form.date || "",
-                    location: form.location || "",
-                });
-                router.push(`/thank-you?${queryParams.toString()}`);
+                const bookingId = data.bookingId ? String(data.bookingId) : "";
+                const requestNumber = data.requestNumber ? String(data.requestNumber) : "";
+                if (typeof window !== "undefined") {
+                    try {
+                        sessionStorage.setItem(
+                            "last_booking",
+                            JSON.stringify({
+                                bookingId,
+                                requestNumber,
+                                service: form.service || "Luxury Treatment",
+                                name: form.name.trim(),
+                                date: form.date || "",
+                                location: form.location || "",
+                            })
+                        );
+                    } catch {}
+                }
+                router.push("/thank-you");
             } else {
                 setErrorMsg(data.error || "Failed to submit booking. Please call us directly.");
             }
@@ -160,14 +170,15 @@ function BookingForm({ whatsappText, whatsappNumber }) {
                         <option value="" disabled>
                             Select a service
                         </option>
-                        <option value="Bridal Makeup">Bridal Makeup</option>
-                        <option value="Engagement Makeup">Engagement Makeup</option>
-                        <option value="Party Makeup">Party Makeup</option>
-                        <option value="Hair Services">Hair Services</option>
-                        <option value="Facial & Beauty">Facial &amp; Beauty</option>
-                        <option value="Nail Services">Nail Services</option>
-                        <option value="Men's Grooming">Men's Grooming</option>
-                        <option value="Other">Other</option>
+                        <option value="Nails">Nails</option>
+                        <option value="Hair">Hair</option>
+                        <option value="Beauty">Beauty</option>
+                        <option value="Facial">Facial</option>
+                        <option value="Body">Body</option>
+                        <option value="Makeup Studio">Makeup Studio</option>
+                        <option value="Men's Grooming">Men&apos;s Grooming</option>
+                        <option value="Skin & Aesthetics">Skin &amp; Aesthetics</option>
+                        <option value="Other / Bespoke Consultation">Other / Bespoke Consultation</option>
                     </select>
                 </div>
 

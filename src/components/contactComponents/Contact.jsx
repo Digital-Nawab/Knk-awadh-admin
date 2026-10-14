@@ -214,17 +214,26 @@ export default function Contact() {
                     "Thank you! Your message has been received. Our concierge team will reach out shortly."
                 );
 
-                // Redirect to thank-you page after brief timeout
-                const queryParams = new URLSearchParams({
-                    bookingId: data.bookingId ? String(data.bookingId) : "",
-                    service: form.service,
-                    name: trimmedName,
-                    date: form.date || new Date().toISOString().split("T")[0],
-                    location: form.branch,
-                });
+                const bookingId = data.bookingId ? String(data.bookingId) : "";
+                const requestNumber = data.requestNumber ? String(data.requestNumber) : "";
+                if (typeof window !== "undefined") {
+                    try {
+                        sessionStorage.setItem(
+                            "last_booking",
+                            JSON.stringify({
+                                bookingId,
+                                requestNumber,
+                                service: form.service,
+                                name: trimmedName,
+                                date: form.date || new Date().toISOString().split("T")[0],
+                                location: form.branch,
+                            })
+                        );
+                    } catch {}
+                }
 
                 setTimeout(() => {
-                    router.push(`/thank-you?${queryParams.toString()}`);
+                    router.push("/thank-you");
                 }, 1200);
             } else {
                 setErrorMsg(

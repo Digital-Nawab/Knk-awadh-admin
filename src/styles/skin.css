@@ -1,0 +1,650 @@
+/* KNK SKKIN — luxury skin & aesthetics design system */
+
+@font-face {
+  font-family: 'Bomiro';
+  src: url('/skin/fonts/Bomiro_Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gilmer';
+  src: url('/skin/fonts/Gilmer_Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  /* Warm paper & KNK brown */
+  --skin-background: 35 33% 96%;
+  --skin-foreground: 26 50% 28%;
+  --skin-card: 35 30% 93%;
+  --skin-card-foreground: 26 50% 28%;
+  --skin-popover: 35 33% 96%;
+  --skin-popover-foreground: 26 50% 28%;
+  --skin-primary: 26 50% 28%;
+  --skin-primary-foreground: 35 40% 97%;
+  --skin-secondary: 0 0% 0%;
+  --skin-secondary-foreground: 35 33% 96%;
+  --skin-muted: 35 28% 87%;
+  --skin-muted-foreground: 26 12% 38%;
+  --skin-accent: 33 45% 62%;
+  --skin-accent-foreground: 0 0% 4%;
+  --skin-gold: 36 52% 62%;
+  --skin-gold-deep: 30 45% 45%;
+  --skin-gold-light: 40 62% 80%;
+  --skin-destructive: 0 60% 42%;
+  --skin-destructive-foreground: 0 0% 100%;
+  --skin-border: 30 16% 84%;
+  --skin-input: 30 16% 84%;
+  --skin-ring: 26 50% 28%;
+  --skin-radius: 0.125rem;
+
+  --gradient-gold: linear-gradient(100deg, hsl(30 45% 45%), hsl(36 52% 62%) 35%, hsl(42 70% 84%) 55%, hsl(33 48% 58%) 80%, hsl(28 42% 42%));
+  --ease-lux: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.skin-theme {
+  --background: hsl(35 33% 96%);
+  --foreground: hsl(26 50% 28%);
+  --card: hsl(35 30% 93%);
+  --card-foreground: hsl(26 50% 28%);
+  --primary: hsl(26 50% 28%);
+  --primary-foreground: hsl(35 40% 97%);
+  --secondary: hsl(0 0% 0%);
+  --secondary-foreground: hsl(35 33% 96%);
+  --muted: hsl(35 28% 87%);
+  --muted-foreground: hsl(26 12% 38%);
+  --border: hsl(30 16% 84%);
+  --input: hsl(30 16% 84%);
+  --ring: hsl(26 50% 28%);
+
+  background-color: hsl(var(--skin-background));
+  color: hsl(var(--skin-foreground));
+  font-family: 'Gilmer', system-ui, -apple-system, sans-serif;
+  font-feature-settings: "kern";
+  min-height: 100vh;
+}
+
+.skin-theme h1,
+.skin-theme h2,
+.skin-theme h3,
+.skin-theme h4 {
+  font-family: 'Bomiro', 'Georgia', serif;
+  font-weight: 400;
+}
+
+html.custom-cursor,
+html.custom-cursor a,
+html.custom-cursor button {
+  cursor: none;
+}
+
+/* =========================================================================
+   Typography & Base Utilities
+========================================================================= */
+.skin-theme .display,
+.display {
+  font-family: 'Bomiro', 'Georgia', serif !important;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+}
+
+.skin-theme .font-display,
+.font-display {
+  font-family: 'Bomiro', 'Georgia', serif !important;
+}
+
+.skin-theme .font-serif,
+.font-serif {
+  font-family: 'Bomiro', 'Georgia', serif !important;
+}
+
+.skin-theme .font-sans,
+.font-sans {
+  font-family: 'Gilmer', system-ui, -apple-system, sans-serif !important;
+}
+
+.skin-theme .label-xs,
+.label-xs {
+  font-family: 'Gilmer', sans-serif !important;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+}
+
+@media (min-width: 640px) {
+  .skin-theme .label-xs,
+  .label-xs {
+    font-size: 14px;
+    letter-spacing: 0.22em;
+  }
+}
+
+/* =========================================================================
+   Gold Gradients & Text
+========================================================================= */
+.skin-theme .text-gold,
+.text-gold {
+  background-image: var(--gradient-gold) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline-block;
+}
+
+.skin-theme .bg-gold-gradient,
+.bg-gold-gradient {
+  background-image: var(--gradient-gold) !important;
+}
+
+.skin-theme .text-gold-light,
+.text-gold-light {
+  color: hsl(var(--skin-gold-light)) !important;
+}
+
+.skin-theme .text-gold-deep,
+.text-gold-deep {
+  color: hsl(var(--skin-gold-deep)) !important;
+}
+
+.skin-theme .bg-gold,
+.bg-gold {
+  background-color: hsl(var(--skin-gold)) !important;
+}
+.skin-theme .bg-gold\/50,
+.bg-gold\/50 {
+  background-color: hsl(var(--skin-gold) / 0.5) !important;
+}
+.skin-theme .bg-gold\/20,
+.bg-gold\/20 {
+  background-color: hsl(var(--skin-gold) / 0.2) !important;
+}
+.skin-theme .bg-gold\/15,
+.bg-gold\/15 {
+  background-color: hsl(var(--skin-gold) / 0.15) !important;
+}
+.skin-theme .bg-gold\/10,
+.bg-gold\/10 {
+  background-color: hsl(var(--skin-gold) / 0.1) !important;
+}
+
+.skin-theme .border-gold,
+.border-gold {
+  border-color: hsl(var(--skin-gold)) !important;
+}
+.skin-theme .border-gold\/60,
+.border-gold\/60 {
+  border-color: hsl(var(--skin-gold) / 0.6) !important;
+}
+.skin-theme .border-gold\/50,
+.border-gold\/50 {
+  border-color: hsl(var(--skin-gold) / 0.5) !important;
+}
+.skin-theme .border-gold\/40,
+.border-gold\/40 {
+  border-color: hsl(var(--skin-gold) / 0.4) !important;
+}
+
+/* =========================================================================
+   Secondary Foreground (Cream text for Dark / Brown sections: Consultation & Footer)
+========================================================================= */
+.skin-theme .text-secondary-foreground,
+.text-secondary-foreground {
+  color: hsl(var(--skin-secondary-foreground)) !important;
+}
+.skin-theme .text-secondary-foreground\/90,
+.text-secondary-foreground\/90 {
+  color: hsl(var(--skin-secondary-foreground) / 0.9) !important;
+}
+.skin-theme .text-secondary-foreground\/80,
+.text-secondary-foreground\/80 {
+  color: hsl(var(--skin-secondary-foreground) / 0.8) !important;
+}
+.skin-theme .text-secondary-foreground\/70,
+.text-secondary-foreground\/70 {
+  color: hsl(var(--skin-secondary-foreground) / 0.7) !important;
+}
+.skin-theme .text-secondary-foreground\/60,
+.text-secondary-foreground\/60 {
+  color: hsl(var(--skin-secondary-foreground) / 0.6) !important;
+}
+.skin-theme .text-secondary-foreground\/50,
+.text-secondary-foreground\/50 {
+  color: hsl(var(--skin-secondary-foreground) / 0.5) !important;
+}
+.skin-theme .text-secondary-foreground\/40,
+.text-secondary-foreground\/40 {
+  color: hsl(var(--skin-secondary-foreground) / 0.4) !important;
+}
+.skin-theme .text-secondary-foreground\/30,
+.text-secondary-foreground\/30 {
+  color: hsl(var(--skin-secondary-foreground) / 0.3) !important;
+}
+
+/* =========================================================================
+   Background Text (Cream text on Dark Overlays & Unscrolled Header)
+========================================================================= */
+.skin-theme .text-background,
+.text-background {
+  color: hsl(var(--skin-background)) !important;
+}
+.skin-theme .text-background\/90,
+.text-background\/90 {
+  color: hsl(var(--skin-background) / 0.9) !important;
+}
+.skin-theme .text-background\/75,
+.text-background\/75 {
+  color: hsl(var(--skin-background) / 0.75) !important;
+}
+.skin-theme .text-background\/70,
+.text-background\/70 {
+  color: hsl(var(--skin-background) / 0.7) !important;
+}
+.skin-theme .text-background\/60,
+.text-background\/60 {
+  color: hsl(var(--skin-background) / 0.6) !important;
+}
+.skin-theme .text-background\/40,
+.text-background\/40 {
+  color: hsl(var(--skin-background) / 0.4) !important;
+}
+.skin-theme .text-background\/30,
+.text-background\/30 {
+  color: hsl(var(--skin-background) / 0.3) !important;
+}
+
+/* =========================================================================
+   Foreground (KNK Deep Brown text)
+========================================================================= */
+.skin-theme .text-foreground,
+.text-foreground {
+  color: hsl(var(--skin-foreground)) !important;
+}
+.skin-theme .text-foreground\/85,
+.text-foreground\/85 {
+  color: hsl(var(--skin-foreground) / 0.85) !important;
+}
+.skin-theme .text-foreground\/80,
+.text-foreground\/80 {
+  color: hsl(var(--skin-foreground) / 0.8) !important;
+}
+.skin-theme .text-foreground\/70,
+.text-foreground\/70 {
+  color: hsl(var(--skin-foreground) / 0.7) !important;
+}
+.skin-theme .text-foreground\/60,
+.text-foreground\/60 {
+  color: hsl(var(--skin-foreground) / 0.6) !important;
+}
+
+/* =========================================================================
+   Muted & Primary Text
+========================================================================= */
+.skin-theme .text-muted-foreground,
+.text-muted-foreground {
+  color: hsl(var(--skin-muted-foreground)) !important;
+}
+.skin-theme .text-muted-foreground\/70,
+.text-muted-foreground\/70 {
+  color: hsl(var(--skin-muted-foreground) / 0.7) !important;
+}
+.skin-theme .text-muted-foreground\/60,
+.text-muted-foreground\/60 {
+  color: hsl(var(--skin-muted-foreground) / 0.6) !important;
+}
+.skin-theme .text-primary,
+.text-primary {
+  color: hsl(var(--skin-primary)) !important;
+}
+.skin-theme .text-primary-foreground,
+.text-primary-foreground {
+  color: hsl(var(--skin-primary-foreground)) !important;
+}
+.skin-theme .text-card-foreground,
+.text-card-foreground {
+  color: hsl(var(--skin-card-foreground)) !important;
+}
+.skin-theme .text-popover-foreground,
+.text-popover-foreground {
+  color: hsl(var(--skin-popover-foreground)) !important;
+}
+
+/* =========================================================================
+   Background Colors
+========================================================================= */
+.skin-theme .bg-background,
+.bg-background {
+  background-color: hsl(var(--skin-background)) !important;
+}
+.skin-theme .bg-background\/90,
+.bg-background\/90 {
+  background-color: hsl(var(--skin-background) / 0.9) !important;
+}
+.skin-theme .bg-background\/70,
+.bg-background\/70 {
+  background-color: hsl(var(--skin-background) / 0.7) !important;
+}
+.skin-theme .bg-background\/40,
+.bg-background\/40 {
+  background-color: hsl(var(--skin-background) / 0.4) !important;
+}
+.skin-theme .bg-background\/5,
+.bg-background\/5 {
+  background-color: hsl(var(--skin-background) / 0.05) !important;
+}
+
+.skin-theme .bg-foreground,
+.bg-foreground {
+  background-color: hsl(var(--skin-foreground)) !important;
+}
+.skin-theme .bg-secondary,
+.bg-secondary {
+  background-color: hsl(var(--skin-secondary)) !important;
+}
+.skin-theme .bg-secondary\/85,
+.bg-secondary\/85 {
+  background-color: hsl(var(--skin-secondary) / 0.85) !important;
+}
+.skin-theme .bg-secondary\/80,
+.bg-secondary\/80 {
+  background-color: hsl(var(--skin-secondary) / 0.8) !important;
+}
+
+.skin-theme .bg-card,
+.bg-card {
+  background-color: hsl(var(--skin-card)) !important;
+}
+.skin-theme .bg-card\/60,
+.bg-card\/60 {
+  background-color: hsl(var(--skin-card) / 0.6) !important;
+}
+.skin-theme .bg-card\/40,
+.bg-card\/40 {
+  background-color: hsl(var(--skin-card) / 0.4) !important;
+}
+.skin-theme .bg-card\/30,
+.bg-card\/30 {
+  background-color: hsl(var(--skin-card) / 0.3) !important;
+}
+
+.skin-theme .bg-muted,
+.bg-muted {
+  background-color: hsl(var(--skin-muted)) !important;
+}
+.skin-theme .bg-muted\/40,
+.bg-muted\/40 {
+  background-color: hsl(var(--skin-muted) / 0.4) !important;
+}
+.skin-theme .bg-primary,
+.bg-primary {
+  background-color: hsl(var(--skin-primary)) !important;
+}
+.skin-theme .bg-popover,
+.bg-popover {
+  background-color: hsl(var(--skin-popover)) !important;
+}
+
+/* =========================================================================
+   Border Colors
+========================================================================= */
+.skin-theme .border-border,
+.border-border {
+  border-color: hsl(var(--skin-border)) !important;
+}
+.skin-theme .border-border\/80,
+.border-border\/80 {
+  border-color: hsl(var(--skin-border) / 0.8) !important;
+}
+.skin-theme .border-border\/70,
+.border-border\/70 {
+  border-color: hsl(var(--skin-border) / 0.7) !important;
+}
+
+.skin-theme .border-background,
+.border-background {
+  border-color: hsl(var(--skin-background)) !important;
+}
+.skin-theme .border-background\/40,
+.border-background\/40 {
+  border-color: hsl(var(--skin-background) / 0.4) !important;
+}
+.skin-theme .border-background\/30,
+.border-background\/30 {
+  border-color: hsl(var(--skin-background) / 0.3) !important;
+}
+.skin-theme .border-background\/25,
+.border-background\/25 {
+  border-color: hsl(var(--skin-background) / 0.25) !important;
+}
+.skin-theme .border-background\/20,
+.border-background\/20 {
+  border-color: hsl(var(--skin-background) / 0.2) !important;
+}
+.skin-theme .border-background\/15,
+.border-background\/15 {
+  border-color: hsl(var(--skin-background) / 0.15) !important;
+}
+.skin-theme .border-background\/10,
+.border-background\/10 {
+  border-color: hsl(var(--skin-background) / 0.1) !important;
+}
+
+.skin-theme .border-primary,
+.border-primary {
+  border-color: hsl(var(--skin-primary)) !important;
+}
+.skin-theme .border-primary\/40,
+.border-primary\/40 {
+  border-color: hsl(var(--skin-primary) / 0.4) !important;
+}
+.skin-theme .border-primary\/30,
+.border-primary\/30 {
+  border-color: hsl(var(--skin-primary) / 0.3) !important;
+}
+.skin-theme .border-primary\/20,
+.border-primary\/20 {
+  border-color: hsl(var(--skin-primary) / 0.2) !important;
+}
+.skin-theme .divide-primary\/20 > :not([hidden]) ~ :not([hidden]) {
+  border-color: hsl(var(--skin-primary) / 0.2) !important;
+}
+
+.skin-theme .border-foreground\/20,
+.border-foreground\/20 {
+  border-color: hsl(var(--skin-foreground) / 0.2) !important;
+}
+.skin-theme .border-foreground\/15,
+.border-foreground\/15 {
+  border-color: hsl(var(--skin-foreground) / 0.15) !important;
+}
+.skin-theme .border-input,
+.border-input {
+  border-color: hsl(var(--skin-input)) !important;
+}
+
+/* =========================================================================
+   Interactive States & Hovers
+========================================================================= */
+.skin-theme .hover\:bg-background:hover {
+  background-color: hsl(var(--skin-background)) !important;
+}
+.skin-theme .hover\:bg-background\/70:hover {
+  background-color: hsl(var(--skin-background) / 0.7) !important;
+}
+.skin-theme .hover\:bg-primary:hover {
+  background-color: hsl(var(--skin-primary)) !important;
+}
+.skin-theme .hover\:bg-muted\/30:hover {
+  background-color: hsl(var(--skin-muted) / 0.3) !important;
+}
+
+.skin-theme .hover\:text-foreground:hover {
+  color: hsl(var(--skin-foreground)) !important;
+}
+.skin-theme .hover\:text-background:hover {
+  color: hsl(var(--skin-background)) !important;
+}
+.skin-theme .hover\:text-primary:hover {
+  color: hsl(var(--skin-primary)) !important;
+}
+.skin-theme .hover\:text-primary-foreground:hover {
+  color: hsl(var(--skin-primary-foreground)) !important;
+}
+.skin-theme .hover\:text-secondary-foreground:hover {
+  color: hsl(var(--skin-secondary-foreground)) !important;
+}
+.skin-theme .hover\:text-gold:hover {
+  color: hsl(var(--skin-gold)) !important;
+}
+.skin-theme .hover\:text-gold-light:hover {
+  color: hsl(var(--skin-gold-light)) !important;
+}
+
+.skin-theme .group:hover .group-hover\:text-background {
+  color: hsl(var(--skin-background)) !important;
+}
+.skin-theme .group:hover .group-hover\:text-primary {
+  color: hsl(var(--skin-primary)) !important;
+}
+.skin-theme .group:hover .group-hover\:bg-gold {
+  background-color: hsl(var(--skin-gold)) !important;
+}
+
+.skin-theme .hover\:border-gold:hover {
+  border-color: hsl(var(--skin-gold)) !important;
+}
+.skin-theme .hover\:border-gold\/50:hover {
+  border-color: hsl(var(--skin-gold) / 0.5) !important;
+}
+.skin-theme .hover\:border-gold\/40:hover {
+  border-color: hsl(var(--skin-gold) / 0.4) !important;
+}
+.skin-theme .hover\:border-primary:hover {
+  border-color: hsl(var(--skin-primary)) !important;
+}
+.skin-theme .hover\:border-primary\/30:hover {
+  border-color: hsl(var(--skin-primary) / 0.3) !important;
+}
+
+.skin-theme .focus\:bg-accent:focus {
+  background-color: hsl(var(--skin-accent)) !important;
+}
+.skin-theme .focus\:text-accent-foreground:focus {
+  color: hsl(var(--skin-accent-foreground)) !important;
+}
+
+/* =========================================================================
+   Form Placeholder Styles
+========================================================================= */
+.skin-theme .placeholder\:text-secondary-foreground\/40::placeholder {
+  color: hsl(var(--skin-secondary-foreground) / 0.4) !important;
+}
+.skin-theme .placeholder\:text-muted-foreground::placeholder {
+  color: hsl(var(--skin-muted-foreground)) !important;
+}
+
+/* =========================================================================
+   Luxury Components & Micro-interactions
+========================================================================= */
+.rule {
+  height: 1px;
+  width: 100%;
+  background-color: hsl(var(--skin-border));
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.link-line {
+  position: relative;
+  display: inline-block;
+}
+.link-line::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  transform-origin: right;
+  transform: scaleX(0);
+  background-color: currentColor;
+  transition: transform 500ms var(--ease-lux);
+}
+.link-line:hover::after {
+  transform-origin: left;
+  transform: scaleX(1);
+}
+
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(0, 0, 0, 0.05) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+.btn-primary:hover::before {
+  transform: translateX(100%);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ease-lux {
+  transition-timing-function: var(--ease-lux);
+}
+
+.grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* =========================================================================
+   Keyframe Animations
+========================================================================= */
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-accordion-down { animation: accordion-down 0.2s ease-out; }
+.animate-accordion-up { animation: accordion-up 0.2s ease-out; }
+.animate-fade-up { animation: fade-up 0.8s ease-out forwards; }
+.animate-fade-in { animation: fade-in 0.6s ease-out forwards; }

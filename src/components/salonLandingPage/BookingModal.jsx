@@ -147,6 +147,7 @@ export default function BookingModal() {
             "knk_salon_thankyou",
             JSON.stringify({
               bookingId: data?.bookingId ? String(data.bookingId) : "",
+              requestNumber: data?.requestNumber ? String(data.requestNumber) : "",
               service: formData.service,
               name: formData.name.trim(),
               date: formData.date,
@@ -159,7 +160,8 @@ export default function BookingModal() {
       }
 
       closeBookingModal();
-      router.push("/salon-services-lucknow/thank-you");
+      const reqNumQuery = data?.requestNumber ? `?requestNumber=${data.requestNumber}` : "";
+      router.push(`/salon-services-lucknow/thank-you${reqNumQuery}`);
     } catch (err) {
       console.error("Booking API error:", err);
       setIsSubmitting(false);
@@ -324,12 +326,14 @@ export default function BookingModal() {
                   onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                   className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-[#FAF7F2]/60 hover:bg-[#FAF7F2] focus:bg-white border border-[#E7DFD4] text-xs sm:text-sm text-[#161413] focus:outline-none focus:border-[#B3203F] focus:ring-1 focus:ring-[#B3203F] transition appearance-none cursor-pointer"
                 >
-                  <option value="Hair Services">Hair Services</option>
-                  <option value="Makeup Services">Makeup Services</option>
-                  <option value="Skin and Facial">Skin and Facial</option>
-                  <option value="Nail Services">Nail Services</option>
-                  <option value="Beauty Services">Beauty Services</option>
+                  <option value="Nails">Nails</option>
+                  <option value="Hair">Hair</option>
+                  <option value="Beauty">Beauty</option>
+                  <option value="Facial">Facial</option>
+                  <option value="Body">Body</option>
+                  <option value="Makeup Studio">Makeup Studio</option>
                   <option value="Men's Grooming">Men&apos;s Grooming</option>
+                  <option value="Skin & Aesthetics">Skin &amp; Aesthetics</option>
                 </select>
                 <ChevronDown className="w-4 h-4 text-[#7A726B] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>

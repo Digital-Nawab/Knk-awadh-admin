@@ -3,82 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const DEFAULT_SERVICES_LIST = [
-    {
-        category: "Nails",
-        items: [
-            "French Nail Art",
-            "Nail Art",
-            "Gel Polish",
-            "Gel Nail Extension",
-            "Acrylic Nail Extension",
-            "Luxury Manicure",
-            "Therapeutic Pedicure",
-        ],
-    },
-    {
-        category: "Hair",
-        items: [
-            "Haircut & Styling",
-            "Hair Colour & Balayage",
-            "Hair Spa Rituals",
-            "Keratin Treatment",
-            "Smoothening",
-            "Nanoplastia Therapy",
-            "Couture Hair Styling",
-        ],
-    },
-    {
-        category: "Beauty",
-        items: [
-            "Deep Face Clean-Up",
-            "Gentle Waxing Rituals",
-            "Precision Threading",
-            "Bleach & Detan",
-            "Full Body Waxing",
-        ],
-    },
-    {
-        category: "Facial",
-        items: [
-            "Signature HydraFacial",
-            "Casmara Luxury Facial",
-            "O3+ Radiance Facial",
-            "Kanpeki Japanese Facial",
-            "Thalgo Marine Facial",
-            "Skin Glow Clean-Up",
-        ],
-    },
-    {
-        category: "Body",
-        items: [
-            "Body Care & Polishing",
-            "Full Body Exfoliating Scrub",
-            "Swedish Body Massage",
-            "Deep Tissue Massage",
-            "Foot & Head Massage",
-            "Steam Bath Therapy",
-        ],
-    },
-    {
-        category: "Makeup Studio",
-        items: [
-            "Bridal Makeup (HD / Airbrush)",
-            "Engagement Makeup",
-            "Reception Makeup",
-            "Party & Cocktail Glam",
-        ],
-    },
-    {
-        category: "Men's Grooming",
-        items: [
-            "Men's Haircut & Styling",
-            "Beard Sculpting & Trim",
-            "Hot Towel Straight-Razor Shave",
-            "Men's Detan & Glow Facial",
-            "Men's Hair Spa & Scalp Detox",
-        ],
-    },
+const DEFAULT_CATEGORIES = [
+    "Nails",
+    "Hair",
+    "Beauty",
+    "Facial",
+    "Body",
+    "Makeup Studio",
+    "Men's Grooming",
+    "Skin & Aesthetics",
 ];
 
 const BRANCH_LOCATIONS = [
@@ -86,6 +19,45 @@ const BRANCH_LOCATIONS = [
     "Gomti Nagar, Lucknow",
     "Hazratganj, Lucknow",
 ];
+
+function findCategoryMatch(initial, availableCategories) {
+    if (!initial) return "";
+    const lower = initial.toLowerCase().trim();
+    // Direct match
+    const exact = availableCategories.find((c) => c.toLowerCase() === lower);
+    if (exact) return exact;
+    // Keyword match
+    if (lower.includes("nail") || lower.includes("pedicure") || lower.includes("manicure")) {
+        const nailCat = availableCategories.find((c) => /nail/i.test(c));
+        if (nailCat) return nailCat;
+    }
+    if (lower.includes("hair") || lower.includes("balayage") || lower.includes("keratin") || lower.includes("nanoplastia")) {
+        const hairCat = availableCategories.find((c) => /hair/i.test(c));
+        if (hairCat) return hairCat;
+    }
+    if (lower.includes("makeup") || lower.includes("bride") || lower.includes("bridal")) {
+        const makeupCat = availableCategories.find((c) => /makeup/i.test(c));
+        if (makeupCat) return makeupCat;
+    }
+    if (lower.includes("facial") || lower.includes("skin") || lower.includes("hydra") || lower.includes("peel")) {
+        const facialCat = availableCategories.find((c) => /facial|skin/i.test(c));
+        if (facialCat) return facialCat;
+    }
+    if (lower.includes("wax") || lower.includes("bleach") || lower.includes("thread") || lower.includes("beauty")) {
+        const beautyCat = availableCategories.find((c) => /beauty/i.test(c));
+        if (beautyCat) return beautyCat;
+    }
+    if (lower.includes("body") || lower.includes("massage") || lower.includes("spa") || lower.includes("steam")) {
+        const bodyCat = availableCategories.find((c) => /body/i.test(c));
+        if (bodyCat) return bodyCat;
+    }
+    if (lower.includes("men") || lower.includes("grooming") || lower.includes("beard") || lower.includes("shave")) {
+        const menCat = availableCategories.find((c) => /men/i.test(c));
+        if (menCat) return menCat;
+    }
+    const partial = availableCategories.find((c) => lower.includes(c.toLowerCase()) || c.toLowerCase().includes(lower));
+    return partial || availableCategories[0] || initial;
+}
 
 export default function BookingModal({ isOpen, onClose, initialService = "" }) {
     const router = useRouter();
@@ -98,7 +70,7 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
     const [notes, setNotes] = useState("");
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
-    const [servicesList, setServicesList] = useState(DEFAULT_SERVICES_LIST);
+    const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
 
     // Initialize date to today's date formatted as YYYY-MM-DD
     useEffect(() => {
@@ -109,35 +81,32 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
         setDate(`${yyyy}-${mm}-${dd}`);
     }, []);
 
-    // Load active services dynamically from backend
+    // Load main categories dynamically from backend API
     useEffect(() => {
         let isMounted = true;
-        const fetchDynamicServices = async () => {
+        const fetchCategories = async () => {
             try {
-                const res = await fetch("/api/services");
+                const res = await fetch("/api/services/categories");
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.services && data.services.length > 0 && isMounted) {
-                        const grouped = {};
-                        data.services.forEach((s) => {
-                            const cat = s.category_name || "General";
-                            if (!grouped[cat]) grouped[cat] = [];
-                            if (!grouped[cat].includes(s.name)) {
-                                grouped[cat].push(s.name);
-                            }
-                        });
-                        const formatted = Object.keys(grouped).map((cat) => ({
-                            category: cat,
-                            items: grouped[cat],
-                        }));
-                        setServicesList(formatted);
+                    if (data.categories && Array.isArray(data.categories) && data.categories.length > 0 && isMounted) {
+                        const catNames = data.categories
+                            .map((c) => c.name)
+                            .filter(Boolean)
+                            .filter((name) => !/test/i.test(name)); // filter out any dummy test categories
+
+                        // Merge with essential luxury main categories
+                        const merged = Array.from(new Set([...catNames, ...DEFAULT_CATEGORIES]));
+                        if (merged.length > 0) {
+                            setCategories(merged);
+                        }
                     }
                 }
             } catch (err) {
-                console.warn("Could not fetch dynamic services list, using fallback.", err);
+                console.warn("Could not fetch categories list, using default luxury categories.", err);
             }
         };
-        fetchDynamicServices();
+        fetchCategories();
         return () => {
             isMounted = false;
         };
@@ -148,12 +117,13 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
         if (isOpen) {
             setErrorMsg("");
             if (initialService) {
-                setService(initialService);
-            } else if (!service && servicesList.length > 0 && servicesList[0].items.length > 0) {
-                setService(servicesList[0].items[0]);
+                const matched = findCategoryMatch(initialService, categories);
+                setService(matched);
+            } else if (!service && categories.length > 0) {
+                setService(categories[0]);
             }
         }
-    }, [isOpen, initialService, servicesList]);
+    }, [isOpen, initialService, categories]);
 
     // Handle Escape key to close modal
     useEffect(() => {
@@ -236,14 +206,26 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
             if (res.ok && data.success) {
                 // Close modal and redirect to dedicated Thank You page
                 onClose();
-                const queryParams = new URLSearchParams({
-                    bookingId: data.bookingId ? String(data.bookingId) : "",
-                    service: service,
-                    name: name.trim(),
-                    date: date,
-                    location: branch,
-                });
-                router.push(`/thank-you?${queryParams.toString()}`);
+                const bookingId = data.bookingId ? String(data.bookingId) : "";
+                const requestNumber = data.requestNumber ? String(data.requestNumber) : "";
+                if (typeof window !== "undefined") {
+                    try {
+                        sessionStorage.setItem(
+                            "last_booking",
+                            JSON.stringify({
+                                bookingId: bookingId,
+                                requestNumber: requestNumber,
+                                service: service,
+                                name: name.trim(),
+                                date: date,
+                                location: branch,
+                            })
+                        );
+                    } catch {
+                        // ignore storage errors
+                    }
+                }
+                router.push("/thank-you");
             } else {
                 setErrorMsg(data.error || "Failed to reserve appointment. Please call us directly.");
             }
@@ -349,7 +331,7 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
                             </div>
                         </div>
 
-                        {/* Service Selection */}
+                        {/* Service Selection - ONLY MAIN CATEGORIES */}
                         <div>
                             <label className="block font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-ink mb-1">
                                 Selected Service <span className="text-red-500">*</span>
@@ -361,16 +343,12 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
                                 className="w-full rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-xs text-ink focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold cursor-pointer"
                             >
                                 <option value="" disabled>Select a service</option>
-                                {servicesList.map((group) => (
-                                    <optgroup key={group.category} label={`— ${group.category} —`}>
-                                        {group.items.map((item) => (
-                                            <option key={item} value={item}>
-                                                {item}
-                                            </option>
-                                        ))}
-                                    </optgroup>
+                                {categories.map((catName) => (
+                                    <option key={catName} value={catName}>
+                                        {catName}
+                                    </option>
                                 ))}
-                                <option value="Consultation / Other Service">
+                                <option value="Other / Bespoke Consultation">
                                     Other / Bespoke Consultation
                                 </option>
                             </select>

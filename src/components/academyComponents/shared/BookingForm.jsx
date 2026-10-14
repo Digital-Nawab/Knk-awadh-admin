@@ -70,14 +70,19 @@ export default function BookingForm() {
             });
             const data = await res.json();
             if (res.ok && data.success) {
-                const queryParams = new URLSearchParams({
-                    bookingId: data.bookingId ? String(data.bookingId) : "",
-                    service: form.course || "Academy Course",
-                    name: form.name.trim(),
-                    date: new Date().toISOString().split("T")[0],
-                    location: form.city ? `Academy (${form.city})` : "KNK Academy Lucknow",
-                });
-                router.push(`/thank-you?${queryParams.toString()}`);
+                try {
+                    sessionStorage.setItem("last_booking", JSON.stringify({
+                        bookingId: data.bookingId ? String(data.bookingId) : "",
+                        requestNumber: data.bookingId ? String(data.bookingId) : "",
+                        service: form.course || "Academy Course",
+                        name: form.name.trim(),
+                        date: new Date().toISOString().split("T")[0],
+                        location: form.city ? `Academy (${form.city})` : "KNK Academy Lucknow",
+                    }));
+                } catch {
+                    // ignore storage errors
+                }
+                router.push("/thank-you");
             } else {
                 setError(data.error || "Failed to submit application. Please try again.");
             }
