@@ -6,12 +6,6 @@ import Services from './Services';
 import Makeup from './Makeup';
 import Academy from './Academy';
 import Aesthetics from './Aesthetics';
-import Location from './Location';
-import ParallaxBanner from './ParallexBanner';
-import Review from './Review';
-import BlogSection from './BlogSection';
-import Faq from './Faq';
-import LuxuryBooking from './LuxuryBooking';
 import HeroModel from '@/models/HeroModel';
 import BlogModel from '@/models/BlogModel';
 import HomeModel from '@/models/HomeModel';
@@ -21,39 +15,40 @@ const CelebrityMakeup = dynamic(() => import('./CelebrityMakeup'), {
   loading: () => <div className="min-h-[500px] bg-[#3b2419]" />,
 });
 
+const Location = dynamic(() => import('./Location'));
+const ParallaxBanner = dynamic(() => import('./ParallexBanner'));
+const BlogSection = dynamic(() => import('./BlogSection'));
+const Review = dynamic(() => import('./Review'));
+const Faq = dynamic(() => import('./Faq'));
+const LuxuryBooking = dynamic(() => import('./LuxuryBooking'));
+
 async function Home() {
+  const [blogsRes, heroRes, homeDataRes] = await Promise.allSettled([
+    BlogModel.getAll({ publishedOnly: true }),
+    HeroModel.getActive(),
+    HomeModel.getAllSections(),
+  ]);
+
   let initialBlogs = [];
-  try {
-    const allBlogs = await BlogModel.getAll({ publishedOnly: true });
-    if (allBlogs && allBlogs.length > 0) {
-      initialBlogs = allBlogs.slice(0, 3);
-    }
-  } catch (err) {
-    console.warn("Failed to prefetch blogs on server:", err?.message || err);
+  if (blogsRes.status === 'fulfilled' && blogsRes.value && blogsRes.value.length > 0) {
+    initialBlogs = blogsRes.value.slice(0, 3);
   }
 
   let initialHero = null;
-  try {
-    const activeHeroes = await HeroModel.getActive();
-    if (activeHeroes && activeHeroes.length > 0) {
-      const topHero = activeHeroes[0];
-      initialHero = {
-        id: topHero.id,
-        media_url: topHero.media_url,
-        media_type: topHero.media_type,
-        alt_text: topHero.alt_text,
-        is_active: topHero.is_active,
-      };
-    }
-  } catch (err) {
-    console.warn("Failed to prefetch hero on server:", err?.message || err);
+  if (heroRes.status === 'fulfilled' && heroRes.value && heroRes.value.length > 0) {
+    const topHero = heroRes.value[0];
+    initialHero = {
+      id: topHero.id,
+      media_url: topHero.media_url,
+      media_type: topHero.media_type,
+      alt_text: topHero.alt_text,
+      is_active: topHero.is_active,
+    };
   }
 
   let homeData = DEFAULT_HOME_SECTIONS;
-  try {
-    homeData = await HomeModel.getAllSections();
-  } catch (err) {
-    console.warn("Failed to prefetch home sections on server:", err?.message || err);
+  if (homeDataRes.status === 'fulfilled' && homeDataRes.value) {
+    homeData = homeDataRes.value;
   }
 
   return (
