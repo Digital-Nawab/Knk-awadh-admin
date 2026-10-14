@@ -182,7 +182,29 @@ export function formatLeadSource(formType) {
         };
     }
 
-    // 5. Other Website Pages
+    // 5. Skin Aesthetics Leads
+    if (
+        raw === "skin_consultation" ||
+        raw === "skin-aesthetics" ||
+        raw === "skin_aesthetics" ||
+        raw === "skin" ||
+        raw === "aesthetic" ||
+        raw === "laser-treatment" ||
+        raw === "microblading"
+    ) {
+        return {
+            group: "skin_aesthetics",
+            groupName: "Skin Aesthetics",
+            channel: "skin_aesthetics",
+            channelName: "Skin & Aesthetics Studio",
+            badgeText: "Skin Aesthetics",
+            path: "/skin-aesthetics",
+            badgeClass: "bg-[#fbf4eb] text-[#784e2d] border-[#d8b589] font-medium",
+            borderAccent: "border-l-[#C9A24A]",
+        };
+    }
+
+    // 6. Other Website Pages
     let originName = "Main Website";
     let path = "/";
 
@@ -230,6 +252,7 @@ export default function AdminBookingsPage() {
         landingPages: 0,
         bridalLanding: 0,
         salonLanding: 0,
+        skinAesthetics: 0,
         website: 0,
     });
     const [loading, setLoading] = useState(true);
@@ -652,8 +675,8 @@ export default function AdminBookingsPage() {
                 </div>
             </div>
 
-            {/* Metrics: Lead Sources Breakdown (Home page, Popup, Landing page, Website) */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+            {/* Metrics: Lead Sources Breakdown (Home page, Popup, Landing page, Skin Aesthetics, Website) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
                 {/* 1. Total Leads */}
                 <div
                     onClick={() => setTypeFilter("all")}
@@ -677,7 +700,7 @@ export default function AdminBookingsPage() {
                         {stats.total || 0}
                     </p>
                     <p className="text-[11px] text-muted mt-1">
-                        All channels &amp; campaigns combined
+                        All channels &amp; campaigns
                     </p>
                 </div>
 
@@ -745,7 +768,7 @@ export default function AdminBookingsPage() {
                             Landing Pages
                         </span>
                         <span className="text-[10px] font-mono text-muted">
-                            Bridal + Salon Ads
+                            Bridal + Salon
                         </span>
                     </div>
                     <p className="font-display text-3xl font-bold text-rose-700 mt-2">
@@ -753,6 +776,31 @@ export default function AdminBookingsPage() {
                     </p>
                     <p className="text-[11px] text-muted mt-1">
                         Dedicated ads campaign pages
+                    </p>
+                </div>
+
+                {/* 5. Skin Aesthetics Leads */}
+                <div
+                    onClick={() => setTypeFilter(typeFilter === "skin_aesthetics" ? "all" : "skin_aesthetics")}
+                    className={`p-4 rounded-xl border bg-white transition-all cursor-pointer ${
+                        typeFilter === "skin_aesthetics"
+                            ? "border-[#784e2d] shadow-xs ring-1 ring-[#784e2d] bg-[#fbf4eb]/50"
+                            : "border-[#e8e2d5] hover:border-[#c9a24a]"
+                    }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-[11px] uppercase tracking-wider font-semibold text-[#784e2d]">
+                            Skin Aesthetics
+                        </span>
+                        <span className="text-[10px] font-mono text-muted">
+                            KNK SKKIN
+                        </span>
+                    </div>
+                    <p className="font-display text-3xl font-bold text-[#784e2d] mt-2">
+                        {stats.skinAesthetics || 0}
+                    </p>
+                    <p className="text-[11px] text-muted mt-1">
+                        Doctor consultation leads
                     </p>
                 </div>
             </div>
@@ -855,6 +903,18 @@ export default function AdminBookingsPage() {
                         }`}
                     >
                         Landing Pages ({stats.landingPages || (stats.bridalLanding + stats.salonLanding) || 0})
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setTypeFilter("skin_aesthetics")}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                            typeFilter === "skin_aesthetics"
+                                ? "bg-[#784e2d] text-white font-semibold shadow-xs"
+                                : "text-[#784e2d] hover:bg-[#fbf4eb]"
+                        }`}
+                    >
+                        Skin Aesthetics ({stats.skinAesthetics || 0})
                     </button>
 
                     <button
@@ -1213,7 +1273,7 @@ export default function AdminBookingsPage() {
                         Total matching leads: <strong className="text-ink">{bookings.length}</strong>
                     </span>
                     <span className="font-mono text-[11px]">
-                        Home: {stats.homePage || 0} | Popup: {stats.popup || 0} | Landing: {stats.landingPages || 0}
+                        Home: {stats.homePage || 0} | Popup: {stats.popup || 0} | Landing: {stats.landingPages || 0} | Skin: {stats.skinAesthetics || 0} | Other: {stats.website || 0}
                     </span>
                 </div>
             </div>

@@ -36,13 +36,17 @@ export const viewport = {
   initialScale: 1,
 }
 
+import GlobalEffects from '@/components/common/GlobalEffects'
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
       <body className="font-sans antialiased overflow-x-hidden">
         <ScrollToTop />
         <BookingProvider>
-          {children}
+          <GlobalEffects>
+            {children}
+          </GlobalEffects>
         </BookingProvider>
       </body>
     </html>

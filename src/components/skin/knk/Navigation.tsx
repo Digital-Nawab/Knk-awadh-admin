@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,23 +18,53 @@ const Navigation = () => {
   const [scrolled, setScrolled] = useState(!isHome);
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [active, setActive] = useState<string>("");
-  const [hidden, setHidden] = useState(false);
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dropdownRef = useRef<HTMLLIElement | null>(null);
 
+  const [active, setActive] = useState<string>("");
   const { scrollY, scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 200, damping: 40 });
 
-  useMotionValueEvent(scrollY, "change", (current) => {
-    const previous = scrollY.getPrevious() ?? current;
-    setHidden(current > previous && current > 160);
-  });
+  const handleDropdownMouseEnter = () => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
+    }
+    setDropdownOpen(true);
+  };
+
+  const handleDropdownMouseLeave = () => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+    }
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setDropdownOpen(false);
+    }, 200);
+  };
+
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isHome) {
       setScrolled(true);
       return;
     }
-    const onScroll = () => setScrolled(window.scrollY > 80);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -91,14 +121,14 @@ const Navigation = () => {
     <>
       <motion.header
         initial={{ y: -40, opacity: 0 }}
-        animate={{ y: hidden && !open ? "-100%" : 0, opacity: 1 }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: EASE }}
         className="fixed inset-x-0 top-0 z-50"
       >
         <div
-          className={`relative transition-[background-color,border-color,padding] duration-700 ease-lux ${
+          className={`relative transition-[background-color,border-color,padding,box-shadow] duration-500 ease-lux ${
             scrolled
-              ? "border-b border-border bg-background/90 py-3 backdrop-blur-md"
+              ? "border-b border-[#E6DECE] bg-white/95 py-3.5 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.06)]"
               : "border-b border-transparent py-6"
           }`}
         >
@@ -126,54 +156,62 @@ const Navigation = () => {
                   return (
                     <li
                       key={link.label}
-                      className="relative group"
-                      onMouseEnter={() => setDropdownOpen(true)}
-                      onMouseLeave={() => setDropdownOpen(false)}
+                      ref={dropdownRef}
+                      className="relative"
+                      onMouseEnter={handleDropdownMouseEnter}
+                      onMouseLeave={handleDropdownMouseLeave}
                     >
                       <button
                         type="button"
                         onClick={() => setDropdownOpen((prev) => !prev)}
                         aria-expanded={dropdownOpen}
-                        className={`label-xs flex items-center gap-1 transition-colors duration-500 ${
+                        className={`label-xs flex items-center gap-1.5 py-1 transition-colors duration-300 cursor-pointer ${
                           scrolled
                             ? isActive(link)
-                              ? "text-primary"
-                              : "text-foreground/70 hover:text-primary group-hover:text-primary"
+                              ? "text-[#9C7A2E] font-semibold"
+                              : "text-[#241D18] font-medium hover:text-[#9C7A2E]"
                             : isActive(link)
-                              ? "text-gold-light"
-                              : "text-background/75 hover:text-background group-hover:text-background"
+                              ? "text-[#EAD9AE] font-semibold"
+                              : "text-white/85 font-medium hover:text-white"
                         }`}
                       >
                         {link.label}
-                        <span className="text-[9px] leading-none transition-transform duration-200">
+                        <span
+                          className={`text-[9px] leading-none transition-transform duration-300 ${
+                            dropdownOpen ? "rotate-180" : ""
+                          }`}
+                        >
                           ▾
                         </span>
                       </button>
 
+                      {/* Dropdown menu container with hover bridge (pt-2.5) */}
                       <div
-                        className={`absolute left-0 top-full mt-2 min-w-[170px] rounded-sm bg-white py-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.12)] border border-[#e8ded4] z-50 overflow-hidden transition-all duration-200 ${
+                        className={`absolute left-0 top-full pt-2.5 min-w-[210px] z-[70] transition-all duration-200 ease-out before:absolute before:-top-3 before:inset-x-0 before:h-4 before:content-[''] ${
                           dropdownOpen
                             ? "opacity-100 visible translate-y-0 pointer-events-auto"
-                            : "opacity-0 invisible translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto"
+                            : "opacity-0 invisible -translate-y-1 pointer-events-none"
                         }`}
                       >
-                        {link.items.map((item) => {
-                          const isItemActive = pathname === item.to;
-                          return (
-                            <Link
-                              key={item.to}
-                              href={item.to}
-                              onClick={() => setDropdownOpen(false)}
-                              className={`block px-4 py-2.5 text-sm font-sans tracking-wide text-left transition-colors duration-200 ${
-                                isItemActive
-                                  ? "bg-[#d4c0ab] text-white"
-                                  : "text-[#2b2520] hover:bg-[#d4c0ab] hover:text-white"
-                              }`}
-                            >
-                              {item.label}
-                            </Link>
-                          );
-                        })}
+                        <div className="rounded-md bg-white py-2 shadow-[0_14px_40px_rgba(0,0,0,0.14)] border border-[#E6DECE] overflow-hidden">
+                          {link.items.map((item) => {
+                            const isItemActive = pathname === item.to;
+                            return (
+                              <Link
+                                key={item.to}
+                                href={item.to}
+                                onClick={() => setDropdownOpen(false)}
+                                className={`block px-4 py-2.5 text-[11px] font-sans tracking-[0.14em] uppercase transition-all duration-200 cursor-pointer ${
+                                  isItemActive
+                                    ? "bg-[#241D18] text-[#EAD9AE] font-semibold pl-5"
+                                    : "text-[#241D18] hover:bg-[#F4EEE1] hover:text-[#9C7A2E] hover:pl-5 font-medium"
+                                }`}
+                              >
+                                {item.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
                       </div>
                     </li>
                   );
@@ -185,14 +223,14 @@ const Navigation = () => {
                     <Link
                       href={target}
                       onClick={(e) => handleSmoothAnchor(e, target)}
-                      className={`label-xs link-line transition-colors duration-500 ${
+                      className={`label-xs link-line transition-colors duration-300 ${
                         scrolled
                           ? isActive(link)
-                            ? "text-primary"
-                            : "text-foreground/70 hover:text-primary"
+                            ? "text-[#9C7A2E] font-semibold"
+                            : "text-[#241D18] font-medium hover:text-[#9C7A2E]"
                           : isActive(link)
-                            ? "text-gold-light"
-                            : "text-background/75 hover:text-background"
+                            ? "text-[#EAD9AE] font-semibold"
+                            : "text-white/85 font-medium hover:text-white"
                       }`}
                     >
                       {link.label}
@@ -209,8 +247,8 @@ const Navigation = () => {
                   onClick={(e) => handleSmoothAnchor(e, bookHref)}
                   className={`group inline-flex items-center gap-3 border px-6 py-3 label-xs transition-colors duration-500 ease-lux ${
                     scrolled
-                      ? "border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground"
-                      : "border-background/40 text-background hover:bg-background hover:text-foreground"
+                      ? "border-[#241D18] text-[#241D18] font-medium hover:bg-[#241D18] hover:text-[#FBF7F0]"
+                      : "border-white/50 text-white font-medium hover:bg-white hover:text-[#241D18]"
                   }`}
                 >
                   Book a consultation
@@ -224,13 +262,13 @@ const Navigation = () => {
                 type="button"
                 onClick={() => setOpen(true)}
                 aria-label="Open menu"
-                className="flex h-10 w-10 flex-col items-center justify-center gap-[6px] lg:hidden"
+                className="flex h-10 w-10 flex-col items-center justify-center gap-[6px] lg:hidden cursor-pointer"
               >
                 <span
-                  className={`h-px w-6 transition-colors duration-500 ${scrolled ? "bg-foreground" : "bg-background"}`}
+                  className={`h-px w-6 transition-colors duration-500 ${scrolled ? "bg-[#241D18]" : "bg-white"}`}
                 />
                 <span
-                  className={`h-px w-6 transition-colors duration-500 ${scrolled ? "bg-foreground" : "bg-background"}`}
+                  className={`h-px w-6 transition-colors duration-500 ${scrolled ? "bg-[#241D18]" : "bg-white"}`}
                 />
               </button>
             </div>

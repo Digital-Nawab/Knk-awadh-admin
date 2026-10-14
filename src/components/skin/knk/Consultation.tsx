@@ -57,9 +57,10 @@ const Consultation = () => {
           name: values.fullName,
           phone: values.phone,
           service: values.areaOfConcern,
+          service_or_course: values.areaOfConcern,
           form_type: "skin_consultation",
           branch_location: "KNK SKKIN Hazratganj",
-          message: values.notes || "Skin & Aesthetics consultation request",
+          message: values.notes ? `${values.notes} (Concern: ${values.areaOfConcern})` : `Skin consultation for ${values.areaOfConcern}`,
           date: new Date().toISOString().split("T")[0],
         }),
       });
@@ -68,13 +69,13 @@ const Consultation = () => {
       if (res.ok) {
         toast({
           title: "Consultation Request Received",
-          description: `Thank you, ${values.fullName}! Our specialist skin doctor will be in touch shortly.`,
+          description: `Thank you, ${values.fullName}! Your consultation for "${values.areaOfConcern}" has been registered. Our doctor will contact you shortly.`,
         });
         form.reset({ fullName: "", phone: "", areaOfConcern: undefined, notes: "" });
       } else {
         toast({
-          title: "Consultation Request Received",
-          description: data?.error || `Thank you, ${values.fullName}. Our team will contact you shortly.`,
+          title: "Booking Notice",
+          description: data?.error || `Thank you, ${values.fullName}. Our team has received your inquiry.`,
         });
         form.reset({ fullName: "", phone: "", areaOfConcern: undefined, notes: "" });
       }

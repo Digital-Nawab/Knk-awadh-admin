@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { usePrefersReducedMotion } from "./Reveal";
 
-const INTERACTIVE_SELECTOR = "a, button, [data-cursor-hover]";
+const INTERACTIVE_SELECTOR = "a, button, [role='button'], input[type='submit'], input[type='button'], select, [data-cursor-hover]";
 
-/** Subtle gold dot + ring cursor. Desktop (fine pointer) only; renders nothing on touch or reduced-motion. */
+/** Subtle gold dot + ring cursor. Desktop (fine pointer) only; renders nothing on touch, reduced-motion, or admin dashboard. */
 const Cursor = () => {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
   const reducedMotion = usePrefersReducedMotion();
   const [enabled, setEnabled] = useState(false);
   const [hovering, setHovering] = useState(false);
@@ -25,7 +28,10 @@ const Cursor = () => {
   }, []);
 
   useEffect(() => {
-    if (!enabled || reducedMotion) return;
+    if (!enabled || reducedMotion || isAdmin) {
+      document.documentElement.classList.remove("custom-cursor");
+      return;
+    }
 
     const onMove = (e: MouseEvent) => {
       x.set(e.clientX);
@@ -49,21 +55,21 @@ const Cursor = () => {
       window.removeEventListener("mouseout", onOut);
       document.documentElement.classList.remove("custom-cursor");
     };
-  }, [enabled, reducedMotion, x, y]);
+  }, [enabled, reducedMotion, isAdmin, x, y]);
 
-  if (!enabled || reducedMotion) return null;
+  if (!enabled || reducedMotion || isAdmin) return null;
 
   return (
     <>
       <motion.div
-        className="pointer-events-none fixed left-0 top-0 z-[100] h-1.5 w-1.5 rounded-full bg-gold"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] h-1.5 w-1.5 rounded-full bg-[#C9A24A]"
         style={{ x, y, translateX: "-50%", translateY: "-50%" }}
       />
       <motion.div
-        className="pointer-events-none fixed left-0 top-0 z-[100] rounded-full border border-gold/60"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] rounded-full border border-[#C9A24A]/70 shadow-xs"
         style={{ x: ringX, y: ringY, translateX: "-50%", translateY: "-50%" }}
-        animate={{ width: hovering ? 48 : 28, height: hovering ? 48 : 28, opacity: hovering ? 0.9 : 0.5 }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        animate={{ width: hovering ? 48 : 28, height: hovering ? 48 : 28, opacity: hovering ? 0.95 : 0.6 }}
+        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
       />
     </>
   );

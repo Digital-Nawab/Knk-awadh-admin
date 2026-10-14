@@ -26,14 +26,11 @@ const ClientProviders = ({ children }: { children: ReactNode }) => {
         <Toaster />
         <Sonner />
         <Loader />
-        <Cursor />
-        <SmoothScroll>
-          <ScrollToHash />
-          <Navigation />
-          {children}
-          <WhatsAppButton />
-          <BackToTop />
-        </SmoothScroll>
+        <ScrollToHash />
+        <Navigation />
+        {children}
+        <WhatsAppButton />
+        <BackToTop />
       </TooltipProvider>
     </QueryClientProvider>
   );

@@ -2,14 +2,17 @@
 
 import { ReactNode, useEffect } from "react";
 import Lenis from "lenis";
+import { usePathname } from "next/navigation";
 import { usePrefersReducedMotion } from "./Reveal";
 
-/** Drives buttery smooth scroll physics site-wide; falls back to native scroll for reduced-motion users. */
+/** Drives buttery smooth scroll physics site-wide; falls back to native scroll for reduced-motion users or admin pages. */
 const SmoothScroll = ({ children }: { children: ReactNode }) => {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
   const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion || isAdmin) return;
 
     const lenis = new Lenis({
       duration: 1.1,
@@ -27,7 +30,7 @@ const SmoothScroll = ({ children }: { children: ReactNode }) => {
       cancelAnimationFrame(frame);
       lenis.destroy();
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, isAdmin]);
 
   return <>{children}</>;
 };

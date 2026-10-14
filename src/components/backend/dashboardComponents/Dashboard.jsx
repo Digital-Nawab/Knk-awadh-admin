@@ -48,6 +48,7 @@ export default function Dashboard() {
         landingPages: 0,
         bridalLanding: 0,
         salonLanding: 0,
+        skinAesthetics: 0,
         website: 0,
     });
 
@@ -131,6 +132,7 @@ export default function Dashboard() {
             if (channelTab === "home_page" && src.group !== "home_page") return false;
             if (channelTab === "popup" && src.group !== "popup") return false;
             if (channelTab === "landing_page" && src.group !== "landing_page") return false;
+            if (channelTab === "skin_aesthetics" && src.group !== "skin_aesthetics") return false;
 
             // Status filter
             if (statusFilter !== "all") {
@@ -237,7 +239,7 @@ export default function Dashboard() {
                     </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
                     {/* Card 1: Total Leads */}
                     <Link
                         href="/admin/bookings?formType=all"
@@ -315,7 +317,7 @@ export default function Dashboard() {
                             </span>
                         </div>
                         <p className="text-[10px] text-muted mt-0.5">
-                            &quot;Book Appointment&quot; modal popups
+                            &quot;Book Appointment&quot; popups
                         </p>
                     </Link>
 
@@ -342,7 +344,34 @@ export default function Dashboard() {
                             </span>
                         </div>
                         <p className="text-[10px] text-muted mt-0.5">
-                            Bridal &amp; Salon dedicated campaign pages
+                            Bridal &amp; Salon campaign pages
+                        </p>
+                    </Link>
+
+                    {/* Card 5: Skin Aesthetics Leads */}
+                    <Link
+                        href="/admin/bookings?formType=skin_aesthetics"
+                        className="relative bg-white p-5 rounded-2xl border border-amber-200/80 shadow-xs hover:border-[#784e2d] hover:shadow-soft transition-all group block bg-gradient-to-br from-white via-white to-[#fbf4eb]/40"
+                    >
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] uppercase tracking-wider font-semibold text-[#784e2d] bg-[#fbf4eb] px-2.5 py-0.5 rounded-full border border-[#e8d5be]">
+                                Skin Aesthetics
+                            </span>
+                            <span className="text-[10px] font-mono text-muted">
+                                KNK SKKIN
+                            </span>
+                        </div>
+                        <p className="font-display text-4xl sm:text-5xl italic text-[#784e2d] font-semibold mt-3 group-hover:text-[#533620] transition-colors">
+                            {stats.skinAesthetics || 0}
+                        </p>
+                        <div className="mt-2 flex items-center justify-between text-xs font-sans">
+                            <span className="font-semibold text-ink">Skin &amp; Clinic Leads</span>
+                            <span className="text-gold-deep text-[11px] group-hover:translate-x-0.5 transition-transform">
+                                Filter &rarr;
+                            </span>
+                        </div>
+                        <p className="text-[10px] text-muted mt-0.5">
+                            Doctor consultations &amp; treatments
                         </p>
                     </Link>
                 </div>
@@ -462,6 +491,17 @@ export default function Dashboard() {
                                 }`}
                             >
                                 Landing ({stats.landingPages || 0})
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setChannelTab("skin_aesthetics")}
+                                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                                    channelTab === "skin_aesthetics"
+                                        ? "bg-[#784e2d] text-cream font-semibold"
+                                        : "text-[#784e2d] hover:text-[#533620]"
+                                }`}
+                            >
+                                Skin Aesthetics ({stats.skinAesthetics || 0})
                             </button>
                         </div>
 
