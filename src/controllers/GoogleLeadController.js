@@ -349,6 +349,16 @@ export async function bulkActions(request) {
  */
 export async function simulateTestLead(request) {
     try {
+        // Disable simulation on live production servers to prevent test data pollution
+        const host = request?.headers?.get?.("x-forwarded-host") || request?.headers?.get?.("host") || "";
+        const isLive = host && !host.includes("localhost") && !host.includes("127.0.0.1") && !host.startsWith("192.168.");
+        if (isLive && process.env.NODE_ENV === "production") {
+            return {
+                status: 403,
+                body: { error: "Test lead simulation is disabled on live production to preserve real lead data." },
+            };
+        }
+
         const body = await request.json().catch(() => ({}));
         const sampleNames = ["Priya Verma", "Aarav Kapoor", "Ananya Singh", "Rohan Mehta", "Sanya Gupta"];
         const sampleServices = ["Bridal Makeup & Hair Styling", "Nanoplastia Hair Treatment", "HydraFacial Glow Therapy", "Keratin Hair Smoothening", "Balayage & Global Colour"];
@@ -414,8 +424,25 @@ export async function simulateTestLead(request) {
  * Return Webhook setup configuration for Google Ads
  */
 export function getWebhookConfig(request) {
-    const origin = request?.nextUrl?.origin || process.env.NEXT_PUBLIC_SITE_URL || "https://knksalonawadh.com";
-    const webhookUrl = `${origin}/api/webhooks/google-leads`;
+    // 1. Read proxy headers (Nginx, Apache, Cloudflare, cPanel, Vercel)
+    const forwardedHost = request?.headers?.get?.("x-forwarded-host");
+    const forwardedProto = request?.headers?.get?.("x-forwarded-proto");
+    const host = forwardedHost || request?.headers?.get?.("host") || "";
+    const proto = forwardedProto || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
+
+    // 2. Compute true live origin (never fall back to localhost for Google Ads Webhook)
+    let liveOrigin = "";
+    if (host && !host.includes("localhost") && !host.includes("127.0.0.1")) {
+        liveOrigin = `${proto}://${host}`;
+    } else if (process.env.NEXT_PUBLIC_SITE_URL && !process.env.NEXT_PUBLIC_SITE_URL.includes("localhost")) {
+        liveOrigin = process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+    } else {
+        liveOrigin = "https://knksalonawadh.com";
+    }
+
+    const localOrigin = request?.nextUrl?.origin || "http://localhost:3000";
+    const webhookUrl = `${liveOrigin}/api/webhooks/google-leads`;
+    const localWebhookUrl = `${localOrigin}/api/webhooks/google-leads`;
     const secretKey = DEFAULT_SECRET_KEY;
 
     return {
@@ -423,6 +450,9 @@ export function getWebhookConfig(request) {
         body: {
             success: true,
             webhookUrl,
+            productionUrl: webhookUrl,
+            localWebhookUrl,
+            liveOrigin,
             secretKey,
             apiVersion: "1.0",
             steps: [

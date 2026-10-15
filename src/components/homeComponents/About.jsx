@@ -18,12 +18,12 @@ function About({ data }) {
             <section className="relative overflow-hidden pb-16 pt-20 md:pt-24">
                 <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 md:px-10 lg:grid-cols-[1.05fr_0.95fr]">
                     <div>
-                        <h2 className="mt-4 font-display text-4xl leading-tight md:text-5xl lg:text-6xl">
+                        <h1 className="mt-4 font-display text-4xl leading-tight md:text-5xl lg:text-6xl">
                             {content.heading || "Luxury Salon & Makeup"}{" "}
                             <span className="italic">
                                 {content.headingHighlight || content.italic_heading || "Studio in & Lucknow"}
                             </span>
-                        </h2>
+                        </h1>
 
                         <p className="mt-5 text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground">
                             {content.eyebrow || content.badge || "Professional Makeup, Hair, Nails, Skin & Beauty Services"}
