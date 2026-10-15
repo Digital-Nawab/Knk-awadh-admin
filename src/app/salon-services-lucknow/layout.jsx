@@ -30,6 +30,9 @@ const alexBrush = Alex_Brush({
   display: "swap",
 });
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { getDynamicMetadata } from "@/lib/seo";
 
 export async function generateMetadata() {
