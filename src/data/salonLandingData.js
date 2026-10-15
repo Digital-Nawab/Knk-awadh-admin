@@ -20,7 +20,7 @@ export const bridalServices = [
   },
   {
     id: "nanoplastia-keratin",
-    title: "Nanoplastia Treatment",
+    title: "Nanoplastia & Hair",
     subtitle: "Frizz-Free Glass Hair Longevity",
     image: "/salon-landing-page/images/salon/service-hairspa.webp",
     alt: "Nanoplastia and Keratin Hair Treatment Lucknow at KNK Salon",

@@ -31,7 +31,7 @@ export default function BridalServices() {
     },
     {
       id: "nanoplastia-keratin",
-      title: "Nanoplastia Treatment",
+      title: "Nanoplastia & Hair",
       subtitle: "Frizz-Free Glass Hair Longevity",
       image: "/salon-landing-page/images/salon/service-hairspa.webp",
       description:
