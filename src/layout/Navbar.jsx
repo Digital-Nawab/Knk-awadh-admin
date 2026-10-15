@@ -189,6 +189,12 @@ function Navbar() {
                     >
                         Skin & Aesthetics
                     </Link>
+                    <Link
+                        href="/offers"
+                        className="relative px-3.5 py-1 rounded-full text-gold font-semibold bg-gradient-to-r from-gold/25 via-gold/15 to-gold/5 border border-gold/60 shadow-[0_0_12px_rgba(197,162,101,0.3)] hover:border-gold hover:shadow-[0_0_20px_rgba(197,162,101,0.55)] transition-all duration-300 whitespace-nowrap tracking-[0.16em]"
+                    >
+                        Offers
+                    </Link>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                     <Link
@@ -381,6 +387,13 @@ function Navbar() {
                     className="rounded-lg px-2 py-3 hover:bg-secondary"
                 >
                     Skin & Aesthetics
+                </Link>
+                <Link
+                    href="/offers"
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-lg px-2 py-3 text-gold font-semibold hover:bg-secondary"
+                >
+                    Offers
                 </Link>
                 <Link
                     href="/book"

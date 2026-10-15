@@ -1,7 +1,7 @@
 import { writeFile, unlink, mkdir } from "fs/promises";
 import path from "path";
 import GalleryModel from "@/models/GalleryModel";
-import { getSafeOriginalFilename } from "@/lib/uploadHelper";
+import { getSafeOriginalFilename, writeUploadBuffer, deleteUploadFile } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/jpg"];
 const UPLOAD_DIR = path.join(process.cwd(), "public", "admin-assets", "gallery");
@@ -59,7 +59,7 @@ export async function createGallery(request) {
             const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, file.name, ".webp");
 
             const buffer = Buffer.from(await file.arrayBuffer());
-            await writeFile(filePath, buffer);
+            await writeUploadBuffer(filePath, buffer);
 
             const imageUrl = `/admin-assets/gallery/${fileName}`;
 
@@ -188,14 +188,7 @@ export async function deleteGallery(id) {
 
         // If file was uploaded into /admin-assets/gallery/, safely unlink it
         if (item.image_url && item.image_url.startsWith("/admin-assets/gallery/")) {
-            const filePath = path.join(process.cwd(), "public", item.image_url);
-            try {
-                await unlink(filePath);
-            } catch (err) {
-                if (err.code !== "ENOENT") {
-                    console.error("Failed to delete gallery file from disk:", err);
-                }
-            }
+            await deleteUploadFile(item.image_url);
         }
 
         await GalleryModel.delete(id);

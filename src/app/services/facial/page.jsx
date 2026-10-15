@@ -1,10 +1,15 @@
 import Layout from "@/layout/Layout";
 import DynamicCategoryPage from "@/components/serviceComponents/DynamicCategoryPage";
+import { getDynamicMetadata } from "@/lib/seo";
 
-export const metadata = {
-    title: "Facial Services in Lucknow | KNK Salon Awadh",
-    description: "Signature cellular skin nutrition, HydraFacials, and brightening rituals at KNK Salon Awadh Lucknow.",
-};
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+    return await getDynamicMetadata('/services/facial', {
+        title: "Facial Services in Lucknow | KNK Salon Awadh",
+        description: "Signature cellular skin nutrition, HydraFacials, and brightening rituals at KNK Salon Awadh Lucknow.",
+    });
+}
 
 export default function FacialPage() {
     return (

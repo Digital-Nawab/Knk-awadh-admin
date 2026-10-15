@@ -1,7 +1,7 @@
 import { writeFile, unlink, mkdir } from "fs/promises";
 import path from "path";
 import InteriorModel from "@/models/InteriorModel";
-import { getSafeOriginalFilename } from "@/lib/uploadHelper";
+import { getSafeOriginalFilename, writeUploadBuffer, deleteUploadFile } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/jpg"];
 const MAX_FILE_SIZE_BYTES = 500 * 1024; // 500 KB max limit
@@ -75,7 +75,7 @@ export async function createInterior(request) {
             const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, file.name, ".webp");
 
             const buffer = Buffer.from(await file.arrayBuffer());
-            await writeFile(filePath, buffer);
+            await writeUploadBuffer(filePath, buffer);
 
             const imageUrl = `/admin-assets/interior/${fileName}`;
 
@@ -216,14 +216,7 @@ export async function deleteInterior(id) {
 
         // If file was uploaded into /admin-assets/interior/, unlink it
         if (item.image_url && item.image_url.startsWith("/admin-assets/interior/")) {
-            const filePath = path.join(process.cwd(), "public", item.image_url);
-            try {
-                await unlink(filePath);
-            } catch (err) {
-                if (err.code !== "ENOENT") {
-                    console.error("Failed to delete interior file from disk:", err);
-                }
-            }
+            await deleteUploadFile(item.image_url);
         }
 
         await InteriorModel.delete(id);

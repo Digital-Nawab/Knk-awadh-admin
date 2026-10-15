@@ -154,3 +154,26 @@ CREATE TABLE IF NOT EXISTS interior_gallery (
     INDEX idx_display_order (display_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 11. Exclusive Offers & Deals Table
+CREATE TABLE IF NOT EXISTS offers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    tagline VARCHAR(255) NULL,
+    services_included TEXT NULL,
+    price VARCHAR(100) NULL,
+    original_price VARCHAR(100) NULL,
+    badge VARCHAR(100) NULL,
+    image_url VARCHAR(255) NOT NULL,
+    category VARCHAR(100) DEFAULT 'All',
+    valid_until VARCHAR(100) NULL,
+    terms TEXT NULL,
+    display_order INT DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_is_active (is_active),
+    INDEX idx_category (category),
+    INDEX idx_display_order (display_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+

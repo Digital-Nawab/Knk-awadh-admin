@@ -1,7 +1,7 @@
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import MenGroomingModel from "@/models/MenGroomingModel";
-import { getSafeOriginalFilename } from "@/lib/uploadHelper";
+import { getSafeOriginalFilename, writeUploadBuffer } from "@/lib/uploadHelper";
 
 const UPLOAD_DIR = path.join(process.cwd(), "public", "admin-assets", "men-grooming");
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/svg+xml", "image/jpg"];
@@ -77,7 +77,7 @@ export async function updateMenGroomingSection(param1, param2) {
                     const fallbackExt = isVideo ? ".webm" : ".webp";
                     const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, file.name, fallbackExt);
                     const buffer = Buffer.from(await file.arrayBuffer());
-                    await writeFile(filePath, buffer);
+                    await writeUploadBuffer(filePath, buffer);
                     const fileUrl = `/admin-assets/men-grooming/${fileName}`;
 
                     if (isVideo) {
@@ -147,7 +147,7 @@ export async function uploadMenGroomingAsset(request) {
         const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, file.name, fallbackExt);
 
         const buffer = Buffer.from(await file.arrayBuffer());
-        await writeFile(filePath, buffer);
+        await writeUploadBuffer(filePath, buffer);
 
         const url = `/admin-assets/men-grooming/${fileName}`;
 

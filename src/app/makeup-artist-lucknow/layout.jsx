@@ -30,25 +30,25 @@ const alexBrush = Alex_Brush({
   display: "swap",
 });
 
-export const metadata = {
-  title: "KNK Awadh Bridal | Luxury Bridal Makeup & Aesthetics in Lucknow",
-  description:
-    "Premium beauty, hair, makeup, aesthetics and professional bridal services at KNK Awadh, Lucknow. HD & Airbrush bridal couture.",
-  keywords: [
-    "KNK Awadh",
-    "Luxury salon Lucknow",
-    "Best bridal makeup Lucknow",
-    "Airbrush bridal Lucknow",
-    "HD bridal makeup Lucknow",
-    "Bridal studio Hazratganj",
-    "Bridal studio Gomti Nagar",
-    "Bridal studio Mahanagar",
-  ],
-  icons: {
-    icon: "/landing-page/images/logo.png",
-    apple: "/landing-page/images/logo.png",
-  },
-};
+import { getDynamicMetadata } from "@/lib/seo";
+
+export async function generateMetadata() {
+  const dynamicMeta = await getDynamicMetadata('/makeup-artist-lucknow', {
+    title: "KNK Awadh Bridal | Luxury Bridal Makeup & Aesthetics in Lucknow",
+    description:
+      "Premium beauty, hair, makeup, aesthetics and professional bridal services at KNK Awadh, Lucknow. HD & Airbrush bridal couture.",
+    keywords:
+      "KNK Awadh, Luxury salon Lucknow, Best bridal makeup Lucknow, Airbrush bridal Lucknow, HD bridal makeup Lucknow, Bridal studio Hazratganj",
+    ogImage: "/landing-page/images/logo.png",
+  });
+  return {
+    ...dynamicMeta,
+    icons: {
+      icon: "/landing-page/images/logo.png",
+      apple: "/landing-page/images/logo.png",
+    },
+  };
+}
 
 export default function MakeupLandingLayout({ children }) {
   return (

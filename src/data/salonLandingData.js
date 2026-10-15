@@ -20,14 +20,14 @@ export const bridalServices = [
   },
   {
     id: "nanoplastia-keratin",
-    title: "Nanoplastia & Hair Botox",
+    title: "Nanoplastia Treatment",
     subtitle: "Frizz-Free Glass Hair Longevity",
     image: "/salon-landing-page/images/salon/service-hairspa.webp",
     alt: "Nanoplastia and Keratin Hair Treatment Lucknow at KNK Salon",
     description:
       "Formaldehyde-free organic amino acid technology that deeply reconstructs damaged hair fibres, restoring mirror-like shine and total frizz elimination for up to 8 months.",
     details:
-      "The ultimate restorative therapy for chemically treated, dull or frizzy hair. Nanoplastia seals the cuticle using organic nano-nutrients without harsh fumes, while Hair Botox repairs cellular porosity with collagen and hyaluronic acid.",
+      "The ultimate restorative therapy for chemically treated, dull or frizzy hair. Nanoplastia seals the cuticle using organic nano-nutrients without harsh fumes, repairing cellular porosity with collagen and hyaluronic acid.",
     features: [
       "Up to 8 months mirror-glass smoothness",
       "100% formaldehyde-free organic formula",
@@ -132,7 +132,7 @@ export const portfolioImages = [
   },
   {
     id: 6,
-    title: "Signature Blow-Dry & Hair Botox Care",
+    title: "Signature Blow-Dry & Hair Care",
     bride: "Pooja P.",
     client: "Pooja P.",
     ceremony: "Hair Styling",
@@ -211,7 +211,7 @@ export const bridalFAQs = [
   {
     question: "What salon and beauty services are offered at KNK Salon Awadh?",
     answer:
-      "KNK Salon Awadh offers a comprehensive range of luxury salon services across Lucknow: precision designer haircuts, hair colouring (balayage, ombré, global, highlights), Nanoplastia, Keratin and Hair Botox treatments, deep conditioning hair spas, advanced HydraFacials, cleanups, waxing, gel/acrylic nail extensions and nail art, executive men's grooming, and KNK SKKIN aesthetic skin therapies.",
+      "KNK Salon Awadh offers a comprehensive range of luxury salon services across Lucknow: precision designer haircuts, hair colouring (balayage, ombré, global, highlights), Nanoplastia, Keratin treatments, deep conditioning hair spas, advanced HydraFacials, cleanups, waxing, gel/acrylic nail extensions and nail art, executive men's grooming, and KNK SKKIN aesthetic skin therapies.",
   },
   {
     question: "Nanoplastia vs Keratin: Which hair smoothing treatment is best for me?",

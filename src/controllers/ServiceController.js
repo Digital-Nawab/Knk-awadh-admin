@@ -2,7 +2,7 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import ServiceModel from "@/models/ServiceModel";
 import { db } from "@/lib/db";
-import { getSafeOriginalFilename } from "@/lib/uploadHelper";
+import { getSafeOriginalFilename, writeUploadBuffer } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
@@ -31,7 +31,7 @@ async function saveUploadedImage(imageFile, prefix = "service") {
     const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, imageFile.name, ".webp");
 
     const buffer = Buffer.from(await imageFile.arrayBuffer());
-    await writeFile(filePath, buffer);
+    await writeUploadBuffer(filePath, buffer);
 
     return `/admin-assets/services/${fileName}`;
 }

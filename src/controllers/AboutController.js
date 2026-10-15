@@ -1,7 +1,7 @@
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import AboutModel from "@/models/AboutModel";
-import { getSafeOriginalFilename } from "@/lib/uploadHelper";
+import { getSafeOriginalFilename, writeUploadBuffer } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/jpg"];
 const VIDEO_TYPES = ["video/mp4", "video/webm"];
@@ -75,7 +75,7 @@ export async function updateAboutSection(sectionKey, request) {
                 const fallbackExt = isVideo ? ".webm" : ".webp";
                 const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, file.name, fallbackExt);
                 const buffer = Buffer.from(await file.arrayBuffer());
-                await writeFile(filePath, buffer);
+                await writeUploadBuffer(filePath, buffer);
 
                 const fileUrl = `/admin-assets/about/${fileName}`;
                 const fileTargetField = formData.get("fileTargetField") || (sectionKey === "hero" ? "mediaUrl" : "image");
@@ -127,7 +127,7 @@ export async function uploadAboutAsset(request) {
         const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, file.name, fallbackExt);
 
         const buffer = Buffer.from(await file.arrayBuffer());
-        await writeFile(filePath, buffer);
+        await writeUploadBuffer(filePath, buffer);
 
         const url = `/admin-assets/about/${fileName}`;
 

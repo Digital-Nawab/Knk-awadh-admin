@@ -1,7 +1,7 @@
 import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
 import BlogModel from "@/models/BlogModel";
-import { getSafeOriginalFilename } from "@/lib/uploadHelper";
+import { getSafeOriginalFilename, writeUploadBuffer, deleteUploadFile } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const UPLOAD_DIR = path.join(process.cwd(), "public", "admin-assets", "blogs");
@@ -73,7 +73,7 @@ export async function createBlog(request) {
 
             const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, coverImageFile.name, ".webp");
             const buffer = Buffer.from(await coverImageFile.arrayBuffer());
-            await writeFile(filePath, buffer);
+            await writeUploadBuffer(filePath, buffer);
             coverImageUrl = `/admin-assets/blogs/${fileName}`;
         }
 
@@ -164,7 +164,7 @@ export async function updateBlog(id, request) {
             }
             const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, coverImageFile.name, ".webp");
             const buffer = Buffer.from(await coverImageFile.arrayBuffer());
-            await writeFile(filePath, buffer);
+            await writeUploadBuffer(filePath, buffer);
             coverImageUrl = `/admin-assets/blogs/${fileName}`;
         }
 
@@ -207,12 +207,7 @@ export async function deleteBlog(id) {
         if (!blog) return { status: 404, body: { error: "Blog not found." } };
 
         if (blog.cover_image && blog.cover_image.startsWith("/admin-assets/blogs/")) {
-            const filePath = path.join(process.cwd(), "public", blog.cover_image);
-            try {
-                await unlink(filePath);
-            } catch (err) {
-                if (err.code !== "ENOENT") console.error("Error deleting image:", err);
-            }
+            await deleteUploadFile(blog.cover_image);
         }
 
         await BlogModel.delete(id);

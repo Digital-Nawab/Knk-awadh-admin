@@ -1,7 +1,7 @@
 import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
 import HeroModel from "@/models/HeroModel";
-import { getSafeOriginalFilename } from "@/lib/uploadHelper";
+import { getSafeOriginalFilename, writeUploadBuffer, deleteUploadFile } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const VIDEO_TYPES = ["video/mp4", "video/webm"];
@@ -33,7 +33,7 @@ export async function createHero(request) {
     const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, media.name, fallbackExt);
 
     const buffer = Buffer.from(await media.arrayBuffer());
-    await writeFile(filePath, buffer);
+    await writeUploadBuffer(filePath, buffer);
 
     const mediaUrl = `/admin-assets/hero/${fileName}`;
     const mediaType = isVideo ? "video" : "image";
@@ -116,21 +116,14 @@ export async function updateHero(id, request) {
         const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, media.name, fallbackExt);
 
         const buffer = Buffer.from(await media.arrayBuffer());
-        await writeFile(filePath, buffer);
+        await writeUploadBuffer(filePath, buffer);
 
         mediaUrl = `/admin-assets/hero/${fileName}`;
         mediaType = isVideo ? "video" : "image";
 
         // Clean up previous uploaded media if applicable
         if (hero.media_url && hero.media_url.startsWith("/admin-assets/hero/")) {
-            const oldFilePath = path.join(process.cwd(), "public", hero.media_url);
-            try {
-                await unlink(oldFilePath);
-            } catch (err) {
-                if (err.code !== "ENOENT") {
-                    console.error("Failed to delete previous hero media file:", err);
-                }
-            }
+            await deleteUploadFile(hero.media_url);
         }
     }
 
@@ -156,14 +149,7 @@ export async function deleteHero(id) {
     }
 
     if (hero.media_url && hero.media_url.startsWith("/admin-assets/hero/")) {
-        const filePath = path.join(process.cwd(), "public", hero.media_url);
-        try {
-            await unlink(filePath);
-        } catch (err) {
-            if (err.code !== "ENOENT") {
-                console.error("Failed to delete hero media file:", err);
-            }
-        }
+        await deleteUploadFile(hero.media_url);
     }
 
     await HeroModel.hardDelete(id);

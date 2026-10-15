@@ -30,45 +30,25 @@ const alexBrush = Alex_Brush({
   display: "swap",
 });
 
-export const metadata = {
-  title: "KNK Salon Awadh | Luxury Hair, Skin, Nails & Beauty Studio in Lucknow",
-  description:
-    "KNK Salon Awadh Lucknow — luxury haircuts, French balayage, Nanoplastia, Keratin, HydraFacials, and nail art across Mahanagar, Gomti Nagar & Hazratganj.",
-  keywords: [
-    "KNK Awadh Salon",
-    "Luxury salon Lucknow",
-    "Best hair salon Lucknow",
-    "Nanoplastia Lucknow",
-    "Keratin treatment Lucknow",
-    "HydraFacial Lucknow",
-    "Nail extensions Lucknow",
-    "Hair salon Hazratganj",
-    "Salon Gomti Nagar",
-    "Salon Mahanagar",
-  ],
-  authors: [{ name: "KNK Awadh" }],
-  creator: "KNK Awadh",
-  openGraph: {
-    type: "website",
-    locale: "en_IN",
-    siteName: "KNK Salon Awadh",
+import { getDynamicMetadata } from "@/lib/seo";
+
+export async function generateMetadata() {
+  const dynamicMeta = await getDynamicMetadata('/salon-services-lucknow', {
     title: "KNK Salon Awadh | Luxury Hair, Skin, Nails & Beauty Studio in Lucknow",
     description:
       "KNK Salon Awadh Lucknow — luxury haircuts, French balayage, Nanoplastia, Keratin, HydraFacials, and nail art across Mahanagar, Gomti Nagar & Hazratganj.",
-    images: [
-      {
-        url: "/salon-landing-page/images/salon/salon-about.webp",
-        width: 1200,
-        height: 630,
-        alt: "KNK Salon Awadh Luxury Hair and Skin Studio Lucknow",
-      },
-    ],
-  },
-  icons: {
-    icon: "/salon-landing-page/images/logo.png",
-    apple: "/salon-landing-page/images/logo.png",
-  },
-};
+    keywords:
+      "KNK Awadh Salon, Luxury salon Lucknow, Best hair salon Lucknow, Nanoplastia Lucknow, Keratin treatment Lucknow, HydraFacial Lucknow, Nail extensions Lucknow",
+    ogImage: "/salon-landing-page/images/salon/salon-about.webp",
+  });
+  return {
+    ...dynamicMeta,
+    icons: {
+      icon: "/salon-landing-page/images/logo.png",
+      apple: "/salon-landing-page/images/logo.png",
+    },
+  };
+}
 
 export default function SalonLandingLayout({ children }) {
   return (

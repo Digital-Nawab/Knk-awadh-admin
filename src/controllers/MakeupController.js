@@ -1,7 +1,7 @@
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import MakeupModel from "@/models/MakeupModel";
-import { getSafeOriginalFilename } from "@/lib/uploadHelper";
+import { getSafeOriginalFilename, writeUploadBuffer } from "@/lib/uploadHelper";
 
 const UPLOAD_DIR = path.join(process.cwd(), "public", "admin-assets", "makeup");
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/svg+xml", "image/jpg"];
@@ -75,7 +75,7 @@ export async function updateMakeupSection(param1, param2) {
                     const fallbackExt = isVideo ? ".webm" : ".webp";
                     const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, file.name, fallbackExt);
                     const buffer = Buffer.from(await file.arrayBuffer());
-                    await writeFile(filePath, buffer);
+                    await writeUploadBuffer(filePath, buffer);
                     const fileUrl = `/admin-assets/makeup/${fileName}`;
 
                     if (isVideo) {
@@ -145,7 +145,7 @@ export async function uploadMakeupAsset(request) {
         const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, file.name, fallbackExt);
 
         const buffer = Buffer.from(await file.arrayBuffer());
-        await writeFile(filePath, buffer);
+        await writeUploadBuffer(filePath, buffer);
 
         const url = `/admin-assets/makeup/${fileName}`;
 

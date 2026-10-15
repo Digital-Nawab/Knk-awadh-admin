@@ -2,7 +2,7 @@ import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
 import { revalidatePath } from "next/cache";
 import SeoModel from "@/models/SeoModel";
-import { getSafeOriginalFilename } from "@/lib/uploadHelper";
+import { getSafeOriginalFilename, writeUploadBuffer, deleteUploadFile } from "@/lib/uploadHelper";
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const UPLOAD_DIR = path.join(process.cwd(), "public", "admin-assets", "seo");
@@ -54,7 +54,7 @@ export async function createSeo(request) {
 
             const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, ogImageFile.name, ".webp");
             const buffer = Buffer.from(await ogImageFile.arrayBuffer());
-            await writeFile(filePath, buffer);
+            await writeUploadBuffer(filePath, buffer);
             ogImageUrl = `/admin-assets/seo/${fileName}`;
         }
 
@@ -150,7 +150,7 @@ export async function updateSeo(id, request) {
             }
             const { fileName, filePath } = await getSafeOriginalFilename(UPLOAD_DIR, ogImageFile.name, ".webp");
             const buffer = Buffer.from(await ogImageFile.arrayBuffer());
-            await writeFile(filePath, buffer);
+            await writeUploadBuffer(filePath, buffer);
             ogImageUrl = `/admin-assets/seo/${fileName}`;
         }
 
@@ -187,12 +187,7 @@ export async function deleteSeo(id) {
         if (!seo) return { status: 404, body: { error: "SEO record not found." } };
 
         if (seo.og_image && seo.og_image.startsWith("/admin-assets/seo/")) {
-            const filePath = path.join(process.cwd(), "public", seo.og_image);
-            try {
-                await unlink(filePath);
-            } catch (err) {
-                if (err.code !== "ENOENT") console.error("Error deleting OG image:", err);
-            }
+            await deleteUploadFile(seo.og_image);
         }
 
         await SeoModel.delete(id);

@@ -4,8 +4,10 @@ import { initDatabase } from "@/lib/initDb";
 function normalizePath(p) {
     if (!p) return "/";
     let cleaned = p.trim();
+    if (cleaned === "index" || cleaned === "/index" || cleaned === "") return "/";
     if (!cleaned.startsWith("/")) cleaned = "/" + cleaned;
     if (cleaned.length > 1 && cleaned.endsWith("/")) cleaned = cleaned.slice(0, -1);
+    if (cleaned === "/index") return "/";
     return cleaned;
 }
 
@@ -74,6 +76,12 @@ const SeoModel = {
         await this.ensureTable();
         const pathVal = normalizePath(pagePath);
         const [rows] = await db.query("SELECT * FROM seo_metadata WHERE page_path = ? LIMIT 1", [pathVal]);
+        if ((!rows || rows.length === 0) && pathVal === "/") {
+            const [altRows] = await db.query(
+                "SELECT * FROM seo_metadata WHERE page_path IN ('/', '/index', 'index', '') LIMIT 1"
+            );
+            return altRows[0] || null;
+        }
         return rows[0] || null;
     },
 

@@ -27,6 +27,17 @@ const links = [
         ),
     },
     {
+        label: "Google Ads Leads",
+        href: "/admin/google-leads",
+        badge: "Ads",
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                <circle cx="12" cy="12" r="9" />
+            </svg>
+        ),
+    },
+    {
         label: "Home Page CMS",
         href: "/admin/home",
         icon: (
@@ -107,6 +118,16 @@ const links = [
         ),
     },
     {
+        label: "Exclusive Offers",
+        href: "/admin/offers",
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                <line x1="7" y1="7" x2="7.01" y2="7" />
+            </svg>
+        ),
+    },
+    {
         label: "The Journal (Blogs)",
         href: "/admin/blogs",
         icon: (
@@ -170,7 +191,12 @@ export default function Sidebar() {
                                 />
                             )}
                             <span className="h-[18px] w-[18px] shrink-0">{link.icon}</span>
-                            {link.label}
+                            <span className="flex-1 truncate">{link.label}</span>
+                            {link.badge && (
+                                <span className="text-[9.5px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-gold/20 text-gold border border-gold/30 shrink-0">
+                                    {link.badge}
+                                </span>
+                            )}
                         </Link>
                     );
                 })}

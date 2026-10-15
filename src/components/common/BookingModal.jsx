@@ -117,13 +117,19 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
         if (isOpen) {
             setErrorMsg("");
             if (initialService) {
-                const matched = findCategoryMatch(initialService, categories);
-                setService(matched);
+                // If specific offer or service passed, include it in dropdown so user sees the exact offer selected
+                setCategories((prev) => {
+                    if (!prev.includes(initialService)) {
+                        return [initialService, ...prev];
+                    }
+                    return prev;
+                });
+                setService(initialService);
             } else if (!service && categories.length > 0) {
                 setService(categories[0]);
             }
         }
-    }, [isOpen, initialService, categories]);
+    }, [isOpen, initialService]);
 
     // Handle Escape key to close modal
     useEffect(() => {

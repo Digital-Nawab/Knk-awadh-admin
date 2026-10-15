@@ -454,6 +454,76 @@ export async function initDatabase() {
             console.log("Default Men Grooming page sections seeded successfully");
         }
 
+        // 13. Exclusive Offers & Deals Table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS offers (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                alt_text VARCHAR(255) NULL,
+                tagline VARCHAR(255) NULL,
+                services_included TEXT NULL,
+                price VARCHAR(100) NULL,
+                original_price VARCHAR(100) NULL,
+                badge VARCHAR(100) NULL,
+                image_url VARCHAR(255) NOT NULL,
+                category VARCHAR(100) DEFAULT 'All',
+                valid_until VARCHAR(100) NULL,
+                terms TEXT NULL,
+                display_order INT DEFAULT 0,
+                is_active TINYINT(1) DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_is_active (is_active),
+                INDEX idx_category (category),
+                INDEX idx_display_order (display_order)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        try {
+            await db.query("ALTER TABLE offers ADD COLUMN alt_text VARCHAR(255) NULL AFTER title");
+        } catch {
+            // Already exists or ignore
+        }
+
+        // Seed default offers if empty
+        const [existingOffers] = await db.query("SELECT id FROM offers LIMIT 1");
+        if (existingOffers.length === 0) {
+            const initialOffers = [
+                [
+                    "Hair Offer — A Little Extra Love For Women",
+                    "A Little Extra Love — Head Wash, Hair Mask & Blow Dry at ₹499",
+                    "/admin-assets/offers/offer_1.webp",
+                    1,
+                    1
+                ],
+                [
+                    "Hair Spa — Buy 4 Get 1 Free",
+                    "Buy 4 Hair Spa Sessions Get 1 Free Special Offer",
+                    "/admin-assets/offers/offer_2.webp",
+                    2,
+                    1
+                ],
+                [
+                    "Men's Grooming Combo Deal",
+                    "Men's Grooming Combo Deal — Haircut, Beard & D-Tan at ₹499",
+                    "/admin-assets/offers/offer_3.webp",
+                    3,
+                    1
+                ]
+            ];
+
+            await db.query(
+                `INSERT INTO offers (title, alt_text, image_url, display_order, is_active) VALUES ?`,
+                [initialOffers]
+            );
+            console.log("Default exclusive reel-size offers seeded successfully");
+        } else {
+            // Update existing seeds to point to real reel images if using old assets
+            await db.query("UPDATE offers SET image_url = '/admin-assets/offers/offer_1.webp' WHERE id = 1");
+            await db.query("UPDATE offers SET image_url = '/admin-assets/offers/offer_2.webp' WHERE id = 2");
+            await db.query("UPDATE offers SET image_url = '/admin-assets/offers/offer_3.webp' WHERE id = 3");
+        }
+
         return { success: true, message: "Database tables and seed data initialized successfully." };
     } catch (error) {
         console.error("Database initialization error:", error);
