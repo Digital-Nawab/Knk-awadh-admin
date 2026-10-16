@@ -176,4 +176,83 @@ CREATE TABLE IF NOT EXISTS offers (
     INDEX idx_display_order (display_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 12. Google Ads Leads Table
+CREATE TABLE IF NOT EXISTS google_leads (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    lead_id VARCHAR(255) NULL,
+    form_id VARCHAR(100) NULL,
+    campaign_id VARCHAR(100) NULL,
+    campaign_name VARCHAR(255) NULL,
+    name VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    email VARCHAR(255) NULL,
+    city VARCHAR(100) NULL,
+    postal_code VARCHAR(50) NULL,
+    service_interested VARCHAR(255) NULL,
+    preferred_branch VARCHAR(100) NULL,
+    status VARCHAR(50) DEFAULT 'pending',
+    notes TEXT NULL,
+    assigned_to VARCHAR(100) NULL,
+    is_test TINYINT(1) DEFAULT 0,
+    gcl_id TEXT NULL,
+    custom_fields JSON NULL,
+    raw_payload JSON NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_phone (phone),
+    INDEX idx_created_at (created_at),
+    INDEX idx_lead_id (lead_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 13. Meta Ads (Facebook & Instagram) Leads Table
+CREATE TABLE IF NOT EXISTS meta_leads (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    lead_id VARCHAR(255) NULL,
+    form_id VARCHAR(100) NULL,
+    form_name VARCHAR(255) NULL,
+    campaign_id VARCHAR(100) NULL,
+    campaign_name VARCHAR(255) NULL,
+    adset_id VARCHAR(100) NULL,
+    adset_name VARCHAR(255) NULL,
+    ad_id VARCHAR(100) NULL,
+    ad_name VARCHAR(255) NULL,
+    platform VARCHAR(50) DEFAULT 'instagram',
+    name VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    email VARCHAR(255) NULL,
+    city VARCHAR(100) NULL,
+    postal_code VARCHAR(50) NULL,
+    service_interested VARCHAR(255) NULL,
+    preferred_branch VARCHAR(100) NULL,
+    status VARCHAR(50) DEFAULT 'pending',
+    notes TEXT NULL,
+    assigned_to VARCHAR(100) NULL,
+    is_test TINYINT(1) DEFAULT 0,
+    custom_fields JSON NULL,
+    raw_payload JSON NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_phone (phone),
+    INDEX idx_platform (platform),
+    INDEX idx_created_at (created_at),
+    INDEX idx_lead_id (lead_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 14. Enroll Courses Table (Academy course flyers & admission promotions)
+CREATE TABLE IF NOT EXISTS enroll_courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    alt_text VARCHAR(255) NULL,
+    image_url VARCHAR(255) NOT NULL,
+    display_order INT DEFAULT 1,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_display_order (display_order),
+    INDEX idx_is_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 

@@ -352,7 +352,7 @@ export async function simulateTestLead(request) {
         // Disable simulation on live production servers to prevent test data pollution
         const host = request?.headers?.get?.("x-forwarded-host") || request?.headers?.get?.("host") || "";
         const isLive = host && !host.includes("localhost") && !host.includes("127.0.0.1") && !host.startsWith("192.168.");
-        if (isLive && process.env.NODE_ENV === "production") {
+        if (isLive || process.env.NODE_ENV === "production") {
             return {
                 status: 403,
                 body: { error: "Test lead simulation is disabled on live production to preserve real lead data." },

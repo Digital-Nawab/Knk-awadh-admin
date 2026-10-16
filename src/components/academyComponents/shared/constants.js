@@ -29,7 +29,7 @@ export const whyAcademyPoints = [
 export const stats = [
     { value: "15+", label: "Years of Legacy", detail: "Shaping India's finest artists" },
     { value: "1000+", label: "Students Trained", detail: "Placed in salons & bridal studios" },
-    { value: "12", label: "Specialised Courses", detail: "Beginner to Master Diploma" },
+    { value: "10", label: "Specialised Courses", detail: "Beginner to Master Diploma" },
     { value: "IAF", label: "Certified Academy", detail: "Global recognition in 80+ nations" },
 ];
 
@@ -113,324 +113,262 @@ export const curriculum = [
    under the sidebar tabs in the Courses section (Makeup Course,
    Self Grooming Course, Diploma, etc). Category names match courseOptions. */
 export const courses = [
-    // ---------- Makeup Course ----------
+    // 1. 1 Month Makeup Artist Course
     {
-        title: "Pro Makeup Course",
+        title: "1 Month Makeup Artist Course",
         category: "Makeup Course",
         duration: "1 Month",
+        originalPrice: "₹1,20,000",
+        offerPrice: "₹89,999",
+        kit: null,
         points: [
-            "Product knowledge", "Colour wheel", "3 party makeup looks",
-            "3 trending bridal makeup looks", "Men/groom makeup",
-            "Airbrush makeup", "High end fashion MU", "Haldi/Mehndi MU",
+            "Skin care and hygiene theory",
+            "Product knowledge and vanity setup",
+            "Color wheel and tone matching theory",
+            "3 party and occasion makeup looks",
+            "Trending bridal makeup looks",
+            "Men and groom makeup techniques",
+            "Airbrush makeup demo and fundamentals",
+            "Live evaluation, portfolio shoot and IAF certification",
         ],
     },
+
+    // 2. 2 Month Pro Makeup Artist Course
     {
-        title: "Pro Makeup Courses",
+        title: "2 Month Pro Makeup Artist Course",
+        category: "Makeup Course",
+        duration: "2 Months",
+        originalPrice: "₹1,70,000",
+        offerPrice: "₹1,30,000",
+        kit: "Makeup Kit Included",
+        points: [
+            "Advanced color correction and base blending",
+            "5+ bridal signatures (Awadhi, Contemporary, Royal)",
+            "Reception, cocktail and red carpet glam looks",
+            "High-definition (HD) and camera-ready makeup",
+            "Airbrush theory, operation and practicals",
+            "Complimentary Professional Makeup Kit",
+            "Haldi, Mehndi and groom grooming",
+            "Client consultation, vanity setup and IAF certification",
+        ],
+    },
+
+    // 3. 3 Months Complete Makeup Artistry Course
+    {
+        title: "3 Months Complete Makeup Artistry Course",
         category: "Makeup Course",
         duration: "3 Months",
-        points: [
-            "Product knowledge", "Free makeup kit", "Basic to advanced makeup",
-            "Basic to advanced hairstyling", "Men/groom makeup", "Airbrush makeup",
-            "Ramp/model makeup", "High end fashion", "Social media marketing",
-            "Professional draping",
-        ],
-    },
-    {
-        title: "Fast Track Makeup Course",
-        category: "Makeup Course",
-        duration: "1 Month",
-        points: [
-            "Skin care and hygiene theory", "Product knowledge", "Brush theory and maintenance",
-            "Day makeup look", "Party makeup look", "Engagement makeup look",
-            "Contemporary bride makeup", "Traditional bridal makeup", "Glam cocktail makeup",
-            "Examination", "Portfolio shoot", "Certification",
-        ],
-    },
-    {
-        title: "Professional Makeup Artist Course",
-        category: "Makeup Course",
-        duration: "3 Months",
+        originalPrice: "₹2,00,000",
+        offerPrice: "₹1,50,000",
+        kit: "Makeup & Hair Kit Included",
         featured: true,
         sections: [
             {
-                title: "Fundamentals",
+                title: "Advanced Bridal & Airbrush",
                 items: [
-                    "Introduction to becoming a professional makeup artist",
-                    "Kit distribution & product knowledge", "Theory of skin",
-                    "History of makeup", "Colour theory for makeup artists",
+                    "Complete basic to high-fashion bridal makeup",
+                    "Airbrush machine mastering and flawless HD base",
+                    "High end fashion, runway and creative editorial looks",
+                    "Groom grooming and multi-cultural bridal styles",
                 ],
             },
             {
-                title: "Demo & Practice",
+                title: "Hairstyling & Draping",
                 items: [
-                    "Basic to advanced makeups", "Basic to advanced hairdos",
-                    "Groom/male model makeup", "Airbrush theory and practical",
-                    "Basic to advanced professional draping",
+                    "Basic to advanced bridal and engagement hairdos",
+                    "Hair volumizing, crimping and thermal styling",
+                    "Professional saree and dupatta draping (Sabyasachi, Nivi, Gujarati)",
+                    "Hair extension, jewelry and flower placement",
                 ],
             },
             {
-                title: "Career Prep",
-                items: ["Social media marketing", "Portfolio building with Ishitta Chowdhary"],
+                title: "Kits & Career Growth",
+                items: [
+                    "Complimentary Professional Makeup & Hair Kit",
+                    "Social media marketing and bridal booking strategy",
+                    "Portfolio building and live shoot with Ishitta Chowdhary",
+                    "IAF globally recognized certification and placement support",
+                ],
             },
         ],
     },
+
+    // 4. Pro Diploma Salon Owner Course
     {
-        title: "Pro Course — Industry Based",
-        category: "Makeup Course",
-        duration: "4 Months",
+        title: "Pro Diploma Salon Owner Course",
+        category: "Diploma",
+        duration: "8 Months",
+        originalPrice: "₹3,50,000",
+        offerPrice: "₹3,00,000",
+        kit: "Makeup, Hair, Skin & Nail Kit Included",
+        featured: true,
         sections: [
             {
-                title: "Basic to Advance Bridal Makeup",
+                title: "All 4-Discipline Artistry",
                 items: [
-                    "Skin care & hygiene theory", "Colour wheel theory", "Day self makeup",
-                    "Base theory", "Base application", "Evening party look", "Brush theory",
-                    "Face chart", "Engagement look", "Face, eyebrow, lip shapes", "Face contour",
-                    "Types of eyeliners", "Traditional bride look", "Contemporary bride look",
-                    "Arabic bride look", "Airbrush theory", "Airbrush makeup",
+                    "Complete professional makeup and airbrush masterclass",
+                    "Advanced hair designing, cutting, coloring and chemical treatments",
+                    "Clinical and aesthetic cosmetology and skin therapies",
+                    "Full nail extension and 3D nail artistry diploma",
                 ],
             },
             {
-                title: "Fashion & Creative Makeup",
+                title: "Salon Entrepreneurship & Business",
                 items: [
-                    "Introduction to the fashion industry", "Industry etiquette", "History of makeup",
-                    "Types of fashion & creative makeup", "Working backstage for international fashion weeks",
-                    "Understanding catwalk, makeup trends & backstage etiquette", "Graphic eyeliners",
-                    "Makeup for prints", "Decade makeup", "Trending fashion makeup looks",
-                    "Runway & catwalk makeup", "Makeup for photoshoot", "Portfolio shoots", "Assessment",
+                    "Salon startup blueprint: licensing, equipment and vendor sourcing",
+                    "Team recruitment, staff training and commission structures",
+                    "Client consultation psychology and premium pricing strategy",
+                    "Digital marketing, local SEO and bridal booking funnels",
                 ],
             },
             {
-                title: "Basic to Advance Hair Styling",
+                title: "Kits & Guaranteed Internship",
                 items: [
-                    "Detangling & sectioning", "Theory of hair volumizing", "Types of blow dryer",
-                    "Types of hairstyles", "Advance engagement hairdo", "Advance bridal hairdo",
-                    "Pakistani bridal hairdo", "Different fronts according to face shapes",
-                    "Hair extensions/hair accessories application",
+                    "All 4 Kits Included (Makeup, Hair, Skin & Nail Kit)",
+                    "Guaranteed 1-month hands-on internship at KNK Luxury Salon",
+                    "Celebrity and runway bridal portfolio building",
+                    "IAF Master Diploma with global accreditation in 80+ nations",
                 ],
-            },
-            {
-                title: "Professional Draping",
-                items: ["Casual saree draping", "Different styles of draping"],
             },
         ],
     },
 
-    // ---------- Self Grooming Course ----------
+    // 5. Diploma in Cosmetology
     {
-        title: "Self Grooming Course",
-        category: "Self Grooming Course",
-        duration: "15 Days",
-        points: [
-            "Guidelines on health, safety and hygiene", "Skin primers", "Skin theory and skincare",
-            "Foundations and concealer application", "Highlighting and contouring", "Eyelash application",
-            "Eyebrow definition and grooming", "Strip eyelash application", "Blusher techniques",
-            "Eyeliners & mascara application", "Day makeup look", "Evening party makeup look",
-            "Smokey eyes makeup",
-        ],
-    },
-
-    // ---------- Diploma ----------
-    {
-        title: "Diploma in Skin Cosmetology",
+        title: "Diploma in Cosmetology",
         category: "Diploma",
         duration: "6 Months",
-        points: [
-            "Skin texture & function", "Latest product knowledge", "Clean up & facial techniques",
-            "Use of different bleach & D-tan", "Manicures", "Pedicures", "Wax — face/body/B-wax",
-            "Homecare & recommendations", "Complete professional makeup course",
-            "Nail extension course & more",
-        ],
-    },
-    {
-        title: "Diploma Course",
-        category: "Diploma",
-        duration: "6 Months",
+        originalPrice: "₹3,00,000",
+        offerPrice: "₹2,50,000",
+        kit: "Makeup, Hair, Skin & Nail Kit Included",
         sections: [
             {
-                title: "Course Includes",
+                title: "Aesthetic Skin & Cosmetology",
                 items: [
-                    "4 month industry based course", "Nail technician course",
-                    "Advanced cosmetology course", "2 months internship provided",
+                    "Skin anatomy, physiology and diagnostic analysis",
+                    "Electrotherapy facials (Galvanic, High Frequency, Ultrasonic)",
+                    "Chemical peels, pigmentation and anti-aging treatments",
+                    "Body polishing, spa therapies and hygiene protocols",
                 ],
             },
             {
-                title: "After Care Program",
+                title: "Hair & Nail Architecture",
                 items: [
-                    "Internship", "Portfolio building", "Client interaction & dealing",
-                    "Workshops", "Model shoots", "Celebrity shoots",
+                    "Hair cutting, thermal styling and blow drying techniques",
+                    "Hair chemical treatments: Keratin, Smoothening and Botoplex",
+                    "Nail structure, gel extensions and acrylic overlays",
+                    "Professional nail art, shaping and refills",
                 ],
             },
             {
-                title: "Student Work",
+                title: "Makeup Artistry & Inclusions",
                 items: [
-                    "Glam party makeup looks", "Bridal makeup looks",
-                    "Fashion makeup looks", "Creative makeup looks",
+                    "Complete professional makeup and bridal looks",
+                    "All 4 Kits Included (Makeup, Hair, Skin & Nail Kit)",
+                    "Live client consultations and practical evaluations",
+                    "IAF recognized cosmetology diploma and placement support",
                 ],
-            },
-            {
-                title: "Milestones",
-                items: ["Examination", "Graduation day", "Internship", "Jobs"],
             },
         ],
     },
 
-    // ---------- Fashion & Photography Course ----------
+    // 6. Advance Nail Technician Course
     {
-        title: "Fashion & Photography Course",
-        category: "Fashion & Photography Course",
-        duration: "10 Days",
+        title: "Advance Nail Technician Course",
+        category: "Nail Extension Course",
+        duration: "1 Month",
+        originalPrice: "₹50,000",
+        offerPrice: "₹35,000",
+        kit: "Nail Kit Included",
         points: [
-            "Editorial makeup & shoot", "Haute couture & shoot", "Working with models",
-            "Clothing shoot", "Jewellery shoot", "Bridal & party makeup shoots",
+            "Nail anatomy, nail health and sanitization protocols",
+            "Gel extensions with tip and form applications",
+            "Acrylic nail extensions with liquid and powder bead control",
+            "Overlay, refill and safe nail removal procedures",
+            "Trending nail art: Ombre, Chrome, Marble and French tips",
+            "3D nail art, foil, glitters and stone embellishments",
+            "Electric drill machine techniques and cuticle maintenance",
+            "Complimentary Professional Nail Kit and IAF certification",
         ],
     },
 
-    // ---------- Airbrush Makeup Course ----------
+    // 7. 1 Month Professional Hair Technician Course
     {
-        title: "Airbrush Makeup Course",
-        category: "Airbrush Makeup Course",
-        duration: "1 Week",
-        points: [
-            "Difference between airbrush & normal makeup", "Airbrush machine & its operation",
-            "Base with airbrush", "Blusher & contour with airbrush", "How to set airbrush MU",
-            "Cleaning & maintaining of AB gun",
-        ],
-    },
-
-    // ---------- Hair Technician Course ----------
-    {
-        title: "Hair Technician Course",
+        title: "1 Month Professional Hair Technician Course",
         category: "Hair Technician Course",
-        duration: "3 Months",
-        sections: [
-            {
-                title: "Core Curriculum",
-                items: [
-                    "Detangling & sectioning", "Introduction of tools", "Theory of hair volumizing",
-                    "Types of blow dryer", "Ironing", "Crimping", "Types of braids", "Types of ponys",
-                    "Types of buns", "Advance engagement hairdo", "Advance bridal hairdo",
-                    "Pakistani bridal hairdo", "Hair extensions/hair accessories application",
-                    "Different fronts according to face shapes", "Professional dryer & ironing",
-                    "Complimentary hair kit", "Portfolio building",
-                ],
-            },
-            {
-                title: "Other Crucial Skills",
-                items: [
-                    "Client counselling", "Jewelry setting", "Flower setting",
-                    "Hair accessories application", "Hair extension application",
-                ],
-            },
-        ],
-    },
-
-    // ---------- Nail Extension Course ----------
-    {
-        title: "Nail Extension Course",
-        category: "Nail Extension Course",
-        duration: "15 Days",
-        points: [
-            "Nail structure, function & hygiene", "Gel extensions", "Acrylic extensions", "Refill",
-            "Overlay", "French nails", "Nail art — 10 types", "Use of drill machine",
-            "Different nail shapes", "3D nail art",
-        ],
-    },
-    {
-        title: "Nail Technician Course",
-        category: "Nail Extension Course",
         duration: "1 Month",
-        sections: [
-            {
-                title: "Core Curriculum",
-                items: [
-                    "Nail theory & hygiene", "Product knowledge", "Nail cleaning & correction",
-                    "Types of nail shapes", "Gel polish application", "Temporary nail tip application",
-                    "Gel tip extension", "Over layer gel application", "Acrylic gel extension",
-                    "Gel removal", "2D nail art", "3D nail art", "Nail accessories application",
-                    "Refill", "Use of drill machine",
-                ],
-            },
-            {
-                title: "Types of Nail Art",
-                items: ["Ombre nail art", "Chrome nail art", "Marble nail art", "French nail art", "Cat eye nail art"],
-            },
+        originalPrice: "₹1,00,000",
+        offerPrice: "₹75,000",
+        kit: null,
+        points: [
+            "Hair science, scalp diagnosis and trichology basics",
+            "Professional detangling, sectioning and shampooing",
+            "Thermal styling: Blow-dry types, flat ironing and crimping",
+            "Classic haircutting techniques and perimeter styling",
+            "Hair spa, deep conditioning and scalp treatments",
+            "Basic hair coloring, root touchups and grey coverage",
+            "Tool maintenance, safety and salon ergonomics",
+            "Live model practicals, examination and IAF certification",
         ],
     },
 
-    // ---------- Self Drapping Course ----------
+    // 8. Pro Advance Hair Technician Course
     {
-        title: "Self Drapping Course",
-        category: "Self Drapping Course",
-        duration: "1 Week",
-        points: [
-            "Casual saree draping", "Nivi draping/sidha palla", "Gujrati draping/ulta palla",
-            "Indo-western dupatta draping", "Sabhyasachi dupatta draping",
-        ],
-    },
-    {
-        title: "Self Hairstyling Course",
-        category: "Self Drapping Course",
-        duration: "10 Days",
-        points: [
-            "Detangling & sectioning", "Introduction of tools", "Hair volumizing", "Ironing",
-            "Soft curls", "Crimping", "Waterfall", "French braid", "Dutch braid",
-            "Simple bun", "Messy bun",
-        ],
-    },
-
-    // ---------- Professional Drapping Course ----------
-    {
-        title: "Professional Drapping",
-        category: "Professional Drapping Course",
-        duration: "10 Days",
-        points: [
-            "Casual saree draping", "Nivi draping/siddha palla", "Gujrati draping/ulta palla",
-            "Bengali draping", "Marathi draping/Navsaree draping", "Indo-western draping",
-            "Lehenga draping", "Bridal draping", "Sabhyasachi draping", "Ragini draping", "Mughal draping",
-        ],
-    },
-
-    // ---------- Professional Henna Art ----------
-    {
-        title: "Professional Henna Art Course",
-        category: "Professional Henna Art",
-        duration: "15 Days",
-        sections: [
-            {
-                title: "Basics",
-                items: ["How to make mehendi paste", "How to make mehendi cone", "Introduction to mehendi basics"],
-            },
-            {
-                title: "Design Practice",
-                items: [
-                    "Indian", "Gulf", "Arabic", "Jewelry mehndi designs",
-                    "Designers mehendi designs", "Bridal mehendi designs", "Leg mehendi designs",
-                ],
-            },
-        ],
-    },
-
-    // ---------- Beautician Course ----------
-    {
-        title: "Basic Beautician Course",
-        category: "Beautician Course",
-        duration: "1 Month",
-        points: [
-            "Knowledge of beauty products", "Skin knowledge", "CTM knowledge", "Threading",
-            "Cleanup", "Manicure", "Pedicure", "Facial", "Normal wax", "Face D-tan",
-            "Face bleach", "Body polishing", "Assessment", "Examination", "Certification",
-        ],
-    },
-    {
-        title: "Advance Beautician Course",
-        category: "Beautician Course",
+        title: "Pro Advance Hair Technician Course",
+        category: "Hair Technician Course",
         duration: "2 Months",
+        originalPrice: "₹1,30,000",
+        offerPrice: "₹99,000",
+        kit: "Hairtech Kit Included",
         points: [
-            "Skin knowledge & theory", "Threading", "Knowledge of beauty", "Knowledge of CTM",
-            "Cleanup", "Sugar wax", "Rica wax", "Manicure", "Pedicure", "Essential facial",
-            "Advance facial", "Face de-tan", "Face bleach", "Body de-tan", "Body bleach",
-            "Body wax", "Body polishing", "Body spa", "Body massage",
-            "Complimentary skin kit & skin tools",
+            "Advanced hair chemicals: Keratin, Botoplex and Nanoplastia",
+            "Permanent hair straightening, rebonding and smoothening",
+            "Creative hair coloring: Balayage, Ombre, Highlights and Global colour",
+            "Precision advanced haircutting, layers and texture sculpting",
+            "Bridal updos, Pakistani bridal hairdos and textured buns",
+            "Hair extension fixing, flower setting and accessories styling",
+            "Complimentary Professional Hairtech Kit",
+            "Live client simulation, portfolio shoot and IAF certification",
+        ],
+    },
+
+    // 9. 1 Month Beautician Course
+    {
+        title: "1 Month Beautician Course",
+        category: "Beautician Course",
+        duration: "1 Month",
+        originalPrice: "₹75,000",
+        offerPrice: "₹50,000",
+        kit: "Skin Kit Included",
+        points: [
+            "Skin types, CTM routine and skin preparation",
+            "Eyebrow shaping, threading and facial waxing",
+            "Face clean-ups, de-tan treatments and bleaching methods",
+            "Classic and fruit facials with facial massage strokes",
+            "Manicure and pedicure procedures and hygiene",
+            "Basic body waxing (honey wax, Rica wax) and polishing",
+            "Complimentary Professional Skin Kit",
+            "Client handling, salon hygiene and IAF certification",
+        ],
+    },
+
+    // 10. Advance Cosmetology Course
+    {
+        title: "Advance Cosmetology Course",
+        category: "Cosmetology & Skin",
+        duration: "55 Days",
+        originalPrice: "₹1,00,000",
+        offerPrice: "₹75,000",
+        kit: "Skin Kit Included",
+        points: [
+            "Clinical skin analysis and common dermatological conditions",
+            "Aesthetic electrotherapy: High Frequency, Galvanic & Ultrasonic",
+            "Hydra facial treatment procedures and vacuum suction",
+            "Cosmeceutical chemical peels for acne and pigmentation",
+            "Anti-aging lifting treatments and collagen stimulation",
+            "Advanced de-tan, organic peelings and brightening therapies",
+            "Complimentary Professional Skin Kit",
+            "Live client clinical cases, exam and IAF certification",
         ],
     },
 ];
@@ -481,14 +419,9 @@ export const faqs = [
 
 export const courseOptions = [
     "Makeup Course",
-    "Self Grooming Course",
     "Diploma",
-    "Fashion & Photography Course",
-    "Airbrush Makeup Course",
     "Hair Technician Course",
     "Nail Extension Course",
-    "Self Drapping Course",
-    "Professional Drapping Course",
-    "Professional Henna Art",
     "Beautician Course",
+    "Cosmetology & Skin",
 ];

@@ -112,7 +112,7 @@ function Hero({ initialHero = null }) {
             );
           } catch {}
         }
-        router.push("/thank-you");
+        router.push(`/thank-you?requestNumber=${encodeURIComponent(requestNumber)}&bookingId=${encodeURIComponent(bookingId)}`);
       } else {
         setStatusMessage({ type: "error", text: data.error || "Failed to submit booking. Please call us." });
       }

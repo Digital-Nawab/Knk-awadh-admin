@@ -233,7 +233,7 @@ export default function Contact() {
                 }
 
                 setTimeout(() => {
-                    router.push("/thank-you");
+                    router.push(`/thank-you?requestNumber=${encodeURIComponent(requestNumber)}&bookingId=${encodeURIComponent(bookingId)}`);
                 }, 1200);
             } else {
                 setErrorMsg(

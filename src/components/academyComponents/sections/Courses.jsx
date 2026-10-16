@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
     Sparkles, UserRound, GraduationCap, Camera, Wind, Scissors,
     Hand, Shirt, Layers, PenTool, Flower2, ChevronDown, ChevronLeft, ChevronRight,
-    X, Clock, CheckCircle2, ArrowRight, BookOpen, Search
+    X, Clock, CheckCircle2, ArrowRight, BookOpen, Search, Gift, Tag
 } from "lucide-react";
 import { INK, MUTED, GOLD, GOLD_DEEP, LINE, CREAM_DEEP } from "../shared/constants";
 import { courses, courseOptions } from "../shared/constants";
@@ -13,19 +13,14 @@ import { SectionHeading, GoldDivider } from "../shared/SharedUI";
 
 const CATEGORY_ICON = {
     "Makeup Course": Sparkles,
-    "Self Grooming Course": UserRound,
     "Diploma": GraduationCap,
-    "Fashion & Photography Course": Camera,
-    "Airbrush Makeup Course": Wind,
     "Hair Technician Course": Scissors,
     "Nail Extension Course": Hand,
-    "Self Drapping Course": Shirt,
-    "Professional Drapping Course": Layers,
-    "Professional Henna Art": PenTool,
     "Beautician Course": Flower2,
+    "Cosmetology & Skin": Sparkles,
 };
 
-function BookingModal({ open, onClose, courseTitle }) {
+export function BookingModal({ open, onClose, courseTitle }) {
     const router = useRouter();
     const [form, setForm] = useState({ name: "", email: "", mobile: "", city: "", course: "", message: "", hp_company_url: "" });
     const [submitted, setSubmitted] = useState(false);
@@ -71,6 +66,8 @@ function BookingModal({ open, onClose, courseTitle }) {
             return;
         }
 
+        const selectedCourse = form.course || courseTitle || "Academy Course";
+
         setLoading(true);
         try {
             const res = await fetch("/api/bookings", {
@@ -82,8 +79,8 @@ function BookingModal({ open, onClose, courseTitle }) {
                     phone: cleanPhone,
                     email: form.email.trim() || null,
                     city: form.city.trim() || null,
-                    course: form.course,
-                    service: form.course,
+                    course: selectedCourse,
+                    service: selectedCourse,
                     location: form.city.trim() ? `Academy (${form.city.trim()})` : "KNK Academy Lucknow",
                     message: form.message.trim() || null,
                     hp_company_url: form.hp_company_url || null,
@@ -93,11 +90,13 @@ function BookingModal({ open, onClose, courseTitle }) {
             const data = await res.json();
             if (res.ok && data.success) {
                 onClose();
+                const bookingId = data.bookingId ? String(data.bookingId) : "";
+                const requestNumber = data.requestNumber ? String(data.requestNumber) : (data.bookingNumber ? String(data.bookingNumber) : (bookingId || ""));
                 try {
                     sessionStorage.setItem("last_booking", JSON.stringify({
-                        bookingId: data.bookingId ? String(data.bookingId) : "",
-                        requestNumber: data.bookingId ? String(data.bookingId) : "",
-                        service: form.course || "Academy Course",
+                        bookingId,
+                        requestNumber,
+                        service: selectedCourse,
                         name: form.name.trim(),
                         date: new Date().toISOString().split("T")[0],
                         location: form.city.trim() ? `Academy (${form.city.trim()})` : "KNK Academy Lucknow",
@@ -105,7 +104,7 @@ function BookingModal({ open, onClose, courseTitle }) {
                 } catch {
                     // ignore storage errors
                 }
-                router.push("/thank-you");
+                router.push(`/thank-you?requestNumber=${encodeURIComponent(requestNumber)}&bookingId=${encodeURIComponent(bookingId)}`);
             } else {
                 setErrorMsg(data.error || "Failed to submit booking. Please try again.");
             }
@@ -247,7 +246,7 @@ function BookingModal({ open, onClose, courseTitle }) {
 
                             <div>
                                 <label className="block font-['Inter'] text-[10px] uppercase tracking-[0.16em] text-[#71665c] mb-1">
-                                    Selected Masterclass *
+                                    Selected Courses *
                                 </label>
                                 <select
                                     required
@@ -258,8 +257,13 @@ function BookingModal({ open, onClose, courseTitle }) {
                                     style={{ borderColor: LINE, color: form.course ? INK : MUTED }}
                                 >
                                     <option value="">Select Course...</option>
-                                    {courseOptions.map((opt) => (
-                                        <option key={opt} value={opt}>{opt}</option>
+                                    {courseTitle && !courses.some((c) => c.title === courseTitle) && (
+                                        <option value={courseTitle}>{courseTitle}</option>
+                                    )}
+                                    {courses.map((opt) => (
+                                        <option key={opt.title} value={opt.title}>
+                                            {opt.title}{opt.duration ? ` (${opt.duration})` : ""}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -308,7 +312,7 @@ export default function Courses() {
     const [modalCourse, setModalCourse] = useState(null);
     const tabsRef = useRef(null);
 
-    const INITIAL_LIMIT = 6;
+    const INITIAL_LIMIT = 10;
 
     const filteredCourses = useMemo(() => {
         return courses.filter((c) => {
@@ -505,13 +509,31 @@ export default function Courses() {
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center justify-between md:justify-end gap-2 sm:gap-5 pt-2.5 md:pt-0 border-t md:border-t-0 border-[#e8dfc8]">
+                                            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between md:justify-end gap-2.5 sm:gap-4 pt-2.5 md:pt-0 border-t md:border-t-0 border-[#e8dfc8]">
                                                 {/* Duration Pill */}
                                                 <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-[#f4eee1] text-[#29231f] border border-[#e6dece] shrink-0">
                                                     <Clock className="size-3 sm:size-3.5 text-[#b58a52]" />
                                                     <span className="font-['Inter'] text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">
                                                         {c.duration}
                                                     </span>
+                                                </div>
+
+                                                {/* Pricing Block */}
+                                                <div className="flex flex-col items-start md:items-end justify-center shrink-0">
+                                                    <div className="flex items-baseline gap-1.5 sm:gap-2">
+                                                        <span className="font-['Cormorant_Garamond'] text-lg sm:text-2xl font-bold text-[#b58a52] leading-none">
+                                                            {c.offerPrice}
+                                                        </span>
+                                                        <span className="font-['Inter'] text-[10px] sm:text-[11px] text-[#8c7e72] line-through leading-none">
+                                                            {c.originalPrice}
+                                                        </span>
+                                                    </div>
+                                                    {c.kit && (
+                                                        <span className="mt-1 inline-flex items-center gap-1 font-['Inter'] text-[8.5px] sm:text-[9px] font-semibold text-[#5a4a3e] bg-[#f4eee1] border border-[#d0bda4]/70 px-2 py-0.5 rounded-full">
+                                                            <Gift size={9} className="text-[#b58a52]" />
+                                                            {c.kit}
+                                                        </span>
+                                                    )}
                                                 </div>
 
                                                 {/* Quick Actions */}
@@ -547,6 +569,23 @@ export default function Courses() {
                                         >
                                             <div className="overflow-hidden min-h-0">
                                                 <div className="border-t border-[#e8dfc8] bg-[#fbf7f0]/60 px-4 py-5 sm:px-7 sm:py-6">
+                                                    {/* Kit inclusion highlight banner */}
+                                                    {c.kit && (
+                                                        <div className="mb-4 sm:mb-5 flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-[#faf3e6] via-[#fffdf9] to-[#faf3e6] border border-[#d0bda4]/80 shadow-2xs">
+                                                            <div className="size-8 rounded-lg bg-[#b58a52]/20 flex items-center justify-center text-[#b58a52] shrink-0">
+                                                                <Gift size={16} />
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                <p className="font-['Inter'] text-[9.5px] uppercase tracking-[0.16em] font-bold text-[#a17b5a]">
+                                                                    Complimentary Kit Included
+                                                                </p>
+                                                                <p className="font-['Inter'] text-[12px] sm:text-[13px] font-semibold text-[#29231f]">
+                                                                    {c.kit}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
                                                     <div className="flex items-center gap-2 mb-3 sm:mb-4">
                                                         <BookOpen className="size-3.5 sm:size-4 text-[#b58a52] shrink-0" />
                                                         <span className="font-['Inter'] text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.16em] sm:tracking-[0.2em] font-semibold text-[#29231f]">
@@ -602,11 +641,20 @@ export default function Courses() {
                                                             <span>Includes IAF Recognized Certification &amp; Live Practical Evaluation</span>
                                                         </div>
 
-                                                        <div className="flex items-center justify-end">
+                                                        <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-5">
+                                                            <div className="text-left sm:text-right">
+                                                                <div className="font-['Inter'] text-[9.5px] uppercase tracking-wider text-[#71665c]">
+                                                                    Fee: <span className="line-through text-[#a89d91]">{c.originalPrice}</span>
+                                                                </div>
+                                                                <div className="font-['Cormorant_Garamond'] text-xl sm:text-2xl font-bold text-[#b58a52] leading-tight">
+                                                                    {c.offerPrice}
+                                                                </div>
+                                                            </div>
+
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setModalCourse(c.title)}
-                                                                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full font-['Inter'] text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider text-white shadow-sm transition-transform hover:scale-105 text-center"
+                                                                className="inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full font-['Inter'] text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider text-white shadow-sm transition-transform hover:scale-105 text-center shrink-0"
                                                                 style={{ backgroundColor: GOLD }}
                                                             >
                                                                 <span>Reserve Seat</span>

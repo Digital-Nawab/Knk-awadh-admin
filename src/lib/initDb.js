@@ -98,7 +98,20 @@ export async function initDatabase() {
                 message TEXT NULL,
                 status ENUM('pending', 'confirmed', 'completed', 'cancelled') DEFAULT 'pending',
                 ip_address VARCHAR(45) NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                booking_number INT NULL DEFAULT NULL,
+                booking_date_ist VARCHAR(10) NULL DEFAULT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_booking_date_ist (booking_date_ist)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // 4b. Daily sequential counter table (Resets daily at 12:00 AM IST)
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS daily_booking_sequences (
+                date_key VARCHAR(10) PRIMARY KEY,
+                last_number INT NOT NULL DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
 

@@ -204,16 +204,27 @@ export function formatLeadSource(formType) {
         };
     }
 
-    // 6. Other Website Pages
+    // 6. Academy Admissions Leads
+    if (raw === "academy" || raw === "enroll_for_course" || raw === "enroll-for-course") {
+        return {
+            group: "academy",
+            groupName: "Academy Admissions",
+            channel: "academy",
+            channelName: "Academy Course Admission",
+            badgeText: "Academy: Course Admission",
+            path: "/enroll-for-course",
+            badgeClass: "bg-[#fbf4eb] text-[#877443] border-[#d8b589] font-medium",
+            borderAccent: "border-l-[#877443]",
+        };
+    }
+
+    // 7. Other Website Pages
     let originName = "Main Website";
     let path = "/";
 
     if (raw === "makeup" || raw === "makeup_page_booking") {
         originName = "Bridal Makeup Page";
         path = "/makeup";
-    } else if (raw === "academy") {
-        originName = "Academy Admission";
-        path = "/academy";
     } else if (raw === "contact_us" || raw === "contact") {
         originName = "Contact Us Page";
         path = "/contact-us";
@@ -253,6 +264,7 @@ export default function AdminBookingsPage() {
         bridalLanding: 0,
         salonLanding: 0,
         skinAesthetics: 0,
+        academy: 0,
         website: 0,
     });
     const [loading, setLoading] = useState(true);
@@ -471,6 +483,7 @@ export default function AdminBookingsPage() {
 
         const headers = [
             "Lead ID",
+            "Daily Booking #",
             "Submission Date",
             "Submission Time",
             "Client Name",
@@ -503,6 +516,7 @@ export default function AdminBookingsPage() {
 
             return [
                 lead.id,
+                lead.booking_number ? `#${lead.booking_number}` : "",
                 subDate,
                 subTime,
                 lead.name || "",
@@ -675,8 +689,8 @@ export default function AdminBookingsPage() {
                 </div>
             </div>
 
-            {/* Metrics: Lead Sources Breakdown (Home page, Popup, Landing page, Skin Aesthetics, Website) */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+            {/* Metrics: Lead Sources Breakdown (Home page, Popup, Landing page, Skin Aesthetics, Academy, Website) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
                 {/* 1. Total Leads */}
                 <div
                     onClick={() => setTypeFilter("all")}
@@ -801,6 +815,31 @@ export default function AdminBookingsPage() {
                     </p>
                     <p className="text-[11px] text-muted mt-1">
                         Doctor consultation leads
+                    </p>
+                </div>
+
+                {/* 6. Academy Admissions Leads */}
+                <div
+                    onClick={() => setTypeFilter(typeFilter === "academy" ? "all" : "academy")}
+                    className={`p-4 rounded-xl border bg-white transition-all cursor-pointer ${
+                        typeFilter === "academy"
+                            ? "border-[#877443] shadow-xs ring-1 ring-[#877443] bg-[#fbf4eb]/50"
+                            : "border-[#e8e2d5] hover:border-[#877443]"
+                    }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-[11px] uppercase tracking-wider font-semibold text-[#877443]">
+                            Academy
+                        </span>
+                        <span className="text-[10px] font-mono text-muted">
+                            Admissions
+                        </span>
+                    </div>
+                    <p className="font-display text-3xl font-bold text-[#877443] mt-2">
+                        {stats.academy || 0}
+                    </p>
+                    <p className="text-[11px] text-muted mt-1">
+                        Course enrollment leads
                     </p>
                 </div>
             </div>
@@ -1118,9 +1157,16 @@ export default function AdminBookingsPage() {
 
                                             {/* Client */}
                                             <td className="py-3 px-3">
-                                                <p className="font-semibold text-ink text-sm">
-                                                    {item.name}
-                                                </p>
+                                                <div className="flex items-center gap-1.5">
+                                                    <p className="font-semibold text-ink text-sm">
+                                                        {item.name}
+                                                    </p>
+                                                    {item.booking_number && (
+                                                        <span className="text-[10px] font-mono font-bold text-[#8a6828] bg-[#fbf5ea] border border-[#e8d5b5] px-1.5 py-0.2 rounded-full">
+                                                            #{item.booking_number}
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <div className="flex items-center gap-1.5 mt-0.5">
                                                     <a
                                                         href={`tel:${item.phone}`}

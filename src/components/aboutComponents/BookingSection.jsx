@@ -85,7 +85,7 @@ function BookingForm({ whatsappText, whatsappNumber }) {
                         );
                     } catch {}
                 }
-                router.push("/thank-you");
+                router.push(`/thank-you?requestNumber=${encodeURIComponent(requestNumber)}&bookingId=${encodeURIComponent(bookingId)}`);
             } else {
                 setErrorMsg(data.error || "Failed to submit booking. Please call us directly.");
             }

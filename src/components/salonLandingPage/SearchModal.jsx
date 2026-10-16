@@ -15,7 +15,7 @@ export default function SearchModal({ isOpen, onClose }) {
     { label: "French Balayage & Colour", section: "#services", type: "Service" },
     { label: "Nanoplastia Hair Treatment", section: "#services", type: "Service" },
     { label: "Keratin Smoothing Therapy", section: "#services", type: "Service" },
-    { label: "Advanced HydraFacial & Skin", section: "#services", type: "Service" },
+    { label: "Hydrafacial & All Beauty Services", section: "#services", type: "Service" },
     { label: "Nail Art & Gel Extensions", section: "#services", type: "Service" },
     { label: "Men's Executive Grooming", section: "#services", type: "Service" },
     { label: "Nanoplastia vs Keratin Guide", section: "#comparison", type: "Guide" },

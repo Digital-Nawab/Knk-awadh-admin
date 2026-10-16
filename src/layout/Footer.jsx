@@ -11,7 +11,12 @@ const DEFAULT_SERVICES_MENU = [
     { id: 'beauty', label: 'Beauty', href: '/services/beauty' },
     { id: 'facial', label: 'Facial', href: '/services/facial' },
     { id: 'body', label: 'Body', href: '/services/body' },
-    { id: 'test', label: 'Test', href: '/services/test' },
+];
+
+const ADDITIONAL_SERVICES = [
+    { id: 'makeup', label: 'Makeup', href: '/makeup' },
+    { id: 'men-grooming', label: "Men's Grooming", href: '/services/men-grooming' },
+    { id: 'academy', label: 'Academy', href: '/academy' },
 ];
 
 function Footer() {
@@ -28,11 +33,13 @@ function Footer() {
             .then((data) => {
                 if (data.categories && Array.isArray(data.categories) && data.categories.length > 0 && isMounted) {
                     setServicesMenu(
-                        data.categories.map((cat) => ({
-                            id: cat.slug || String(cat.id),
-                            label: cat.name,
-                            href: `/services/${cat.slug}`,
-                        }))
+                        data.categories
+                            .filter((cat) => cat.slug !== 'test')
+                            .map((cat) => ({
+                                id: cat.slug || String(cat.id),
+                                label: cat.name,
+                                href: `/services/${cat.slug}`,
+                            }))
                     );
                 }
             })
@@ -42,6 +49,12 @@ function Footer() {
             isMounted = false;
         };
     }, []);
+
+    // Combine dynamic categories with Makeup, Men's Grooming, and Academy
+    const allServices = [
+        ...servicesMenu.filter((item) => item.id !== 'test' && !['makeup', 'men-grooming', 'academy'].includes(item.id)),
+        ...ADDITIONAL_SERVICES,
+    ];
 
     return (
         <>
@@ -112,7 +125,7 @@ function Footer() {
                                 <span className="h-px w-6 sm:w-8 bg-[#C9A24A]/30" />
                             </h3>
                             <ul className="space-y-2 sm:space-y-2.5 text-xs font-['Inter'] tracking-[0.12em] sm:tracking-[0.14em] uppercase text-[#FBF7F0]/75">
-                                {servicesMenu.map((item) => (
+                                {allServices.map((item) => (
                                     <li key={item.id}>
                                         <Link
                                             href={item.href}
@@ -140,15 +153,6 @@ function Footer() {
                                     <Link href="/about" className="hover:text-[#b58a52] transition-colors py-0.5 inline-block">About Us</Link>
                                 </li>
                                 <li>
-                                    <Link href="/makeup" className="hover:text-[#b58a52] transition-colors py-0.5 inline-block">Makeup</Link>
-                                </li>
-                                <li>
-                                    <Link href="/services/men-grooming" className="hover:text-[#b58a52] transition-colors py-0.5 inline-block">Men&apos;s Grooming</Link>
-                                </li>
-                                <li>
-                                    <Link href="/academy" className="hover:text-[#b58a52] transition-colors py-0.5 inline-block">Academy</Link>
-                                </li>
-                                <li>
                                     <Link href="/gallery" className="hover:text-[#b58a52] transition-colors py-0.5 inline-block">Gallery</Link>
                                 </li>
                                 <li>
@@ -162,6 +166,11 @@ function Footer() {
                                 <li>
                                     <Link href="/offers" className="text-[#EAD9AE] hover:text-[#b58a52] transition-colors py-0.5 inline-block">
                                         Offers
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/enroll-for-course" className="text-[#EAD9AE] hover:text-[#b58a52] transition-colors py-0.5 inline-block font-medium">
+                                        Enroll For Course
                                     </Link>
                                 </li>
                                 <li>

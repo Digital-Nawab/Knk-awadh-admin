@@ -38,6 +38,18 @@ const links = [
         ),
     },
     {
+        label: "Meta Ads Leads",
+        href: "/admin/meta-leads",
+        badge: "Meta",
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <rect x="2" y="2" width="20" height="20" rx="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+            </svg>
+        ),
+    },
+    {
         label: "Home Page CMS",
         href: "/admin/home",
         icon: (
@@ -124,6 +136,17 @@ const links = [
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
                 <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
                 <line x1="7" y1="7" x2="7.01" y2="7" />
+            </svg>
+        ),
+    },
+    {
+        label: "Enroll Courses CMS",
+        href: "/admin/courses",
+        badge: "Courses",
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
             </svg>
         ),
     },

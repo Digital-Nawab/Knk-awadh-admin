@@ -119,10 +119,15 @@ export async function submitBooking(request) {
             ipAddress: clientIp,
         });
 
+        // Daily sequential booking number generated per day in IST timezone (starts at #1 at 12:00 AM, resets daily)
+        const requestNumber = Number(booking.bookingNumber || booking.requestNumber) || 1;
+
         // Send email notification to tanukashyap889@gmail.com
         try {
             await sendLeadEmail({
                 id: booking.id,
+                bookingNumber: requestNumber,
+                requestNumber: requestNumber,
                 formType,
                 name,
                 phone: cleanPhone,
@@ -140,24 +145,6 @@ export async function submitBooking(request) {
             console.error("Non-blocking lead email notification error:", emailErr);
         }
 
-        // Calculate daily changing request number (e.g. #49 today, changes daily)
-        let requestNumber = 49;
-        try {
-            const now = new Date();
-            const startOfYear = new Date(now.getFullYear(), 0, 0);
-            const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
-            // Changes daily based on calendar day seed
-            const dailySeed = ((dayOfYear * 13 + 37) % 50) + 25;
-            const [countRows] = await db.query(
-                "SELECT COUNT(*) as count FROM bookings WHERE DATE(created_at) = CURDATE()"
-            );
-            const todayCount = Number(countRows[0]?.count) || 1;
-            requestNumber = dailySeed + todayCount;
-        } catch {
-            const today = new Date();
-            requestNumber = 40 + today.getDate();
-        }
-
         return {
             status: 201,
             body: {
@@ -166,12 +153,13 @@ export async function submitBooking(request) {
                     ? "Thank you! Your message has been received. Our concierge team will reach out to you shortly."
                     : "Thank you! Your appointment request has been reserved. Our concierge will contact you shortly.",
                 bookingId: booking.id,
+                bookingNumber: requestNumber,
                 requestNumber: requestNumber,
             },
         };
     } catch (error) {
         console.error("Booking submission error:", error);
-        return { status: 500, body: { error: "Failed to process booking. Please try again or call us." } };
+        return { status: 500, body: { error: error.message || "Failed to process booking. Please try again or call us." } };
     }
 }
 

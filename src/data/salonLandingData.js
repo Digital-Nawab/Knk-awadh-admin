@@ -20,7 +20,7 @@ export const bridalServices = [
   },
   {
     id: "nanoplastia-keratin",
-    title: "Nanoplastia & Hair",
+    title: "Nanoplastia & Keratin Treatment",
     subtitle: "Frizz-Free Glass Hair Longevity",
     image: "/salon-landing-page/images/salon/service-hairspa.webp",
     alt: "Nanoplastia and Keratin Hair Treatment Lucknow at KNK Salon",
@@ -39,7 +39,7 @@ export const bridalServices = [
   },
   {
     id: "hydra-skincare",
-    title: "Advanced HydraFacial & Skin",
+    title: "Hydrafacial & All Beauty Services",
     subtitle: "Cellular Nutrition & Glass Glow",
     image: "/salon-landing-page/images/salon/service-facial.webp",
     alt: "HydraFacial and Luxury Skincare at KNK Salon Lucknow",

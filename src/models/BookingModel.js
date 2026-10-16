@@ -1,24 +1,49 @@
 import { db } from "@/lib/db";
 import { initDatabase } from "@/lib/initDb";
 
+/**
+ * Returns current calendar date (YYYY-MM-DD) in Asia/Kolkata timezone (IST, UTC+05:30).
+ * Midnight 12:00:00 AM IST marks the start of a new day, ending at 11:59:59 PM IST.
+ */
+export function getISTDateKey(date = new Date()) {
+    return new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    }).format(new Date(date));
+}
+
 const BookingModel = {
     async ensureTable() {
         try {
             await db.query("SELECT 1 FROM bookings LIMIT 1");
-            // Ensure status column supports all 6 pipeline statuses without enum truncation
-            try {
-                await db.query("ALTER TABLE bookings MODIFY COLUMN status VARCHAR(50) DEFAULT 'pending'");
-            } catch {
-                // Ignore if permission issue or already modified
-            }
         } catch {
             await initDatabase();
-            try {
-                await db.query("ALTER TABLE bookings MODIFY COLUMN status VARCHAR(50) DEFAULT 'pending'");
-            } catch {
-                // Ignore
-            }
         }
+
+        try {
+            await db.query("ALTER TABLE bookings MODIFY COLUMN status VARCHAR(50) DEFAULT 'pending'");
+        } catch {}
+
+        try {
+            await db.query("ALTER TABLE bookings ADD COLUMN booking_number INT NULL DEFAULT NULL");
+        } catch {}
+
+        try {
+            await db.query("ALTER TABLE bookings ADD COLUMN booking_date_ist VARCHAR(10) NULL DEFAULT NULL");
+        } catch {}
+
+        try {
+            await db.query(`
+                CREATE TABLE IF NOT EXISTS daily_booking_sequences (
+                    date_key VARCHAR(10) PRIMARY KEY,
+                    last_number INT NOT NULL DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            `);
+        } catch {}
     },
 
     async create({
@@ -36,26 +61,82 @@ const BookingModel = {
         ipAddress = null,
     }) {
         await this.ensureTable();
-        const [result] = await db.query(
-            `INSERT INTO bookings 
-            (form_type, name, phone, email, service_or_course, branch_location, booking_date, booking_time, guests, city, message, ip_address, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
-            [
-                formType,
-                name,
-                phone,
-                email,
-                serviceOrCourse,
-                branchLocation,
-                bookingDate,
-                bookingTime,
-                guests || 1,
-                city,
-                message,
-                ipAddress,
-            ]
-        );
-        return { id: result.insertId, formType, name, phone, email, status: "pending" };
+
+        const dateKey = getISTDateKey(); // Current date in Asia/Kolkata (YYYY-MM-DD)
+        const conn = await db.getConnection();
+        let bookingNumber = 1;
+        let insertId = null;
+
+        try {
+            await conn.beginTransaction();
+
+            // Row-level lock on the sequence table for today's dateKey to guarantee uniqueness & no race conditions
+            const [seqRows] = await conn.query(
+                "SELECT last_number FROM daily_booking_sequences WHERE date_key = ? FOR UPDATE",
+                [dateKey]
+            );
+
+            if (seqRows.length > 0) {
+                bookingNumber = Number(seqRows[0].last_number) + 1;
+                await conn.query(
+                    "UPDATE daily_booking_sequences SET last_number = ? WHERE date_key = ?",
+                    [bookingNumber, dateKey]
+                );
+            } else {
+                // First booking of the day (starts from #1 at 12:00 AM IST)
+                const [existing] = await conn.query(
+                    "SELECT MAX(booking_number) as max_num FROM bookings WHERE booking_date_ist = ?",
+                    [dateKey]
+                );
+                const currentMax = Number(existing[0]?.max_num) || 0;
+                bookingNumber = Math.max(currentMax, 0) + 1;
+                await conn.query(
+                    "INSERT INTO daily_booking_sequences (date_key, last_number) VALUES (?, ?)",
+                    [dateKey, bookingNumber]
+                );
+            }
+
+            const [result] = await conn.query(
+                `INSERT INTO bookings 
+                (form_type, name, phone, email, service_or_course, branch_location, booking_date, booking_time, guests, city, message, ip_address, status, booking_number, booking_date_ist)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
+                [
+                    formType,
+                    name,
+                    phone,
+                    email,
+                    serviceOrCourse,
+                    branchLocation,
+                    bookingDate,
+                    bookingTime,
+                    guests || 1,
+                    city,
+                    message,
+                    ipAddress,
+                    bookingNumber,
+                    dateKey,
+                ]
+            );
+
+            insertId = result.insertId;
+            await conn.commit();
+        } catch (err) {
+            await conn.rollback();
+            throw err;
+        } finally {
+            conn.release();
+        }
+
+        return {
+            id: insertId,
+            formType,
+            name,
+            phone,
+            email,
+            status: "pending",
+            bookingNumber,
+            requestNumber: bookingNumber,
+        };
     },
 
     async getAll({ status = null, formType = null, search = null } = {}) {
@@ -98,6 +179,8 @@ const BookingModel = {
                 query += " AND (form_type = 'contact_us' OR form_type = 'contact')";
             } else if (formType === "makeup" || formType === "makeup_page_booking") {
                 query += " AND (form_type = 'makeup' OR form_type = 'makeup_page_booking')";
+            } else if (formType === "academy" || formType === "enroll_for_course" || formType === "enroll-for-course") {
+                query += " AND (form_type = 'academy' OR form_type = 'enroll_for_course' OR form_type = 'enroll-for-course')";
             } else {
                 query += " AND form_type = ?";
                 params.push(formType);
@@ -167,7 +250,10 @@ const BookingModel = {
         // 4. Skin Aesthetics Leads:
         const [skinRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('skin_consultation', 'skin-aesthetics', 'skin_aesthetics', 'skin', 'aesthetic', 'laser-treatment', 'microblading')");
 
-        // 5. General / Other Website:
+        // 5. Academy Leads:
+        const [academyRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('academy', 'enroll_for_course', 'enroll-for-course')");
+
+        // 6. General / Other Website:
         const [websiteRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type NOT IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page', 'makeup-artist-lucknow', 'salon-services-lucknow', 'skin_consultation', 'skin-aesthetics', 'skin_aesthetics', 'skin', 'aesthetic', 'laser-treatment', 'microblading')");
 
         return {
@@ -185,6 +271,7 @@ const BookingModel = {
             bridalLanding: bridalRows[0]?.count || 0,
             salonLanding: salonRows[0]?.count || 0,
             skinAesthetics: skinRows[0]?.count || 0,
+            academy: academyRows[0]?.count || 0,
             website: websiteRows[0]?.count || 0,
         };
     },

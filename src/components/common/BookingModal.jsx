@@ -231,7 +231,7 @@ export default function BookingModal({ isOpen, onClose, initialService = "" }) {
                         // ignore storage errors
                     }
                 }
-                router.push("/thank-you");
+                router.push(`/thank-you?requestNumber=${encodeURIComponent(requestNumber)}&bookingId=${encodeURIComponent(bookingId)}`);
             } else {
                 setErrorMsg(data.error || "Failed to reserve appointment. Please call us directly.");
             }

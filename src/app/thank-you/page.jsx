@@ -17,13 +17,19 @@ function ThankYouContent() {
     });
 
     useEffect(() => {
+        let currentBookingId = searchParams.get("bookingId") || null;
+        let currentRequestNum = searchParams.get("requestNumber") || null;
+
         try {
             const saved = sessionStorage.getItem("last_booking");
             if (saved) {
                 const parsed = JSON.parse(saved);
+                currentBookingId = currentBookingId || parsed.bookingId || null;
+                currentRequestNum = currentRequestNum || parsed.requestNumber || parsed.bookingNumber || null;
+
                 setBookingDetails((prev) => ({
-                    bookingId: prev.bookingId || parsed.bookingId || null,
-                    requestNumber: prev.requestNumber || parsed.requestNumber || null,
+                    bookingId: currentBookingId,
+                    requestNumber: currentRequestNum,
                     name: prev.name || parsed.name || "",
                     service: prev.service || parsed.service || "",
                     date: prev.date || parsed.date || null,
@@ -36,13 +42,30 @@ function ThankYouContent() {
             // ignore
         }
 
+        // If bookingId exists but requestNumber wasn't cached, fetch from database API
+        if (currentBookingId && !currentRequestNum) {
+            fetch(`/api/bookings/${currentBookingId}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    const fetchedNum = data?.requestNumber || data?.bookingNumber;
+                    if (fetchedNum) {
+                        setBookingDetails((prev) => ({
+                            ...prev,
+                            requestNumber: String(fetchedNum),
+                        }));
+                    }
+                })
+                .catch(() => {});
+        }
+
         if (typeof window !== "undefined" && window.location.search) {
             window.history.replaceState({}, "", "/thank-you");
         }
-    }, []);
+    }, [searchParams]);
 
     const bookingId = bookingDetails.bookingId;
-    const requestNum = bookingDetails.requestNumber || bookingId || "49";
+    const rawNum = bookingDetails.requestNumber || bookingId || "1";
+    const requestNum = String(rawNum).replace(/^#+/, "");
     const name = bookingDetails.name || "Valued Guest";
     const service = bookingDetails.service || "Signature Ritual";
     const date = bookingDetails.date;

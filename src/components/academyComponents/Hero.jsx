@@ -333,10 +333,12 @@ function BookingForm() {
             });
             const data = await res.json();
             if (res.ok && data.success) {
+                const bookingId = data.bookingId ? String(data.bookingId) : "";
+                const requestNumber = data.requestNumber ? String(data.requestNumber) : (data.bookingNumber ? String(data.bookingNumber) : (bookingId || ""));
                 try {
                     sessionStorage.setItem("last_booking", JSON.stringify({
-                        bookingId: data.bookingId ? String(data.bookingId) : "",
-                        requestNumber: data.bookingId ? String(data.bookingId) : "",
+                        bookingId,
+                        requestNumber,
                         service: form.course || "Academy Course",
                         name: form.name.trim(),
                         date: new Date().toISOString().split("T")[0],
@@ -345,7 +347,7 @@ function BookingForm() {
                 } catch {
                     // ignore storage errors
                 }
-                router.push("/thank-you");
+                router.push(`/thank-you?requestNumber=${encodeURIComponent(requestNumber)}&bookingId=${encodeURIComponent(bookingId)}`);
             } else {
                 setErrorMsg(data.error || "Failed to submit request. Please try again.");
             }

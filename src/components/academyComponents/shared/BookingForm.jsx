@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { INK, MUTED, GOLD, LINE, courseOptions } from "./constants";
+import { INK, MUTED, GOLD, LINE, courses, courseOptions } from "./constants";
 import { Sparkles, ShieldCheck, Clock, CheckCircle2, Send, ArrowRight } from "lucide-react";
 
 export default function BookingForm() {
@@ -70,10 +70,12 @@ export default function BookingForm() {
             });
             const data = await res.json();
             if (res.ok && data.success) {
+                const bookingId = data.bookingId ? String(data.bookingId) : "";
+                const requestNumber = data.requestNumber ? String(data.requestNumber) : (data.bookingNumber ? String(data.bookingNumber) : (bookingId || ""));
                 try {
                     sessionStorage.setItem("last_booking", JSON.stringify({
-                        bookingId: data.bookingId ? String(data.bookingId) : "",
-                        requestNumber: data.bookingId ? String(data.bookingId) : "",
+                        bookingId,
+                        requestNumber,
                         service: form.course || "Academy Course",
                         name: form.name.trim(),
                         date: new Date().toISOString().split("T")[0],
@@ -82,7 +84,7 @@ export default function BookingForm() {
                 } catch {
                     // ignore storage errors
                 }
-                router.push("/thank-you");
+                router.push(`/thank-you?requestNumber=${encodeURIComponent(requestNumber)}&bookingId=${encodeURIComponent(bookingId)}`);
             } else {
                 setError(data.error || "Failed to submit application. Please try again.");
             }
@@ -223,8 +225,10 @@ export default function BookingForm() {
                         style={{ borderColor: LINE, color: form.course ? INK : MUTED }}
                     >
                         <option value="">Select a course / diploma...</option>
-                        {courseOptions.map((c) => (
-                            <option key={c} value={c}>{c}</option>
+                        {courses.map((c) => (
+                            <option key={c.title} value={c.title}>
+                                {c.title}{c.duration ? ` (${c.duration})` : ""}
+                            </option>
                         ))}
                     </select>
                 </div>

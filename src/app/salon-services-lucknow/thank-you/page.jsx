@@ -20,14 +20,19 @@ function SalonThankYouContent() {
     });
 
     useEffect(() => {
+        let currentBookingId = searchParams.get("bookingId") || "";
+        let currentRequestNum = searchParams.get("requestNumber") || "";
+
         if (typeof window !== "undefined") {
             try {
                 const stored = sessionStorage.getItem("knk_salon_thankyou");
                 if (stored) {
                     const parsed = JSON.parse(stored);
+                    currentBookingId = currentBookingId || parsed.bookingId || "";
+                    currentRequestNum = currentRequestNum || parsed.requestNumber || "";
                     setBooking((prev) => ({
-                        bookingId: parsed.bookingId || prev.bookingId,
-                        requestNumber: parsed.requestNumber || prev.requestNumber,
+                        bookingId: currentBookingId || prev.bookingId,
+                        requestNumber: currentRequestNum || prev.requestNumber,
                         name: parsed.name || prev.name,
                         service: parsed.service || prev.service,
                         date: parsed.date || prev.date,
@@ -38,7 +43,25 @@ function SalonThankYouContent() {
                 console.error("Error reading stored salon booking", e);
             }
         }
-    }, []);
+
+        if (currentBookingId && !currentRequestNum) {
+            fetch(`/api/bookings/${currentBookingId}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    const fetchedNum = data?.requestNumber || data?.bookingNumber;
+                    if (fetchedNum) {
+                        setBooking((prev) => ({
+                            ...prev,
+                            requestNumber: String(fetchedNum),
+                        }));
+                    }
+                })
+                .catch(() => {});
+        }
+    }, [searchParams]);
+
+    const rawNum = booking.requestNumber || booking.bookingId || "1";
+    const requestNum = String(rawNum).replace(/^#+/, "");
 
     return (
         <section className="relative overflow-hidden px-4 py-8 sm:py-10 md:py-12 bg-[#FAF8F5] text-[#191715] flex-1 flex items-center justify-center">
@@ -75,7 +98,7 @@ function SalonThankYouContent() {
 
                 {/* Confirmation message */}
                 <p className="mt-2.5 font-sans text-xs sm:text-sm leading-relaxed text-[#6E6359] max-w-lg mx-auto">
-                    Thanks, <strong className="text-[#191715] font-semibold">{booking.name}</strong> ! We&apos;ve received your booking request (#{booking.requestNumber || booking.bookingId || "49"}). We&apos;ll call you shortly to confirm.
+                    Thanks, <strong className="text-[#191715] font-semibold">{booking.name}</strong> ! We&apos;ve received your booking request (#{requestNum}). We&apos;ll call you shortly to confirm.
                 </p>
 
                 {/* Reservation Summary Card */}
