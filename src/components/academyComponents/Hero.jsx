@@ -897,14 +897,14 @@ export default function Academy() {
                     </p>
                     <div className="mt-9 flex flex-wrap justify-center gap-4">
                         <a
-                            href="tel:+918881000664"
+                            href="tel:+918881000395"
                             className="inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full text-[#241d18] transition-transform duration-300 hover:scale-105"
                             style={{ backgroundColor: GOLD }}
                         >
                             Call Now
                         </a>
                         <a
-                            href="https://wa.me/918881000664?text=Hi%20there,%20I'm%20interested%20in%20enrolling%20at%20KNK%20Makeup%20Academy."
+                            href="https://wa.me/918881000395?text=Hi%20there,%20I'm%20interested%20in%20enrolling%20at%20KNK%20Makeup%20Academy."
                             className="inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full border border-[#4a4038] text-[#fbf7f0] transition-colors hover:bg-white/5"
                         >
                             Chat Now

@@ -127,11 +127,11 @@ export default function Hero() {
                             </a>
 
                             <a
-                                href="tel:+918881000664"
+                                href="tel:+918881000395"
                                 className="inline-flex items-center justify-center sm:justify-start gap-2 font-['Inter'] text-[12px] text-[#71665c] hover:text-[#b58a52] transition-colors pt-1 sm:pt-0 sm:ml-1"
                             >
                                 <Phone className="size-3.5 text-[#b58a52]" />
-                                <span>Admissions: +91 88810 00664</span>
+                                <span>Admissions: +91 88810 00395</span>
                             </a>
                         </div>
                     </div>
