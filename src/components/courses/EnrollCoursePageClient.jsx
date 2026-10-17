@@ -48,7 +48,7 @@ export default function EnrollCoursePageClient({ initialCourses = [] }) {
                 <Breadcrumbs
                     items={[
                         { label: "Home", href: "/" },
-                        { label: "Academy", href: "/academy" },
+                        { label: "Academy", href: "/makeup-academy" },
                         { label: "Enroll For Course" },
                     ]}
                 />

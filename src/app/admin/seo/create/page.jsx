@@ -30,7 +30,7 @@ export default function AdminSeoCreatePage() {
         { path: "/services/facial", name: "Facials & Skincare" },
         { path: "/services/body", name: "Body Therapies" },
         { path: "/makeup", name: "Celebrity & Bridal Makeup" },
-        { path: "/academy", name: "Beauty Academy" },
+        { path: "/makeup-academy", name: "Beauty Academy" },
         { path: "/gallery", name: "Lookbook Gallery" },
         { path: "/blog", name: "The Journal" },
     ];

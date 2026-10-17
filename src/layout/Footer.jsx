@@ -16,7 +16,7 @@ const DEFAULT_SERVICES_MENU = [
 const ADDITIONAL_SERVICES = [
     { id: 'makeup', label: 'Makeup', href: '/makeup' },
     { id: 'men-grooming', label: "Men's Grooming", href: '/services/men-grooming' },
-    { id: 'academy', label: 'Academy', href: '/academy' },
+    { id: 'academy', label: 'Academy', href: '/makeup-academy' },
 ];
 
 function Footer() {
@@ -165,7 +165,7 @@ function Footer() {
                                 </li>
                                 <li>
                                     <Link href="/offers" className="text-[#EAD9AE] hover:text-[#b58a52] transition-colors py-0.5 inline-block">
-                                        Offers
+                                        KNK Offers
                                     </Link>
                                 </li>
                                 <li>

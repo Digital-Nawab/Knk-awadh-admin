@@ -22,7 +22,7 @@ export default function Academy({ data = {} }) {
                         {d.description}
                     </p>
                     <a
-                        href={d.ctaLink || "/academy"}
+                        href={d.ctaLink || "/makeup-academy"}
                         className="inline-flex items-center justify-center border border-[#b58a52] text-[#a17b5a] font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full transition-colors hover:bg-[#b58a52]/10"
                     >
                         {d.ctaText || "Explore Makeup Courses →"}

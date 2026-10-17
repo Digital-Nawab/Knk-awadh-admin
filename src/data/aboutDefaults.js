@@ -119,7 +119,7 @@ export const DEFAULT_ABOUT_SECTIONS = {
         headingHighlight: "Brides trust.",
         description: "Build practical professional makeup skills through training in bridal, editorial and fashion makeup. KNK Academy combines hands-on learning with techniques designed for students preparing for freelance work, salon and studio opportunities, or their own bridal makeup practice.",
         ctaText: "Explore Makeup Courses →",
-        ctaLink: "/academy",
+        ctaLink: "/makeup-academy",
         image: "/assets/images/about/academy-training.webp",
     },
     gallery: {

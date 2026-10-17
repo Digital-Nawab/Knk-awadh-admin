@@ -178,7 +178,7 @@ function Navbar() {
                         Gallery
                     </Link>
                     <Link
-                        href="/academy"
+                        href="/makeup-academy"
                         className="relative whitespace-nowrap transition-colors hover:text-gold after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all hover:after:w-full"
                     >
                         Academy
@@ -375,7 +375,7 @@ function Navbar() {
                     Gallery
                 </Link>
                 <Link
-                    href="/academy"
+                    href="/makeup-academy"
                     onClick={() => setMenuOpen(false)}
                     className="rounded-lg px-2 py-3 hover:bg-secondary"
                 >

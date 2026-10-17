@@ -32,6 +32,36 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/contact',
+        destination: '/contact-us',
+        statusCode: 301,
+      },
+      {
+        source: '/academy',
+        destination: '/makeup-academy',
+        statusCode: 301,
+      },
+      {
+        source: '/knk-makeup-academy',
+        destination: '/makeup-academy',
+        statusCode: 301,
+      },
+      {
+        source: '/makuep-academy',
+        destination: '/makeup-academy',
+        statusCode: 301,
+      },
+      {
+        source: '/gallery/makeup',
+        destination: '/gallery',
+        statusCode: 301,
+      },
+      {
+        source: '/gallery/knk-interior',
+        destination: '/knk-interior',
+        statusCode: 301,
+      },
+      {
         source: '/men-grooming',
         destination: '/services/men-grooming',
         permanent: true,
@@ -75,6 +105,26 @@ const nextConfig = {
         source: '/skkin',
         destination: '/aesthetic',
         permanent: true,
+      },
+      {
+        source: '/best-deal',
+        destination: '/offers',
+        statusCode: 301,
+      },
+      {
+        source: '/best-deal/:path*',
+        destination: '/offers',
+        statusCode: 301,
+      },
+      {
+        source: '/best-deals',
+        destination: '/offers',
+        statusCode: 301,
+      },
+      {
+        source: '/best-deals/:path*',
+        destination: '/offers',
+        statusCode: 301,
       },
     ];
   },
