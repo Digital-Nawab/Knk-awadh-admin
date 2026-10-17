@@ -254,7 +254,7 @@ export default function CoursesIndex() {
                             <GraduationCap className="w-5 h-5 text-[#877443]" />
                         </div>
                         <h1 className="font-playfair text-2xl sm:text-3xl font-bold text-[#161413]">
-                            Enroll Courses CMS
+                            Enroll Course
                         </h1>
                         <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#877443]/10 text-[#877443] border border-[#877443]/20">
                             Live Admissions

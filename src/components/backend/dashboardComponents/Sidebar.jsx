@@ -140,9 +140,8 @@ const links = [
         ),
     },
     {
-        label: "Enroll Courses CMS",
+        label: "Enroll Course",
         href: "/admin/courses",
-        badge: "Courses",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
                 <path d="M22 10v6M2 10l10-5 10 5-10 5z" />

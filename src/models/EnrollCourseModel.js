@@ -1,29 +1,5 @@
 import { db } from "@/lib/db";
 
-const DEFAULT_COURSES = [
-    {
-        title: "Professional Bridal Makeup Masterclass",
-        altText: "Professional Bridal Makeup Masterclass at KNK Academy Lucknow",
-        imageUrl: "/assets/images/new/academy.webp",
-        displayOrder: 1,
-        isActive: 1,
-    },
-    {
-        title: "Advanced Hair Styling & Balayage Certification",
-        altText: "Advanced Hair Styling and Chemical Work at KNK Academy Lucknow",
-        imageUrl: "/assets/images/new/academyimg.webp",
-        displayOrder: 2,
-        isActive: 1,
-    },
-    {
-        title: "Complete Cosmetology & Skin Aesthetics Diploma",
-        altText: "Complete Cosmetology & Skin Aesthetics Diploma at KNK Academy",
-        imageUrl: "/assets/images/about/academy-training.webp",
-        displayOrder: 3,
-        isActive: 1,
-    },
-];
-
 const EnrollCourseModel = {
     async ensureTable() {
         try {
@@ -43,18 +19,6 @@ const EnrollCourseModel = {
                     INDEX idx_is_active (is_active)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             `);
-
-            // Seed initial courses if empty
-            const [rows] = await db.query("SELECT COUNT(*) as count FROM enroll_courses");
-            if (!rows || rows[0].count === 0) {
-                for (const course of DEFAULT_COURSES) {
-                    await db.query(
-                        `INSERT INTO enroll_courses (title, alt_text, image_url, display_order, is_active)
-                         VALUES (?, ?, ?, ?, ?)`,
-                        [course.title, course.altText, course.imageUrl, course.displayOrder, course.isActive]
-                    );
-                }
-            }
         }
     },
 

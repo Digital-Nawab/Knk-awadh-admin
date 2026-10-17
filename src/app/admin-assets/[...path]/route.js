@@ -59,9 +59,9 @@ async function findAssetFile(pathSegments) {
 
     for (const base of candidateBases) {
         for (const p of pathsToTry) {
-            const fullPath = path.join(base, p);
+            const fullPath = path.join(/*turbopackIgnore: true*/ base, p);
             try {
-                const s = await stat(fullPath);
+                const s = await stat(/*turbopackIgnore: true*/ fullPath);
                 if (s.isFile()) {
                     return { filePath: fullPath, stat: s };
                 }
@@ -111,7 +111,7 @@ export async function GET(request, { params }) {
                 }
 
                 const chunksize = end - start + 1;
-                const nodeStream = createReadStream(filePath, { start, end });
+                const nodeStream = createReadStream(/*turbopackIgnore: true*/ filePath, { start, end });
                 const webStream = Readable.toWeb(nodeStream);
 
                 return new Response(webStream, {
@@ -129,7 +129,7 @@ export async function GET(request, { params }) {
         }
 
         // Standard 200 Streaming Response
-        const nodeStream = createReadStream(filePath);
+        const nodeStream = createReadStream(/*turbopackIgnore: true*/ filePath);
         const webStream = Readable.toWeb(nodeStream);
 
         return new Response(webStream, {

@@ -5,38 +5,8 @@ import Breadcrumbs from "@/components/common/Breadcrumbs";
 import CourseEnrollModal from "@/components/courses/CourseEnrollModal";
 import { Sparkles, GraduationCap } from "lucide-react";
 
-// Initial default courses matching academy specialties
-const DEFAULT_COURSES = [
-    {
-        id: 1,
-        title: "Professional Bridal Makeup Masterclass",
-        altText: "Professional Bridal Makeup Masterclass at KNK Academy Lucknow",
-        imageUrl: "/assets/images/new/academy.webp",
-        displayOrder: 1,
-        isActive: true,
-    },
-    {
-        id: 2,
-        title: "Advanced Hair Styling & Balayage Certification",
-        altText: "Advanced Hair Styling and Chemical Work at KNK Academy Lucknow",
-        imageUrl: "/assets/images/new/academyimg.webp",
-        displayOrder: 2,
-        isActive: true,
-    },
-    {
-        id: 3,
-        title: "Complete Cosmetology & Skin Aesthetics Diploma",
-        altText: "Complete Cosmetology & Skin Aesthetics Diploma at KNK Academy",
-        imageUrl: "/assets/images/about/academy-training.webp",
-        displayOrder: 3,
-        isActive: true,
-    },
-];
-
 export default function EnrollCoursePageClient({ initialCourses = [] }) {
-    const [courses, setCourses] = useState(
-        initialCourses && initialCourses.length > 0 ? initialCourses : DEFAULT_COURSES
-    );
+    const [courses, setCourses] = useState(Array.isArray(initialCourses) ? initialCourses : []);
     const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
     const [selectedCourseTitle, setSelectedCourseTitle] = useState("");
 
@@ -49,12 +19,12 @@ export default function EnrollCoursePageClient({ initialCourses = [] }) {
                 return res.json();
             })
             .then((data) => {
-                if (data.courses && Array.isArray(data.courses) && data.courses.length > 0 && isMounted) {
+                if (data && Array.isArray(data.courses) && isMounted) {
                     setCourses(data.courses);
                 }
             })
             .catch(() => {
-                // Keep default or initial courses
+                // Keep initial courses
             });
 
         return () => {
@@ -117,12 +87,9 @@ export default function EnrollCoursePageClient({ initialCourses = [] }) {
                             {/* Reel-size Flyer Poster Card */}
                             <div className="relative overflow-hidden rounded-2xl border-2 border-[#D4BC88]/60 bg-white shadow-[0_12px_36px_rgba(140,110,60,0.14)] transition-all duration-500 group-hover:shadow-[0_20px_45px_rgba(140,110,60,0.24)] group-hover:-translate-y-1">
                                 <img
-                                    src={course.imageUrl || "/assets/images/new/academy.webp"}
+                                    src={course.imageUrl}
                                     alt={course.altText || course.title || "KNK Academy Course"}
                                     className="w-full aspect-[9/16] object-cover block rounded-2xl"
-                                    onError={(e) => {
-                                        e.currentTarget.src = "/assets/images/new/academy.webp";
-                                    }}
                                 />
                             </div>
 
