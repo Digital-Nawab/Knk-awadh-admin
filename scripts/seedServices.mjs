@@ -5,7 +5,7 @@ async function run() {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'knk_awadh',
+        database: 'knk-awadh',
     });
 
     console.log("Connected to MySQL database.");

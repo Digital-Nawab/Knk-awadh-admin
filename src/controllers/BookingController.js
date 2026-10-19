@@ -188,7 +188,7 @@ export async function updateBookingStatus(id, request) {
         if (normalizedStatus === "booked") normalizedStatus = "confirmed";
 
         // Standard lead and booking status pipeline order:
-        // 1. Pending -> 2. Assigned -> 3. Follow-up -> 4. Confirmed / Booked -> 5. Completed -> 6. Cancelled
+        // 1. Pending -> 2. Assigned -> 3. Follow-up -> 4. Confirmed / Booked -> 5. Completed -> 6. Cancelled -> 7. Spam
         const validStatuses = [
             "pending",
             "assigned",
@@ -196,9 +196,10 @@ export async function updateBookingStatus(id, request) {
             "confirmed",
             "completed",
             "cancelled",
+            "spam",
         ];
         if (!validStatuses.includes(normalizedStatus)) {
-            return { status: 400, body: { error: "Invalid booking status. Must be pending, assigned, follow_up, confirmed, completed, or cancelled." } };
+            return { status: 400, body: { error: "Invalid booking status. Must be pending, assigned, follow_up, confirmed, completed, cancelled, or spam." } };
         }
 
         await BookingModel.updateStatus(id, normalizedStatus);

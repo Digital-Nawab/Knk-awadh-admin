@@ -44,6 +44,30 @@ const BookingModel = {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             `);
         } catch {}
+
+        try {
+            const [nullRows] = await db.query(
+                "SELECT id, created_at FROM bookings WHERE booking_number IS NULL ORDER BY id ASC LIMIT 100"
+            );
+            for (const row of nullRows) {
+                const d = new Date(row.created_at);
+                const istDate = new Intl.DateTimeFormat("en-CA", {
+                    timeZone: "Asia/Kolkata",
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                }).format(d);
+                const [countRes] = await db.query(
+                    "SELECT COUNT(*) as cnt FROM bookings WHERE (booking_date_ist = ? OR (booking_date_ist IS NULL AND DATE(created_at) = ?)) AND id <= ?",
+                    [istDate, istDate, row.id]
+                );
+                const num = countRes[0]?.cnt || 1;
+                await db.query(
+                    "UPDATE bookings SET booking_number = ?, booking_date_ist = ? WHERE id = ?",
+                    [num, istDate, row.id]
+                );
+            }
+        } catch {}
     },
 
     async create({
@@ -234,6 +258,7 @@ const BookingModel = {
         const [confirmedRows] = await db.query("SELECT COUNT(*) as confirmed FROM bookings WHERE status IN ('confirmed', 'booked')");
         const [completedRows] = await db.query("SELECT COUNT(*) as completed FROM bookings WHERE status = 'completed'");
         const [cancelledRows] = await db.query("SELECT COUNT(*) as cancelled FROM bookings WHERE status = 'cancelled'");
+        const [spamRows] = await db.query("SELECT COUNT(*) as spam FROM bookings WHERE status = 'spam'");
         const [todayRows] = await db.query("SELECT COUNT(*) as today FROM bookings WHERE DATE(created_at) = CURDATE()");
 
         // Lead sources:
@@ -264,6 +289,7 @@ const BookingModel = {
             confirmed: confirmedRows[0]?.confirmed || 0,
             completed: completedRows[0]?.completed || 0,
             cancelled: cancelledRows[0]?.cancelled || 0,
+            spam: spamRows[0]?.spam || 0,
             today: todayRows[0]?.today || 0,
             homePage: homePageRows[0]?.count || 0,
             popup: popupRows[0]?.count || 0,

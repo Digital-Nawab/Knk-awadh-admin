@@ -62,10 +62,10 @@ async function Home() {
       <CelebrityMakeup data={homeData?.celebrity} />
       <Location data={homeData?.locations} />
       <ParallaxBanner data={homeData?.banner} />
-      <BlogSection initialBlogs={initialBlogs} />
+      <LuxuryBooking data={homeData?.booking} />
       <Review data={homeData?.reviews} />
       <Faq data={homeData?.faq} />
-      <LuxuryBooking data={homeData?.booking} />
+      <BlogSection initialBlogs={initialBlogs} />
     </>
   );
 }

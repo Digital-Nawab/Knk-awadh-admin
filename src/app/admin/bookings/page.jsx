@@ -35,6 +35,7 @@ import {
 // 4. Confirmed / Booked — Appointment or service officially finalized
 // 5. Completed — Service successfully delivered
 // 6. Cancelled — Client or salon called off booking
+// 7. Spam — Spam or junk inquiry
 export const LEAD_STATUS_PIPELINE = [
     {
         key: "pending",
@@ -77,6 +78,13 @@ export const LEAD_STATUS_PIPELINE = [
         desc: "Inquiry or booking called off",
         badgeClass: "bg-rose-50 text-rose-700 border-rose-300",
         dotClass: "bg-rose-500",
+    },
+    {
+        key: "spam",
+        label: "Spam",
+        desc: "Spam / junk inquiry",
+        badgeClass: "bg-stone-100 text-stone-700 border-stone-300",
+        dotClass: "bg-stone-500",
     },
 ];
 
@@ -257,6 +265,7 @@ export default function AdminBookingsPage() {
         confirmed: 0,
         completed: 0,
         cancelled: 0,
+        spam: 0,
         today: 0,
         homePage: 0,
         popup: 0,
@@ -854,7 +863,7 @@ export default function AdminBookingsPage() {
                         Click any status to filter leads
                     </span>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2">
                     {LEAD_STATUS_PIPELINE.map((pStep, idx) => {
                         const countKey = pStep.key === "follow_up" ? "follow_up" : pStep.key;
                         const count = stats[countKey] ?? 0;
@@ -1161,11 +1170,12 @@ export default function AdminBookingsPage() {
                                                     <p className="font-semibold text-ink text-sm">
                                                         {item.name}
                                                     </p>
-                                                    {item.booking_number && (
-                                                        <span className="text-[10px] font-mono font-bold text-[#8a6828] bg-[#fbf5ea] border border-[#e8d5b5] px-1.5 py-0.2 rounded-full">
-                                                            #{item.booking_number}
-                                                        </span>
-                                                    )}
+                                                    <span
+                                                        className="text-[10px] font-mono font-bold text-[#8a6828] bg-[#fbf5ea] border border-[#e8d5b5] px-1.5 py-0.5 rounded-full"
+                                                        title={`Daily lead #${item.booking_number || 1}`}
+                                                    >
+                                                        #{item.booking_number || 1}
+                                                    </span>
                                                 </div>
                                                 <div className="flex items-center gap-1.5 mt-0.5">
                                                     <a
@@ -1203,7 +1213,7 @@ export default function AdminBookingsPage() {
                                                         {source.badgeText}
                                                     </span>
                                                     <span className="text-[10px] text-muted font-mono">
-                                                        {source.path}
+                                                        #{item.booking_number || 1} · {source.path}
                                                     </span>
                                                 </div>
                                             </td>
@@ -1343,7 +1353,7 @@ export default function AdminBookingsPage() {
 
                             <div>
                                 <span className="font-mono text-[10px] uppercase text-muted tracking-wider block">
-                                    Lead #{selectedBooking.id}
+                                    Daily Lead #{selectedBooking.booking_number || 1} · System ID #{selectedBooking.id}
                                 </span>
                                 <h2 className="font-display text-2xl text-ink font-semibold mt-0.5">
                                     {selectedBooking.name}

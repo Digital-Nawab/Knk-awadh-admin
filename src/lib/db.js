@@ -8,7 +8,7 @@ export const db =
         host: process.env.DB_HOST || "localhost",
         user: process.env.DB_USER || "root",
         password: process.env.DB_PASSWORD || "",
-        database: process.env.DB_NAME || "knk_awadh",
+        database: process.env.DB_NAME || "knk-awadh",
         port: Number(process.env.DB_PORT) || 3306,
         waitForConnections: true,
         connectionLimit: 10,
@@ -17,4 +17,4 @@ export const db =
         keepAliveInitialDelay: 0,
     });
 
-if (process.env.NODE_ENV !== "production") globalForDb.db = db;
+if (process.env.NODE_ENV !== "production") globalForDb.db = db;

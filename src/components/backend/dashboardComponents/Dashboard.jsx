@@ -42,6 +42,7 @@ export default function Dashboard() {
         confirmed: 0,
         completed: 0,
         cancelled: 0,
+        spam: 0,
         today: 0,
         homePage: 0,
         popup: 0,
@@ -391,7 +392,7 @@ export default function Dashboard() {
                     </span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2.5">
                     {LEAD_STATUS_PIPELINE.map((pStep, idx) => {
                         const countKey = pStep.key === "follow_up" ? "follow_up" : pStep.key;
                         const count = stats[countKey] ?? 0;
@@ -618,7 +619,7 @@ export default function Dashboard() {
                                                     {source.badgeText}
                                                 </span>
                                                 <span className="block text-[10px] text-muted mt-0.5 font-mono">
-                                                    #{lead.id}
+                                                    #{lead.booking_number || 1}
                                                 </span>
                                             </td>
 

@@ -385,33 +385,49 @@ function Hero({ initialHero = null }) {
                 {/* =================================================
            BOTTOM MINI BAR
       ================================================== */}
-                <div className="mt-5 flex flex-col gap-3 border-t border-[#eee8df] pt-4 sm:flex-row sm:items-center sm:justify-between">
-                  {/* WhatsApp */}
-                  <label className="flex cursor-pointer items-center gap-2 font-['Inter'] text-[9px] text-[#91877e]">
-                    <input
-                      type="checkbox"
-                      name="whatsapp"
-                      defaultValue={1}
-                      className="peer sr-only"
-                    />
-                    <span className="flex h-4 w-4 items-center justify-center rounded-full border border-[#cbbda9] transition-all peer-checked:border-[#b58a52] peer-checked:bg-[#b58a52]">
-                      <svg
-                        className="h-2.5 w-2.5 text-white opacity-0 peer-checked:opacity-100"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={3}
-                      >
-                        <path d="m5 12 4 4L19 6" />
-                      </svg>
-                    </span>
-                    Prefer WhatsApp?
-                  </label>
-                  {/* Confirmation */}
-                  <div className="flex items-center gap-2 font-['Inter'] text-[8px] font-medium uppercase tracking-[0.17em] text-[#aaa098]">
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#b58a52]" />
-                    We'll confirm your appointment shortly
+                <div className="mt-5 flex flex-col gap-4 border-t border-[#eee8df] pt-4 sm:flex-row sm:items-center sm:justify-between">
+                  {/* Left items: WhatsApp & Confirmation */}
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                    {/* WhatsApp */}
+                    <label className="flex cursor-pointer items-center gap-2 font-['Inter'] text-[9px] text-[#91877e]">
+                      <input
+                        type="checkbox"
+                        name="whatsapp"
+                        defaultValue={1}
+                        className="peer sr-only"
+                      />
+                      <span className="flex h-4 w-4 items-center justify-center rounded-full border border-[#cbbda9] transition-all peer-checked:border-[#b58a52] peer-checked:bg-[#b58a52]">
+                        <svg
+                          className="h-2.5 w-2.5 text-white opacity-0 peer-checked:opacity-100"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={3}
+                        >
+                          <path d="m5 12 4 4L19 6" />
+                        </svg>
+                      </span>
+                      Prefer WhatsApp?
+                    </label>
+
+                    {/* Confirmation */}
+                    <div className="flex items-center gap-2 font-['Inter'] text-[8px] font-medium uppercase tracking-[0.17em] text-[#aaa098]">
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#b58a52]" />
+                      We'll confirm your appointment shortly
+                    </div>
                   </div>
+
+                  {/* Right side: Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="group flex w-full items-center justify-center gap-3 bg-[#29231f] px-8 py-3 font-['Inter'] text-[8.5px] font-semibold uppercase tracking-[0.18em] text-[#faf7f0] transition-all duration-300 hover:bg-[#b58a52] disabled:opacity-60 sm:w-auto sm:min-w-[180px] lg:min-w-[210px]"
+                  >
+                    <span>{loading ? "Submitting..." : "Submit"}</span>
+                    <span className="text-[14px] transition-transform duration-300 group-hover:translate-x-1">
+                      ↗
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>
