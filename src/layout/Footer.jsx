@@ -109,7 +109,7 @@ function Footer() {
                                     <span>Reserve Appointment</span>
                                 </a>
                                 <a
-                                    href="tel:+916390008020"
+                                    href="tel:+918881000551"
                                     className="inline-flex items-center gap-2 px-4 py-2.5 sm:py-2 rounded-full bg-white/[0.04] border border-[#C9A24A]/30 text-xs font-['Inter'] tracking-[0.12em] uppercase text-[#FBF7F0]/80 hover:bg-[#C9A24A]/15 hover:text-[#EAD9AE] transition-all"
                                 >
                                     <Phone className="size-3 text-[#b58a52]" />
