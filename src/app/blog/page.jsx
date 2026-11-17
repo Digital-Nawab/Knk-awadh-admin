@@ -113,9 +113,9 @@ export default async function BlogIndexPage({ searchParams }) {
                                     </span>
                                     <Link
                                         href={`/blog/${featured.slug}`}
-                                        className="font-sans text-xs tracking-[0.18em] uppercase text-ink font-semibold flex items-center gap-1.5 hover:text-gold-deep transition-colors"
+                                        className="font-sans text-xs tracking-[0.18em] uppercase text-ink font-semibold flex items-center hover:text-gold-deep transition-colors"
                                     >
-                                        Read Article <span>↗</span>
+                                        Read Article
                                     </Link>
                                 </div>
                             </div>
@@ -162,9 +162,9 @@ export default async function BlogIndexPage({ searchParams }) {
                                     </span>
                                     <Link
                                         href={`/blog/${article.slug}`}
-                                        className="font-sans text-[11px] tracking-wider uppercase text-gold-deep font-semibold hover:underline flex items-center gap-1"
+                                        className="font-sans text-[11px] tracking-wider uppercase text-gold-deep font-semibold hover:underline flex items-center"
                                     >
-                                        Read More <span>→</span>
+                                        Read More
                                     </Link>
                                 </div>
                             </article>

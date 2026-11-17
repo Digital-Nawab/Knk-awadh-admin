@@ -92,19 +92,17 @@ export default function LooksGallery({ data }) {
                 <div className="mt-12 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 sm:gap-6">
                     <Link
                         href={content.btn1Link || content.cta_secondary_link || "/gallery"}
-                        className="inline-flex items-center justify-center gap-2 font-['Inter',sans-serif] text-[11px] font-semibold tracking-[0.2em] uppercase px-8 py-4 rounded-full text-[#241d18] bg-[#fbf7f0] border border-[#d0bda4] hover:border-[#b58a52] hover:bg-[#fffdf9] transition-all duration-300 text-center shadow-sm"
+                        className="inline-flex items-center justify-center font-['Inter',sans-serif] text-[11px] font-semibold tracking-[0.2em] uppercase px-8 py-4 rounded-full text-[#241d18] bg-[#fbf7f0] border border-[#d0bda4] hover:border-[#b58a52] hover:bg-[#fffdf9] transition-all duration-300 text-center shadow-sm"
                     >
                         <span>{content.btn1Text || content.cta_secondary_text || "View Full Makeup Gallery"}</span>
-                        <span className="text-sm font-bold text-[#b58a52]">→</span>
                     </Link>
 
                     <a
                         href={content.btn2Link || content.cta_primary_link || "#book"}
-                        className="inline-flex items-center justify-center gap-2 font-['Inter',sans-serif] text-[11px] font-semibold tracking-[0.2em] uppercase px-8 py-4 rounded-full text-[#fbf7f0] shadow-md transition-all duration-300 hover:scale-105 text-center"
+                        className="inline-flex items-center justify-center font-['Inter',sans-serif] text-[11px] font-semibold tracking-[0.2em] uppercase px-8 py-4 rounded-full text-[#fbf7f0] shadow-md transition-all duration-300 hover:scale-105 text-center"
                         style={{ backgroundColor: GOLD }}
                     >
                         <span>{content.btn2Text || content.cta_primary_text || "Book Your Makeup Appointment"}</span>
-                        <span className="text-sm font-bold">→</span>
                     </a>
                 </div>
             </div>

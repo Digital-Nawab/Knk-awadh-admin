@@ -426,7 +426,7 @@ export default function Contact() {
                                         rel="noopener noreferrer"
                                         className="text-emerald-700 font-semibold hover:underline"
                                     >
-                                        WhatsApp Desk ↗
+                                        WhatsApp Desk
                                     </a>
                                 </div>
                             </div>
@@ -458,7 +458,7 @@ export default function Contact() {
                                         rel="noopener noreferrer"
                                         className="text-emerald-700 font-semibold hover:underline"
                                     >
-                                        Inquire via WhatsApp ↗
+                                        Inquire via WhatsApp
                                     </a>
                                 </div>
                             </div>
@@ -739,7 +739,7 @@ export default function Contact() {
                                     rel="noopener noreferrer"
                                     className="px-4 py-2 rounded-lg bg-primary text-cream text-xs font-sans tracking-wider uppercase font-medium hover:bg-gold-deep transition-colors"
                                 >
-                                    Open Maps ↗
+                                    Open Maps
                                 </a>
                             </div>
                         </div>

@@ -654,11 +654,10 @@ export default function Courses() {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setModalCourse(c.title)}
-                                                                className="inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full font-['Inter'] text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider text-white shadow-sm transition-transform hover:scale-105 text-center shrink-0"
+                                                                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full font-['Inter'] text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider text-white shadow-sm transition-transform hover:scale-105 text-center shrink-0"
                                                                 style={{ backgroundColor: GOLD }}
                                                             >
                                                                 <span>Reserve Seat</span>
-                                                                <ArrowRight className="size-3.5 shrink-0" />
                                                             </button>
                                                         </div>
                                                     </div>

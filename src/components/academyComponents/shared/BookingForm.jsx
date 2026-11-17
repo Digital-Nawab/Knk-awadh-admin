@@ -252,11 +252,10 @@ export default function BookingForm() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full inline-flex items-center justify-center gap-2 font-['Inter'] text-[11px] font-semibold tracking-[0.2em] uppercase px-10 py-4 rounded-full text-white shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg disabled:opacity-60 cursor-pointer"
+                        className="w-full inline-flex items-center justify-center font-['Inter'] text-[11px] font-semibold tracking-[0.2em] uppercase px-10 py-4 rounded-full text-white shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg disabled:opacity-60 cursor-pointer"
                         style={{ backgroundColor: GOLD }}
                     >
                         <span>{loading ? "Registering Application..." : "Submit Consultation Request"}</span>
-                        <ArrowRight className="size-4" />
                     </button>
                     <p className="mt-3 text-center font-['Inter'] text-[11px] text-[#71665c]">
                         Your contact details remain strictly confidential and will only be used for academic consultation.

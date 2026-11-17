@@ -94,10 +94,9 @@ export default function BridalStylesSection({ data }) {
                                     <div className="mt-6 flex items-center gap-4">
                                         <a
                                             href="#book"
-                                            className="inline-flex items-center gap-2 text-xs font-['Inter',sans-serif] font-bold tracking-[0.18em] uppercase text-[#a17b5a] hover:text-[#241d18] transition-colors"
+                                            className="inline-flex items-center text-xs font-['Inter',sans-serif] font-bold tracking-[0.18em] uppercase text-[#a17b5a] hover:text-[#241d18] transition-colors"
                                         >
                                             <span>Customize This Look</span>
-                                            <span>→</span>
                                         </a>
                                     </div>
                                 </div>

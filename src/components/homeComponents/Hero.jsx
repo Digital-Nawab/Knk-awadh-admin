@@ -421,12 +421,9 @@ function Hero({ initialHero = null }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="group flex w-full items-center justify-center gap-3 bg-[#29231f] px-8 py-3 font-['Inter'] text-[8.5px] font-semibold uppercase tracking-[0.18em] text-[#faf7f0] transition-all duration-300 hover:bg-[#b58a52] disabled:opacity-60 sm:w-auto sm:min-w-[180px] lg:min-w-[210px]"
+                    className="group flex w-full items-center justify-center bg-[#29231f] px-8 py-3 font-['Inter'] text-[8.5px] font-semibold uppercase tracking-[0.18em] text-[#faf7f0] transition-all duration-300 hover:bg-[#b58a52] disabled:opacity-60 sm:w-auto sm:min-w-[180px] lg:min-w-[210px]"
                   >
                     <span>{loading ? "Submitting..." : "Submit"}</span>
-                    <span className="text-[14px] transition-transform duration-300 group-hover:translate-x-1">
-                      ↗
-                    </span>
                   </button>
                 </div>
               </div>

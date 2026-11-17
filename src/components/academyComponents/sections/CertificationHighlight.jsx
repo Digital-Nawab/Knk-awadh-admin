@@ -65,11 +65,10 @@ export default function CertificationHighlight() {
                         <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3.5 sm:gap-4">
                             <a
                                 href="#book"
-                                className="inline-flex items-center justify-center gap-2 font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-3.5 sm:py-4 rounded-full text-white shadow-md transition-all duration-300 hover:scale-105 text-center"
+                                className="inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-3.5 sm:py-4 rounded-full text-white shadow-md transition-all duration-300 hover:scale-105 text-center"
                                 style={{ backgroundColor: "#b58a52" }}
                             >
                                 <span>Get Certified With KNK</span>
-                                <ArrowUpRight className="size-3.5" />
                             </a>
                             <span className="font-['Inter'] text-[12px] text-[#71665c] text-center sm:text-left">
                                 Admissions Helpline: <strong className="text-[#29231f]">+91 88810 00395</strong>

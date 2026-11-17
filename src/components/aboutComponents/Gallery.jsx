@@ -38,7 +38,7 @@ export default function Gallery({ data = {} }) {
                         href={d.ctaLink || "/gallery"}
                         className="inline-flex items-center justify-center bg-gradient-gold text-cream font-sans text-sm tracking-[0.15em] uppercase px-8 py-3.5 rounded-full shadow-luxe transition-transform duration-300 hover:scale-105"
                     >
-                        {d.ctaText || "View Makeup Gallery →"}
+                        {(d.ctaText || "View Makeup Gallery").replace(/\s*→\s*$/, "")}
                     </a>
                 </div>
             </div>

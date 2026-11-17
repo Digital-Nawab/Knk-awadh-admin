@@ -87,11 +87,10 @@ export default function TrendyIntro({ data }) {
                 <div className="mt-12 text-center">
                     <Link
                         href={content.cta_link || "/makeup-services/bridal-makeup"}
-                        className="inline-flex items-center justify-center gap-2 font-['Inter',sans-serif] text-[11px] font-semibold tracking-[0.2em] uppercase px-8 py-4 rounded-full text-[#fbf7f0] shadow-md transition-all duration-300 hover:scale-105"
+                        className="inline-flex items-center justify-center font-['Inter',sans-serif] text-[11px] font-semibold tracking-[0.2em] uppercase px-8 py-4 rounded-full text-[#fbf7f0] shadow-md transition-all duration-300 hover:scale-105"
                         style={{ backgroundColor: GOLD }}
                     >
                         <span>{content.cta_text || "Explore Bridal Makeup"}</span>
-                        <span className="text-sm font-bold">→</span>
                     </Link>
                 </div>
             </div>

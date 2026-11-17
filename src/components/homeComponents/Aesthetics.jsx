@@ -106,12 +106,9 @@ function Aesthetics({ data }) {
                             <div className="mt-11 flex flex-wrap items-center gap-7">
                                 <a
                                     href={typeof content.cta_primary_link === 'string' ? content.cta_primary_link : "#book"}
-                                    className="group inline-flex items-center gap-4 border-b border-[#a98251] pb-3 font-['Inter'] text-[9px] font-medium uppercase tracking-[0.22em] text-[#59483b]"
+                                    className="group inline-flex items-center border-b border-[#a98251] pb-3 font-['Inter'] text-[9px] font-medium uppercase tracking-[0.22em] text-[#59483b]"
                                 >
                                     <span>{content.cta_primary_text || "Discover Your Glow"}</span>
-                                    <span className="text-[18px] leading-none transition-transform duration-300 group-hover:translate-x-2">
-                                        →
-                                    </span>
                                 </a>
                                 <a
                                     href={typeof content.cta_secondary_link === 'string' ? content.cta_secondary_link : "#services"}

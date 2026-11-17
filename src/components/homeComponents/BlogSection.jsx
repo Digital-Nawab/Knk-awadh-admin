@@ -88,12 +88,9 @@ export default function BlogSection({ initialBlogs }) {
                         </p>
                         <Link
                             href="/blog"
-                            className="group inline-flex items-center gap-3 border-b border-[#272523] pb-1.5 font-['Inter'] text-[10px] font-medium tracking-[0.22em] uppercase text-[#272523] transition-all duration-300 hover:border-[#c49a4d] hover:text-[#c49a4d]"
+                            className="group inline-flex items-center border-b border-[#272523] pb-1.5 font-['Inter'] text-[10px] font-medium tracking-[0.22em] uppercase text-[#272523] transition-all duration-300 hover:border-[#c49a4d] hover:text-[#c49a4d]"
                         >
                             <span>Explore The Entire Journal</span>
-                            <span className="transition-transform duration-300 group-hover:translate-x-1.5">
-                                →
-                            </span>
                         </Link>
                     </div>
                 </div>
@@ -142,10 +139,9 @@ export default function BlogSection({ initialBlogs }) {
                                 <div className="pt-5 border-t border-[#f0eae1] flex items-center justify-between">
                                     <Link
                                         href={`/blog/${item.slug}`}
-                                        className="font-['Inter'] text-[10px] tracking-[0.2em] uppercase font-semibold text-[#272523] group-hover:text-[#c49a4d] transition-colors flex items-center gap-1.5"
+                                        className="font-['Inter'] text-[10px] tracking-[0.2em] uppercase font-semibold text-[#272523] group-hover:text-[#c49a4d] transition-colors flex items-center"
                                     >
                                         <span>Read Story</span>
-                                        <span className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5">↗</span>
                                     </Link>
                                     <span className="font-['Inter'] text-[9px] tracking-[0.18em] uppercase text-[#a49a90]">
                                         KNK Awadh

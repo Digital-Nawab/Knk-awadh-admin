@@ -169,7 +169,7 @@ export default async function SingleBlogPage({ params }) {
                                 href="/#book"
                                 className="inline-block bg-ink text-cream hover:bg-gold-deep px-8 py-3.5 rounded-full font-sans text-xs tracking-[0.2em] uppercase font-semibold transition-all duration-300 shadow-md"
                             >
-                                Book Appointment Now ↗
+                                Book Appointment Now
                             </Link>
                         </div>
                     </div>

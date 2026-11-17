@@ -135,7 +135,7 @@ function Footer() {
                                         </svg>
                                     </a>
                                     <a
-                                        href="https://www.facebook.com/Knksalonacademy/"
+                                        href="https://www.facebook.com/share/192KVCc9hR/"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label="Facebook"

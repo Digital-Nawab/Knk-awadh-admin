@@ -111,11 +111,10 @@ export default function Hero() {
                                 href="#book"
                                 data-booking-trigger="true"
                                 data-service="Academy Admission Consultation"
-                                className="inline-flex items-center justify-center gap-2 font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-3.5 sm:py-4 rounded-full text-[#fbf7f0] shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-lg cursor-pointer text-center"
+                                className="inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-8 py-3.5 sm:py-4 rounded-full text-[#fbf7f0] shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-lg cursor-pointer text-center"
                                 style={{ backgroundColor: GOLD }}
                             >
                                 <span>Enroll Now</span>
-                                <ArrowUpRight className="size-3.5" />
                             </a>
 
                             <a

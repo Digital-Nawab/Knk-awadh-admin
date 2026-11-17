@@ -122,12 +122,9 @@ export default function Faq({ data }) {
                     </div>
                     <a
                         href={typeof content.ctaButtonLink === 'string' ? content.ctaButtonLink : (typeof content.cta_button_link === 'string' ? content.cta_button_link : "#book")}
-                        className="group inline-flex items-center gap-4 rounded-full bg-[#29231f] px-7 py-3.5 font-['Inter'] text-[9px] font-medium uppercase tracking-[0.22em] text-[#fffaf3] transition-all duration-300 hover:bg-[#c49a4d] hover:shadow-lg"
+                        className="group inline-flex items-center justify-center rounded-full bg-[#29231f] px-7 py-3.5 font-['Inter'] text-[9px] font-medium uppercase tracking-[0.22em] text-[#fffaf3] transition-all duration-300 hover:bg-[#c49a4d] hover:shadow-lg"
                     >
                         <span>{content.ctaButtonText || content.cta_button_text || "Book Appointment"}</span>
-                        <span className="text-[16px] transition-transform duration-300 group-hover:translate-x-1">
-                            →
-                        </span>
                     </a>
                 </div>
             </div>

@@ -99,12 +99,9 @@ function CelebrityMakeup({ data }) {
                             <div className="mt-9 flex flex-wrap items-center gap-7">
                                 <a
                                     href={typeof content.cta_primary_link === 'string' ? content.cta_primary_link : "#book"}
-                                    className="group inline-flex items-center gap-4 rounded-full bg-[#c49a4d] px-7 py-3.5 font-['Inter'] text-[8px] font-semibold uppercase tracking-[0.22em] text-[#29231f] transition-all duration-500 hover:-translate-y-1 hover:bg-[#d6b875] hover:shadow-[0_15px_35px_rgba(196,154,77,0.25)]"
+                                    className="group inline-flex items-center justify-center rounded-full bg-[#c49a4d] px-7 py-3.5 font-['Inter'] text-[8px] font-semibold uppercase tracking-[0.22em] text-[#29231f] transition-all duration-500 hover:-translate-y-1 hover:bg-[#d6b875] hover:shadow-[0_15px_35px_rgba(196,154,77,0.25)]"
                                 >
                                     <span>{content.cta_primary_text || "Book Celebrity Glam"}</span>
-                                    <span className="text-[16px] transition-transform duration-300 group-hover:translate-x-1">
-                                        ↗
-                                    </span>
                                 </a>
                                 <a
                                     href={typeof content.cta_secondary_link === 'string' ? content.cta_secondary_link : "#services"}

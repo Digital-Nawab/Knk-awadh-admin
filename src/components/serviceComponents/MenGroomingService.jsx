@@ -91,10 +91,9 @@ export default function MenGroomingService({ initialData }) {
                             <div className="mt-9 flex flex-wrap items-center gap-4">
                                 <button
                                     onClick={() => openBooking({ serviceName: "Men's Grooming" })}
-                                    className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#d4af37] via-[#e5c07b] to-[#b38f28] px-8 py-4 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-[#0e0c0b] shadow-[0_10px_30px_rgba(212,175,55,0.25)] transition-all duration-300 hover:scale-105 hover:shadow-[0_15px_35px_rgba(212,175,55,0.4)]"
+                                    className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#d4af37] via-[#e5c07b] to-[#b38f28] px-8 py-4 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-[#0e0c0b] shadow-[0_10px_30px_rgba(212,175,55,0.25)] transition-all duration-300 hover:scale-105 hover:shadow-[0_15px_35px_rgba(212,175,55,0.4)]"
                                 >
                                     <span>{data.hero.primaryBtnText}</span>
-                                    <span>→</span>
                                 </button>
                                 <a
                                     href={`tel:${data.hero.phone}`}
@@ -487,10 +486,9 @@ export default function MenGroomingService({ initialData }) {
                     <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                         <button
                             onClick={() => openBooking({ serviceName: "Men's Grooming VIP Slot" })}
-                            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#d4af37] via-[#e5c07b] to-[#b38f28] px-8 py-4 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-[#0e0c0b] shadow-[0_10px_30px_rgba(212,175,55,0.25)] transition-all duration-300 hover:scale-105"
+                            className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#d4af37] via-[#e5c07b] to-[#b38f28] px-8 py-4 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-[#0e0c0b] shadow-[0_10px_30px_rgba(212,175,55,0.25)] transition-all duration-300 hover:scale-105"
                         >
                             <span>{data.cta.primaryBtnText || data.cta.btnText}</span>
-                            <span>→</span>
                         </button>
                         <a
                             href={`tel:${data.cta.phone}`}

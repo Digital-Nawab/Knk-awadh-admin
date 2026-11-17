@@ -59,7 +59,7 @@ export default function ServiceInclusions({
                             href="#book"
                             className="whitespace-nowrap rounded-full bg-ink px-6 py-2.5 font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-cream hover:bg-gold-deep transition-colors"
                         >
-                            Consult With Us →
+                            Consult With Us
                         </a>
                     </div>
                 )}

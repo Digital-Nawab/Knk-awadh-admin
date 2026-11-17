@@ -73,11 +73,10 @@ export default function HowToEnroll() {
                 <div className="mt-12 text-center">
                     <a
                         href="#book"
-                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-9 py-4 rounded-full text-white shadow-md transition-all duration-300 hover:scale-105"
+                        className="w-full sm:w-auto inline-flex items-center justify-center font-['Inter'] text-[11px] tracking-[0.2em] uppercase px-9 py-4 rounded-full text-white shadow-md transition-all duration-300 hover:scale-105"
                         style={{ backgroundColor: "#b58a52" }}
                     >
                         <span>Start Your Admission</span>
-                        <ArrowRight className="size-3.5" />
                     </a>
                 </div>
             </div>

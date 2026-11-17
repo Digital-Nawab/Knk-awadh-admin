@@ -167,10 +167,9 @@ export default function BridalServices() {
                 <button
                   type="button"
                   onClick={() => setSelectedService(service)}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#7A726B] hover:text-[#161413] transition-colors cursor-pointer"
+                  className="inline-flex items-center text-xs font-semibold text-[#7A726B] hover:text-[#161413] transition-colors cursor-pointer"
                 >
                   <span>Explore Look</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
                 <button
                   type="button"

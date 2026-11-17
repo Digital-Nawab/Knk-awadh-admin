@@ -187,10 +187,9 @@ export default function CategoryTemplate({
                                     <div className="pt-4 border-t border-border/60 flex items-center justify-between gap-3">
                                         <Link
                                             href={svc.url}
-                                            className="inline-flex items-center gap-1.5 font-sans text-xs font-semibold uppercase tracking-[0.15em] text-ink group-hover:text-gold-deep transition-colors"
+                                            className="inline-flex items-center font-sans text-xs font-semibold uppercase tracking-[0.15em] text-ink group-hover:text-gold-deep transition-colors"
                                         >
                                             <span>Explore Details</span>
-                                            <span className="transition-transform duration-300 group-hover:translate-x-1">↗</span>
                                         </Link>
                                         <a
                                             href="#book"
@@ -234,7 +233,7 @@ export default function CategoryTemplate({
                                         href={featuredService.url}
                                         className="inline-flex items-center justify-center rounded-full bg-ink px-8 py-3.5 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-cream hover:bg-gold-deep transition-colors"
                                     >
-                                        Discover {featuredService.title} →
+                                        Discover {featuredService.title}
                                     </Link>
                                 </div>
                                 <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg border border-border">

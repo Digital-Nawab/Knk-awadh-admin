@@ -55,12 +55,9 @@ function Location({ data }) {
                                         href={typeof loc.directionsUrl === 'string' ? loc.directionsUrl : (typeof loc.directions_url === 'string' ? loc.directions_url : "#")}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="group inline-flex items-center gap-2 border-b border-[#5c5149] pb-2 font-['Inter'] text-[9px] font-medium uppercase tracking-[0.23em] text-[#493e37] transition hover:text-[#a47a59]"
+                                        className="group inline-flex items-center border-b border-[#5c5149] pb-2 font-['Inter'] text-[9px] font-medium uppercase tracking-[0.23em] text-[#493e37] transition hover:text-[#a47a59]"
                                     >
                                         Get Directions
-                                        <span className="transition-transform duration-300 group-hover:translate-x-1">
-                                            →
-                                        </span>
                                     </a>
                                 </div>
                             </div>

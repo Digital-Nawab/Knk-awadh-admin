@@ -336,12 +336,9 @@ function LuxuryBooking({ data }) {
                                     </label>
                                     <button
                                         type="submit"
-                                        className="group flex items-center justify-center gap-5 bg-[#29231f] px-7 py-4 font-['Inter'] text-[9px] font-medium uppercase tracking-[0.2em] text-[#fffaf3] transition-all duration-500 hover:bg-[#b58a52] hover:shadow-[0_12px_30px_rgba(181,138,82,0.25)]"
+                                        className="group flex items-center justify-center bg-[#29231f] px-7 py-4 font-['Inter'] text-[9px] font-medium uppercase tracking-[0.2em] text-[#fffaf3] transition-all duration-500 hover:bg-[#b58a52] hover:shadow-[0_12px_30px_rgba(181,138,82,0.25)]"
                                     >
                                         <span>Request Appointment</span>
-                                        <span className="text-[17px] transition-transform duration-300 group-hover:translate-x-1">
-                                            ↗
-                                        </span>
                                     </button>
                                 </div>
                             </form>
