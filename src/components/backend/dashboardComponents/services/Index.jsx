@@ -3,6 +3,14 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 
+const PROCESS_CATEGORIES = [
+    { slug: "nails", name: "Nails" },
+    { slug: "hair", name: "Hair" },
+    { slug: "beauty", name: "Beauty" },
+    { slug: "facial", name: "Facial" },
+    { slug: "body", name: "Body" },
+];
+
 export default function ServiceIndex() {
     const [services, setServices] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -13,6 +21,23 @@ export default function ServiceIndex() {
     const [deletingId, setDeletingId] = useState(null);
     const [confirmId, setConfirmId] = useState(null);
     const [togglingId, setTogglingId] = useState(null);
+
+    // Process Steps ("How It Works")
+    const [activeTab, setActiveTab] = useState("catalog"); // "catalog" | "process"
+    const [selectedProcessCategory, setSelectedProcessCategory] = useState("nails");
+    const [processSteps, setProcessSteps] = useState({
+        eyebrow: "How It Works",
+        title: "Simple, from",
+        titleHighlight: "start to finish.",
+        steps: [
+            { n: "01", title: "Choose Your Service", text: "Browse the list below or tell us the occasion — we'll suggest what fits." },
+            { n: "02", title: "Book a Slot", text: "Call, WhatsApp, or fill the form and pick a time that works for you." },
+            { n: "03", title: "Meet Your Artist", text: "You're matched with the specialist best suited to what you need." },
+            { n: "04", title: "Leave Glowing", text: "Walk out looking — and feeling — exactly the way you wanted to." },
+        ],
+    });
+    const [savingProcess, setSavingProcess] = useState(false);
+    const [processMessage, setProcessMessage] = useState({ type: "", text: "" });
 
     const loadServices = useCallback(async () => {
         setLoading(true);
@@ -94,6 +119,62 @@ export default function ServiceIndex() {
         }
     };
 
+    const loadProcessCategory = useCallback(async (slug) => {
+        try {
+            const res = await fetch(`/api/services/process?category=${encodeURIComponent(slug)}`);
+            const d = await res.json();
+            if (d?.process) {
+                setProcessSteps({
+                    eyebrow: d.process.eyebrow || "How It Works",
+                    title: d.process.title || "Simple, from",
+                    titleHighlight: d.process.titleHighlight || "start to finish.",
+                    steps: Array.isArray(d.process.steps) && d.process.steps.length > 0
+                        ? d.process.steps
+                        : [
+                            { n: "01", title: "Choose Your Service", text: "Browse the list below or tell us the occasion — we'll suggest what fits." },
+                            { n: "02", title: "Book a Slot", text: "Call, WhatsApp, or fill the form and pick a time that works for you." },
+                            { n: "03", title: "Meet Your Artist", text: "You're matched with the specialist best suited to what you need." },
+                            { n: "04", title: "Leave Glowing", text: "Walk out looking — and feeling — exactly the way you wanted to." },
+                        ],
+                });
+            }
+        } catch (err) {
+            console.error("Failed to load process steps for category:", slug, err);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadProcessCategory(selectedProcessCategory);
+    }, [selectedProcessCategory, loadProcessCategory]);
+
+    const handleSaveProcess = async () => {
+        setSavingProcess(true);
+        setProcessMessage({ type: "", text: "" });
+        try {
+            const activeCatObj = PROCESS_CATEGORIES.find((c) => c.slug === selectedProcessCategory);
+            const res = await fetch("/api/services/process", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    categorySlug: selectedProcessCategory,
+                    categoryName: activeCatObj?.name || selectedProcessCategory,
+                    content: processSteps,
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Failed to save process steps.");
+            setProcessMessage({
+                type: "success",
+                text: `Process steps for ${activeCatObj?.name || selectedProcessCategory} saved successfully!`,
+            });
+            setTimeout(() => setProcessMessage({ type: "", text: "" }), 3500);
+        } catch (err) {
+            setProcessMessage({ type: "error", text: err.message || "Failed to save process steps." });
+        } finally {
+            setSavingProcess(false);
+        }
+    };
+
     const activeCount = services.filter((s) => s.is_active).length;
     const categoryNames = ["All", ...categories.map((c) => c.name)];
 
@@ -131,8 +212,36 @@ export default function ServiceIndex() {
                 </div>
             </div>
 
-            {/* Filter Pills & Search Bar */}
-            <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between mb-8">
+            {/* View Switcher Tabs */}
+            <div className="flex items-center gap-3 mb-8 border-b border-border/80 pb-4">
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("catalog")}
+                    className={`px-5 py-2.5 rounded-full font-sans text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer ${
+                        activeTab === "catalog"
+                            ? "bg-gold text-white shadow-sm"
+                            : "bg-white text-muted border border-border hover:text-ink"
+                    }`}
+                >
+                    Services Catalog ({services.length})
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("process")}
+                    className={`px-5 py-2.5 rounded-full font-sans text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer ${
+                        activeTab === "process"
+                            ? "bg-gold text-white shadow-sm"
+                            : "bg-white text-muted border border-border hover:text-ink"
+                    }`}
+                >
+                    Process Steps (&quot;How It Works&quot;)
+                </button>
+            </div>
+
+            {activeTab === "catalog" && (
+                <>
+                    {/* Filter Pills & Search Bar */}
+                    <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between mb-8">
                 {/* Category Pills */}
                 <div className="flex flex-wrap gap-1.5">
                     {categoryNames.map((cat) => {
@@ -344,6 +453,159 @@ export default function ServiceIndex() {
                             </div>
                         );
                     })}
+                </div>
+            )}
+                </>
+            )}
+
+            {/* Process Steps ("How It Works") Editor */}
+            {activeTab === "process" && (
+                <div className="bg-white rounded-3xl p-6 sm:p-10 border border-border space-y-8 shadow-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/70 pb-5">
+                        <div>
+                            <h2 className="font-display text-2xl italic text-ink">Process Steps (&quot;How It Works&quot;)</h2>
+                            <p className="font-sans text-xs text-muted mt-1">
+                                Customize the 4 steps guiding clients from booking to glowing finish.
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={handleSaveProcess}
+                            disabled={savingProcess}
+                            className="px-6 py-2.5 rounded-xl bg-gold text-white font-sans text-xs uppercase tracking-wider font-semibold hover:bg-gold-deep transition-all cursor-pointer disabled:opacity-50 self-start sm:self-auto shrink-0 shadow-sm"
+                        >
+                            {savingProcess ? "Saving..." : "Save Section"}
+                        </button>
+                    </div>
+
+                    {processMessage.text && (
+                        <div
+                            className={`p-4 rounded-xl text-xs font-sans border ${
+                                processMessage.type === "success"
+                                    ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                    : "bg-red-50 text-red-700 border-red-200"
+                            }`}
+                        >
+                            {processMessage.text}
+                        </div>
+                    )}
+
+                    {/* Service Category Selector for Process Steps */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#faf7f2] p-4 rounded-2xl border border-border">
+                        <div className="flex items-center gap-2">
+                            <span className="font-sans text-[11px] font-semibold tracking-wider uppercase text-muted">
+                                Select Service Category:
+                            </span>
+                            <span className="font-sans text-xs text-ink font-bold">
+                                {PROCESS_CATEGORIES.find((c) => c.slug === selectedProcessCategory)?.name}
+                            </span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {PROCESS_CATEGORIES.map((cat) => {
+                                const isSelected = selectedProcessCategory === cat.slug;
+                                return (
+                                    <button
+                                        key={cat.slug}
+                                        type="button"
+                                        onClick={() => setSelectedProcessCategory(cat.slug)}
+                                        className={`px-4 py-2 rounded-full font-sans text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer ${
+                                            isSelected
+                                                ? "bg-ink text-gold shadow-sm"
+                                                : "bg-white text-muted border border-border hover:text-ink hover:border-gold"
+                                        }`}
+                                    >
+                                        {cat.name}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="grid sm:grid-cols-3 gap-6 bg-[#faf7f2] p-6 rounded-2xl border border-border">
+                        <div>
+                            <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted mb-2">
+                                Eyebrow
+                            </label>
+                            <input
+                                type="text"
+                                value={processSteps.eyebrow || "How It Works"}
+                                onChange={(e) => setProcessSteps((prev) => ({ ...prev, eyebrow: e.target.value }))}
+                                className="w-full bg-white border border-border rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-gold"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted mb-2">
+                                Title Prefix
+                            </label>
+                            <input
+                                type="text"
+                                value={processSteps.title || "Simple, from"}
+                                onChange={(e) => setProcessSteps((prev) => ({ ...prev, title: e.target.value }))}
+                                className="w-full bg-white border border-border rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-gold"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted mb-2">
+                                Title Highlight
+                            </label>
+                            <input
+                                type="text"
+                                value={processSteps.titleHighlight || "start to finish."}
+                                onChange={(e) => setProcessSteps((prev) => ({ ...prev, titleHighlight: e.target.value }))}
+                                className="w-full bg-white border border-border rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-gold"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
+                        {(processSteps.steps || []).map((step, idx) => (
+                            <div key={idx} className="bg-[#faf7f2] p-5 rounded-2xl border border-border space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="font-display text-2xl italic text-gold">Step</span>
+                                    <input
+                                        type="text"
+                                        value={step.n || `0${idx + 1}`}
+                                        onChange={(e) => {
+                                            const stepsArr = [...processSteps.steps];
+                                            stepsArr[idx] = { ...stepsArr[idx], n: e.target.value };
+                                            setProcessSteps((prev) => ({ ...prev, steps: stepsArr }));
+                                        }}
+                                        className="w-14 text-center font-display text-xl italic text-gold-deep bg-white border border-border rounded-lg px-2 py-1 outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">
+                                        Title
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={step.title || ""}
+                                        onChange={(e) => {
+                                            const stepsArr = [...processSteps.steps];
+                                            stepsArr[idx] = { ...stepsArr[idx], title: e.target.value };
+                                            setProcessSteps((prev) => ({ ...prev, steps: stepsArr }));
+                                        }}
+                                        className="w-full bg-white border border-border rounded-lg px-3 py-2 text-xs font-semibold outline-none focus:border-gold"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        rows={3}
+                                        value={step.text || ""}
+                                        onChange={(e) => {
+                                            const stepsArr = [...processSteps.steps];
+                                            stepsArr[idx] = { ...stepsArr[idx], text: e.target.value };
+                                            setProcessSteps((prev) => ({ ...prev, steps: stepsArr }));
+                                        }}
+                                        className="w-full bg-white border border-border rounded-lg px-3 py-2 text-xs outline-none focus:border-gold"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>

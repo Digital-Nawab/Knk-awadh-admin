@@ -3,12 +3,36 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const CKEditorWrapper = dynamic(() => import("@/components/backend/CKEditorWrapper"), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full h-72 border border-border rounded-xl bg-[#faf8f5] flex flex-col items-center justify-center gap-2 text-xs text-muted font-sans">
+            <div className="w-6 h-6 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+            <span>Loading CKEditor Rich Text Editor...</span>
+        </div>
+    ),
+});
+
+function slugify(text) {
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[^\w\-]+/g, "")
+        .replace(/\-\-+/g, "-")
+        .replace(/^-+/, "")
+        .replace(/-+$/, "");
+}
 
 export default function AdminBlogCreatePage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [imagePreview, setImagePreview] = useState(null);
+    const [isSlugManual, setIsSlugManual] = useState(false);
 
     const [form, setForm] = useState({
         title: "",
@@ -23,12 +47,21 @@ export default function AdminBlogCreatePage() {
 
     const handleTitleChange = (e) => {
         const val = e.target.value;
-        const autoSlug = val
-            .toLowerCase()
-            .trim()
-            .replace(/[^\w\s-]/g, "")
-            .replace(/\s+/g, "-");
-        setForm((prev) => ({ ...prev, title: val, slug: autoSlug }));
+        setForm((prev) => ({
+            ...prev,
+            title: val,
+            slug: isSlugManual ? prev.slug : slugify(val),
+        }));
+    };
+
+    const handleSlugChange = (e) => {
+        setIsSlugManual(true);
+        setForm((prev) => ({ ...prev, slug: e.target.value }));
+    };
+
+    const handleAutoSlug = () => {
+        setIsSlugManual(false);
+        setForm((prev) => ({ ...prev, slug: slugify(prev.title) }));
     };
 
     const handleImageChange = (e) => {
@@ -50,13 +83,16 @@ export default function AdminBlogCreatePage() {
             setError("Short excerpt is required.");
             return;
         }
-        if (!form.content.trim()) {
-            setError("Content is required.");
+        const plainText = form.content.replace(/<[^>]*>?/gm, "").trim();
+        if (!form.content.trim() || !plainText) {
+            setError("Article content is required.");
             return;
         }
 
         const formData = new FormData(e.target);
         formData.set("isPublished", form.isPublished ? "true" : "false");
+        formData.set("content", form.content);
+        formData.set("slug", form.slug || slugify(form.title));
 
         setLoading(true);
         try {
@@ -75,16 +111,6 @@ export default function AdminBlogCreatePage() {
         } finally {
             setLoading(false);
         }
-    };
-
-    const insertFormatting = (tag) => {
-        let snippet = "";
-        if (tag === "h3") snippet = "<h3>Heading</h3>\n";
-        if (tag === "p") snippet = "<p>Your paragraph text here...</p>\n";
-        if (tag === "quote") snippet = '<blockquote>"A memorable quote or client tip"</blockquote>\n';
-        if (tag === "ul") snippet = "<ul>\n  <li>Feature point 1</li>\n  <li>Feature point 2</li>\n</ul>\n";
-
-        setForm((prev) => ({ ...prev, content: prev.content + "\n" + snippet }));
     };
 
     return (
@@ -127,16 +153,28 @@ export default function AdminBlogCreatePage() {
                         </div>
 
                         <div>
-                            <label className="font-sans text-[11px] tracking-[0.18em] uppercase text-muted block mb-2">
-                                URL Slug (Auto-generated)
-                            </label>
-                            <div className="flex items-center border border-border rounded-xl bg-[#f7f4ee] px-3">
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="font-sans text-[11px] tracking-[0.18em] uppercase text-muted block">
+                                    URL Slug {isSlugManual ? "(Customized)" : "(Auto-generated)"}
+                                </label>
+                                {isSlugManual && (
+                                    <button
+                                        type="button"
+                                        onClick={handleAutoSlug}
+                                        className="text-[10px] font-sans text-gold-deep hover:underline uppercase tracking-wider font-semibold cursor-pointer"
+                                    >
+                                        Auto-generate from Title
+                                    </button>
+                                )}
+                            </div>
+                            <div className="flex items-center border border-border rounded-xl bg-[#f7f4ee] px-3 focus-within:border-gold">
                                 <span className="text-muted text-xs font-mono">/blog/</span>
                                 <input
                                     type="text"
                                     name="slug"
                                     value={form.slug}
-                                    onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                                    onChange={handleSlugChange}
+                                    placeholder="story-url-slug"
                                     className="w-full py-2.5 px-1 bg-transparent font-mono text-xs text-ink focus:outline-none"
                                 />
                             </div>
@@ -238,53 +276,17 @@ export default function AdminBlogCreatePage() {
                         </div>
                     </div>
 
-                    {/* Content Editor */}
+                    {/* Content Editor with CKEditor */}
                     <div>
-                        <div className="flex items-center justify-between mb-2">
-                            <label className="font-sans text-[11px] tracking-[0.18em] uppercase text-muted font-semibold">
-                                Article Content (HTML / Rich Format) *
-                            </label>
-                            <div className="flex items-center gap-1.5 text-[11px] font-sans">
-                                <span className="text-muted mr-1">Insert:</span>
-                                <button
-                                    type="button"
-                                    onClick={() => insertFormatting("h3")}
-                                    className="px-2 py-0.5 bg-cream border border-border rounded hover:bg-gold-soft/50"
-                                >
-                                    + Heading
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => insertFormatting("p")}
-                                    className="px-2 py-0.5 bg-cream border border-border rounded hover:bg-gold-soft/50"
-                                >
-                                    + Paragraph
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => insertFormatting("quote")}
-                                    className="px-2 py-0.5 bg-cream border border-border rounded hover:bg-gold-soft/50"
-                                >
-                                    + Quote
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => insertFormatting("ul")}
-                                    className="px-2 py-0.5 bg-cream border border-border rounded hover:bg-gold-soft/50"
-                                >
-                                    + List
-                                </button>
-                            </div>
-                        </div>
-                        <textarea
-                            name="content"
-                            rows={12}
+                        <label className="font-sans text-[11px] tracking-[0.18em] uppercase text-muted font-semibold block mb-2">
+                            Article Content (Rich Text / CKEditor) *
+                        </label>
+                        <CKEditorWrapper
                             value={form.content}
-                            onChange={(e) => setForm({ ...form, content: e.target.value })}
-                            required
-                            placeholder="Write your story using HTML tags like <p>, <h3>, <blockquote>, <ul>, etc."
-                            className="w-full p-4 border border-border rounded-xl font-sans text-xs text-ink bg-white focus:outline-none focus:border-gold leading-relaxed font-mono"
+                            onChange={(newContent) => setForm((prev) => ({ ...prev, content: newContent }))}
+                            placeholder="Write your editorial article story here with headings, paragraphs, lists, quotes, tables, formatting..."
                         />
+                        <input type="hidden" name="content" value={form.content} />
                     </div>
 
                     {/* Publish checkbox */}

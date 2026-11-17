@@ -17,7 +17,7 @@ export default function TrustBar() {
     {
       icon: MapPin,
       title: "Lucknow Locations",
-      subtitle: "Mahanagar | Gomti Nagar | Hazratganj",
+      subtitle: "Mahanagar | Gomti Nagar | Butler Rd, Hazratganj",
     },
   ];
 

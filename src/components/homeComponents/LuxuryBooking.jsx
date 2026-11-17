@@ -303,7 +303,7 @@ function LuxuryBooking({ data }) {
                                             <option value="">Choose your salon</option>
                                             <option value="Mahanagar, Lucknow">Mahanagar, Lucknow</option>
                                             <option value="Gomti Nagar, Lucknow">Gomti Nagar, Lucknow</option>
-                                            <option value="Hazratganj, Lucknow">Hazratganj, Lucknow</option>
+                                            <option value="Butler Rd, Hazratganj, Lucknow">Butler Rd, Hazratganj, Lucknow</option>
                                         </select>
                                     </div>
                                 </div>

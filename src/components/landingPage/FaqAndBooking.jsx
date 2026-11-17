@@ -483,7 +483,7 @@ export default function FaqAndBooking() {
                       >
                         <option value="Mahanagar, Lucknow">Mahanagar, Lucknow</option>
                         <option value="Gomti Nagar, Lucknow">Gomti Nagar, Lucknow</option>
-                        <option value="Hazratganj, Lucknow">Hazratganj, Lucknow</option>
+                        <option value="Butler Rd, Hazratganj, Lucknow">Butler Rd, Hazratganj, Lucknow</option>
                       </select>
                       <ChevronDown className="w-4 h-4 text-[#7A726B] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>

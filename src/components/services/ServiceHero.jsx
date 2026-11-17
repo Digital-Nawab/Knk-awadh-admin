@@ -91,7 +91,7 @@ export default function ServiceHero({
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="text-gold">✦</span>
-                                <span>Mahanagar · Hazratganj · Gomti Nagar</span>
+                                <span>Mahanagar · Butler Rd, Hazratganj · Gomti Nagar</span>
                             </div>
                         </div>
                     </div>

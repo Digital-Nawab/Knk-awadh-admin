@@ -43,7 +43,7 @@ export default function ServiceDetailTemplate({ service }) {
     const defaultWhyChoose = [
         "Over 15 years of beauty artistry and bridal mastery in Awadh",
         "Internationally trained senior artists and certified technicians",
-        "State-of-the-art salons across Mahanagar, Hazratganj, and Gomti Nagar",
+        "State-of-the-art salons across Mahanagar, Butler Rd, Hazratganj, and Gomti Nagar",
         "Exclusively authentic, dermatologist-tested global product lines",
     ];
 

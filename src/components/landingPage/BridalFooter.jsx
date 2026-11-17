@@ -16,7 +16,7 @@ export default function BridalFooter() {
   const { openBookingModal } = useBookingModal();
   const branches = [
     {
-      name: "Hazratganj (Flagship)",
+      name: "Butler Rd, Hazratganj (Flagship)",
       address: "Ground Floor 11B, Tilak Marg, Dalibagh",
       phone: "+91 88810 00529",
       tel: "tel:+918881000529",
@@ -59,7 +59,7 @@ export default function BridalFooter() {
 
             <div className="flex items-center gap-2 pt-0.5 text-[#7A726B]">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/knkawadh?srtk=MTNpeTVhdWtvNHl6aA=="
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-7 h-7 rounded-full bg-[#FAF5EE] border border-[#EAE2D5] flex items-center justify-center hover:text-[#B3203F] hover:border-[#B3203F] transition"

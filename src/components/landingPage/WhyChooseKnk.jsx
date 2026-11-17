@@ -197,7 +197,7 @@ export default function WhyChooseKnk() {
                           Real Work Only &bull; Zero Stock Photos
                         </h4>
                         <p className="text-[11px] text-[#C4BCB3] mt-1 leading-snug">
-                          Captured live at our Hazratganj, Mahanagar &amp; Gomti Nagar bridal lounges.
+                          Captured live at our Butler Rd, Hazratganj, Mahanagar &amp; Gomti Nagar bridal lounges.
                         </p>
                       </div>
 

@@ -36,7 +36,7 @@ const BRANCH_CONFIG = {
     },
     hazratganj: {
         id: "hazratganj",
-        name: "KNK Hazratganj",
+        name: "KNK Butler Rd, Hazratganj",
         title: "Awadh Flagship & Royal Suites",
         address: "Ground Floor 11B, Tilak Marg, Dalibagh Colony, Hazratganj, Lucknow",
         phone: "+91 88810 00529",
@@ -508,7 +508,7 @@ export default function InteriorIndex() {
                             Flagship Sanctuary
                         </span>
                     </div>
-                    <h3 className="font-display text-2xl font-medium">KNK Hazratganj</h3>
+                    <h3 className="font-display text-2xl font-medium">KNK Butler Rd, Hazratganj</h3>
                     <p className={`text-xs mt-1 font-sans ${activeBranchTab === "hazratganj" ? "text-rose-200/70" : "text-muted"}`}>
                         Tilak Marg, Dalibagh · Royal suites & Awadhi jaali
                     </p>
@@ -684,14 +684,14 @@ export default function InteriorIndex() {
                                 <div>
                                     <div className="flex items-center gap-2 mb-1.5">
                                         <span className="font-mono text-[10px] font-bold tracking-[0.2em] uppercase text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full">
-                                            Branch · Hazratganj
+                                            Branch · Butler Rd, Hazratganj
                                         </span>
                                         <span className="text-xs text-muted font-sans">
                                             {filteredHazratganj.length} photos shown ({hazratganjItems.length} total)
                                         </span>
                                     </div>
                                     <h2 className="font-display text-3xl font-medium text-ink">
-                                        KNK Hazratganj Gallery (Flagship)
+                                        KNK Butler Rd, Hazratganj Gallery (Flagship)
                                     </h2>
                                     <div className="flex items-center gap-2 text-xs text-muted mt-1 font-sans">
                                         <MapPin className="size-3.5 text-rose-600" />

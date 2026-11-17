@@ -7,9 +7,9 @@ export const revalidate = 60;
 
 export async function generateMetadata() {
     return await getDynamicMetadata("/contact-us", {
-        title: "Contact Us | KNK Salon Awadh Lucknow – Mahanagar, Gomti Nagar & Hazratganj",
+        title: "Contact Us | KNK Salon Awadh Lucknow – Mahanagar, Gomti Nagar & Butler Rd, Hazratganj",
         description:
-            "Connect with KNK Salon Awadh in Lucknow. Visit our luxury studios in Mahanagar (+91-9559321711), Gomti Nagar (+91-8881000551) & Hazratganj (+91-8881000529). Book your royal hair, skin, and bridal appointments.",
+            "Connect with KNK Salon Awadh in Lucknow. Visit our luxury studios in Mahanagar (+91-9559321711), Gomti Nagar (+91-8881000551) & Butler Rd, Hazratganj (+91-8881000529). Book your royal hair, skin, and bridal appointments.",
         image: "/assets/images/new/about.webp",
         keywords:
             "KNK Salon contact, KNK Salon Mahanagar phone number, KNK Salon Gomti Nagar address, KNK Awadh Hazratganj, luxury beauty salon Lucknow, book bridal makeup Lucknow",
@@ -71,7 +71,7 @@ export default function ContactPage() {
             },
             {
                 "@type": "BeautySalon",
-                name: "KNK Awadh Salon & Academy – Hazratganj",
+                name: "KNK Awadh Salon & Academy – Butler Rd, Hazratganj",
                 telephone: "+91-8881000529",
                 address: {
                     "@type": "PostalAddress",

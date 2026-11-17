@@ -254,5 +254,28 @@ CREATE TABLE IF NOT EXISTS enroll_courses (
     INDEX idx_is_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 15. Nails Services Page Sections Table (Dynamic CMS for Nails Services Page)
+CREATE TABLE IF NOT EXISTS nails_sections (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    section_key VARCHAR(50) NOT NULL UNIQUE,
+    section_name VARCHAR(100) NOT NULL,
+    content JSON NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_section_key (section_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 16. Service Process Steps Table (Category-wise "How It Works" Steps: Nails, Hair, Beauty, Facial, Body)
+CREATE TABLE IF NOT EXISTS service_process_steps (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_slug VARCHAR(50) NOT NULL UNIQUE,
+    category_name VARCHAR(100) NOT NULL,
+    content JSON NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_category_slug (category_slug)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 
 

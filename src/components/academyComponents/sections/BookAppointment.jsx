@@ -14,7 +14,7 @@ export default function BookAppointment() {
                         eyebrow="Reserve Your Vanity Seat"
                         line1="Book an academic"
                         line2="consultation & studio tour."
-                        description="Schedule a private session with our senior course advisors. Discuss batch availability, kit choices, and take a personal tour of our Hazratganj and Gomti Nagar academy studios."
+                        description="Schedule a private session with our senior course advisors. Discuss batch availability, kit choices, and take a personal tour of our Butler Rd, Hazratganj and Gomti Nagar academy studios."
                         center
                     />
                     <div className="flex justify-center">

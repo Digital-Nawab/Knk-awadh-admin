@@ -467,6 +467,75 @@ export async function initDatabase() {
             console.log("Default Men Grooming page sections seeded successfully");
         }
 
+        // 12b. Nails Services Page Sections Table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS nails_sections (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                section_key VARCHAR(50) NOT NULL UNIQUE,
+                section_name VARCHAR(100) NOT NULL,
+                content JSON NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_section_key (section_key)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // Seed default Nails Services page sections if empty
+        const [existingNails] = await db.query("SELECT id FROM nails_sections LIMIT 1");
+        if (existingNails.length === 0) {
+            const { DEFAULT_NAILS_SECTIONS, NAILS_SECTION_METADATA } = await import("../data/nailsDefaults.js");
+            const values = NAILS_SECTION_METADATA.map((meta) => [
+                meta.key,
+                meta.label,
+                JSON.stringify(DEFAULT_NAILS_SECTIONS[meta.key] || {}),
+            ]);
+            await db.query(
+                `INSERT INTO nails_sections (section_key, section_name, content) VALUES ?`,
+                [values]
+            );
+            console.log("Default Nails Services page sections seeded successfully");
+        }
+
+        // 12c. Category-wise Process Steps Table (Nails, Hair, Beauty, Facial, Body)
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS service_process_steps (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                category_slug VARCHAR(50) NOT NULL UNIQUE,
+                category_name VARCHAR(100) NOT NULL,
+                content JSON NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_category_slug (category_slug)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        const [existingProcess] = await db.query("SELECT id FROM service_process_steps LIMIT 1");
+        if (existingProcess.length === 0) {
+            const defaultSteps = {
+                eyebrow: "How It Works",
+                title: "Simple, from",
+                titleHighlight: "start to finish.",
+                steps: [
+                    { n: "01", title: "Choose Your Service", text: "Browse the list below or tell us the occasion — we'll suggest what fits." },
+                    { n: "02", title: "Book a Slot", text: "Call, WhatsApp, or fill the form and pick a time that works for you." },
+                    { n: "03", title: "Meet Your Artist", text: "You're matched with the specialist best suited to what you need." },
+                    { n: "04", title: "Leave Glowing", text: "Walk out looking — and feeling — exactly the way you wanted to." },
+                ],
+            };
+            const cats = [
+                ["nails", "Nails", JSON.stringify(defaultSteps)],
+                ["hair", "Hair", JSON.stringify(defaultSteps)],
+                ["beauty", "Beauty", JSON.stringify(defaultSteps)],
+                ["facial", "Facial", JSON.stringify(defaultSteps)],
+                ["body", "Body", JSON.stringify(defaultSteps)],
+            ];
+            await db.query(
+                `INSERT INTO service_process_steps (category_slug, category_name, content) VALUES ?`,
+                [cats]
+            );
+            console.log("Default service process steps seeded successfully");
+        }
+
         // 13. Exclusive Offers & Deals Table
         await db.query(`
             CREATE TABLE IF NOT EXISTS offers (

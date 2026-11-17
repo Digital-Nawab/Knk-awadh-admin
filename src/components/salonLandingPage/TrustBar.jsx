@@ -17,7 +17,7 @@ export default function TrustBar() {
     {
       icon: MapPin,
       title: "3 Lucknow Studios",
-      subtitle: "Mahanagar | Gomti Nagar | Hazratganj",
+      subtitle: "Mahanagar | Gomti Nagar | Butler Rd, Hazratganj",
     },
   ];
 

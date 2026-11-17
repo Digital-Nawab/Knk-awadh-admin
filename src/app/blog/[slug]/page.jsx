@@ -103,7 +103,7 @@ export default async function SingleBlogPage({ params }) {
 
                     {/* Article Body */}
                     <div
-                        className="prose prose-stone max-w-none font-sans text-[15px] sm:text-base leading-relaxed text-[#3a322c] space-y-6 [&>p]:leading-[1.85] [&>h3]:font-display [&>h3]:text-3xl [&>h3]:italic [&>h3]:text-ink [&>h3]:mt-8 [&>h3]:mb-3 [&>blockquote]:border-l-2 [&>blockquote]:border-gold [&>blockquote]:pl-6 [&>blockquote]:italic [&>blockquote]:text-xl [&>blockquote]:font-display [&>blockquote]:text-[#221c17] [&>blockquote]:my-8 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:space-y-2 [&>ul>li]:text-[#3a322c]"
+                        className="blog-content-body max-w-none text-[15px] sm:text-base leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: blog.content }}
                     />
 

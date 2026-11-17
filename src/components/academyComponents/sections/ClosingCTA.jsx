@@ -67,7 +67,7 @@ export default function ClosingCTA() {
                     <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-[#a89d91] font-['Inter'] text-[11.5px]">
                         <div className="flex items-center gap-1.5">
                             <MapPin className="size-3.5 text-[#ead9ae]" />
-                            <span>Hazratganj Studio & Academy</span>
+                            <span>Butler Rd, Hazratganj Studio & Academy</span>
                         </div>
                         <span className="hidden sm:inline text-[#ead9ae]/40">•</span>
                         <div className="flex items-center gap-1.5">

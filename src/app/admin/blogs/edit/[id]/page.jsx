@@ -3,6 +3,17 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const CKEditorWrapper = dynamic(() => import("@/components/backend/CKEditorWrapper"), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full h-72 border border-border rounded-xl bg-[#faf8f5] flex flex-col items-center justify-center gap-2 text-xs text-muted font-sans">
+            <div className="w-6 h-6 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+            <span>Loading CKEditor Rich Text Editor...</span>
+        </div>
+    ),
+});
 
 export default function AdminBlogEditPage() {
     const router = useRouter();
@@ -72,6 +83,7 @@ export default function AdminBlogEditPage() {
 
         const formData = new FormData(e.target);
         formData.set("isPublished", form.isPublished ? "true" : "false");
+        formData.set("content", form.content);
 
         try {
             const res = await fetch(`/api/blogs/${id}`, {
@@ -241,16 +253,14 @@ export default function AdminBlogEditPage() {
 
                     <div>
                         <label className="font-sans text-[11px] tracking-[0.18em] uppercase text-muted block mb-2 font-semibold">
-                            Article Content (HTML / Rich Format) *
+                            Article Content (CKEditor Rich Text) *
                         </label>
-                        <textarea
-                            name="content"
-                            rows={12}
+                        <CKEditorWrapper
                             value={form.content}
-                            onChange={(e) => setForm({ ...form, content: e.target.value })}
-                            required
-                            className="w-full p-4 border border-border rounded-xl font-sans text-xs text-ink bg-white focus:outline-none focus:border-gold leading-relaxed font-mono"
+                            onChange={(newContent) => setForm((prev) => ({ ...prev, content: newContent }))}
+                            placeholder="Write your editorial article content here with headings, paragraphs, lists, quotes..."
                         />
+                        <input type="hidden" name="content" value={form.content} />
                     </div>
 
                     <div className="flex items-center gap-3 pt-2">

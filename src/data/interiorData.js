@@ -1,7 +1,7 @@
 export const BRANCH_INTERIORS = [
     {
         id: 'hazratganj',
-        name: 'KNK Hazratganj',
+        name: 'KNK Butler Rd, Hazratganj',
         subtitle: 'Awadh Flagship & Royal Suites',
         badge: 'Flagship Sanctuary',
         address: 'Ground Floor 11B, Tilak Marg, Opp. Ganna Sansthaan, Dalibagh Colony, Hazratganj, Lucknow',

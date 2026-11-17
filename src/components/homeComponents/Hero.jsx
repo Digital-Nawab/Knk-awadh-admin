@@ -144,25 +144,28 @@ function Hero({ initialHero = null }) {
             />
           ) : (
             <>
-              <Image
-                src="/assets/images/reel-1-IdXjgO27.webp"
-                alt={hero?.alt_text || "KNK Salon Awadh Luxury Beauty"}
-                priority={true}
-                fill
-                sizes="100vw"
-                quality={85}
-                className="h-full w-full object-cover"
-              />
+              {hero?.poster_url && (
+                <Image
+                  src={hero.poster_url}
+                  alt={hero?.alt_text || "KNK Salon Awadh Luxury Beauty"}
+                  priority={true}
+                  fill
+                  sizes="100vw"
+                  quality={85}
+                  className="h-full w-full object-cover"
+                />
+              )}
               {videoLoaded && (
                 <video
                   ref={videoRef}
-                  src={hero?.media_url || "/admin-assets/hero/1790749838367-reel-2.mp4"}
-                  poster="/assets/images/reel-1-IdXjgO27.webp"
+                  key={hero?.media_url || "hero-video"}
+                  src={hero?.media_url || "/admin-assets/hero/KNK - website video.mp4"}
+                  poster={hero?.poster_url || undefined}
                   autoPlay
                   muted
                   loop
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                   className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
                 />
               )}
@@ -238,12 +241,9 @@ function Hero({ initialHero = null }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="group mt-6 flex w-full items-center justify-between bg-[#29231f] px-4 py-3.5 font-['Inter'] text-[8px] font-semibold uppercase tracking-[0.18em] text-[#faf7f0] transition-all duration-300 hover:bg-[#b58a52] disabled:opacity-60"
+                    className="group mt-6 flex w-full items-center justify-center bg-[#29231f] px-4 py-3.5 font-['Inter'] text-[8px] font-semibold uppercase tracking-[0.18em] text-[#faf7f0] transition-all duration-300 hover:bg-[#b58a52] disabled:opacity-60"
                   >
                     <span>{loading ? "Reserving..." : "Book Appointment"}</span>
-                    <span className="text-[15px] transition-transform duration-300 group-hover:translate-x-1">
-                      ↗
-                    </span>
                   </button>
                 </div>
               </div>
@@ -299,7 +299,7 @@ function Hero({ initialHero = null }) {
                         <option value="">Choose location</option>
                         <option>Mahanagar</option>
                         <option>Gomti Nagar</option>
-                        <option>Hazratganj</option>
+                        <option>Butler Rd, Hazratganj</option>
                       </select>
                       <span className="pointer-events-none absolute right-0 top-1 text-[10px] text-[#655950]">
                         ⌄

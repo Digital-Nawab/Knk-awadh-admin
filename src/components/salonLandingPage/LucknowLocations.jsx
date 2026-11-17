@@ -26,7 +26,7 @@ export default function LucknowLocations() {
     },
     {
       id: "hazratganj",
-      name: "KNK Awadh Salon & Academy – Hazratganj",
+      name: "KNK Awadh Salon & Academy – Butler Rd, Hazratganj",
       address: "Ground Floor 11B, Tilak Marg, Opp. Ganna Sansthaan, Lucknow",
       phone: "+91 88810 00552",
       tel: "tel:+918881000552",

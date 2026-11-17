@@ -4,7 +4,7 @@ import { authController } from "@/controllers/AuthController";
 export async function POST(req) {
     try {
         const body = await req.json().catch(() => ({}));
-        const { email, password } = body;
+        const { email, password, rememberMe = false } = body;
 
         if (!email || !password) {
             return NextResponse.json(
@@ -13,7 +13,7 @@ export async function POST(req) {
             );
         }
 
-        const result = await authController.login(email, password);
+        const result = await authController.login(email, password, Boolean(rememberMe));
 
         if (result.error) {
             return NextResponse.json(
@@ -55,13 +55,19 @@ export async function POST(req) {
             user: result.user,
         });
 
-        res.cookies.set("token", result.token, {
+        const cookieOptions = {
             httpOnly: true,
             secure: isHttps,
             sameSite: "lax",
             path: "/",
-            maxAge: 60 * 60 * 24 * 7, // 7 days
-        });
+        };
+
+        if (result.rememberMe) {
+            cookieOptions.maxAge = 60 * 60 * 24 * 30; // 30 days
+            cookieOptions.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+        }
+
+        res.cookies.set("token", result.token, cookieOptions);
 
         return res;
     } catch (err) {

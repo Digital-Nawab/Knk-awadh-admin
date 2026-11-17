@@ -49,7 +49,7 @@ const BRANCHES = [
     },
     {
         id: "hazratganj",
-        name: "KNK Awadh Salon & Academy – Hazratganj",
+        name: "KNK Awadh Salon & Academy – Butler Rd, Hazratganj",
         address: "Ground Floor 11B, Tilak Marg, Opp. Ganna Sansthaan, Hazratganj Colony, Lucknow 226001",
         phone: "+91-8881000529",
         cleanPhone: "+918881000529",
@@ -437,7 +437,7 @@ export default function Contact() {
                                     <span className="font-sans text-[10px] uppercase tracking-wider text-blue-800 font-semibold bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
                                         Cosmetology &amp; Artistry
                                     </span>
-                                    <span className="text-xs text-muted">Hazratganj Campus</span>
+                                    <span className="text-xs text-muted">Butler Rd, Hazratganj Campus</span>
                                 </div>
                                 <h4 className="font-display text-xl text-[#241D18] font-medium">
                                     KNK Beauty Academy Admissions
@@ -477,7 +477,7 @@ export default function Contact() {
                                             All three studios in Lucknow are open <strong>7 days a week</strong> from <strong>10:00 AM to 08:30 PM</strong>.
                                         </p>
                                         <p className="text-[#8B7D6E] pt-1">
-                                            Valet parking available at Mahanagar and Hazratganj studios.
+                                            Valet parking available at Mahanagar and Butler Rd, Hazratganj studios.
                                         </p>
                                     </div>
                                 </div>
@@ -596,8 +596,8 @@ export default function Contact() {
                                         >
                                             <option value="KNK Salon Mahanagar">KNK Salon Mahanagar</option>
                                             <option value="KNK Salon Gomti Nagar">KNK Salon Gomti Nagar</option>
-                                            <option value="KNK Awadh Salon & Academy – Hazratganj">
-                                                KNK Awadh Salon &amp; Academy – Hazratganj
+                                            <option value="KNK Awadh Salon & Academy – Butler Rd, Hazratganj">
+                                                KNK Awadh Salon &amp; Academy – Butler Rd, Hazratganj
                                             </option>
                                         </select>
                                     </div>

@@ -69,7 +69,7 @@ export const aboutOverview = {
         },
         {
             q: "Where are KNK salons located?",
-            a: "KNK Awadh Salon & Academy has three locations in Lucknow: Mahanagar, Gomti Nagar and Hazratganj.",
+            a: "KNK Awadh Salon & Academy has three locations in Lucknow: Mahanagar, Gomti Nagar and Butler Rd, Hazratganj.",
         },
         {
             q: "What services does KNK offer?",
@@ -108,7 +108,7 @@ export const locations = [
         mapUrl: "https://www.google.com/maps/search/?api=1&query=KNK+Awadh+Salon+Vipul+Khand+Gomti+Nagar+Lucknow",
     },
     {
-        name: "KNK Awadh Hazratganj",
+        name: "KNK Awadh Butler Rd, Hazratganj",
         address: "Ground Floor 11B, Tilak Marg, Opp. Ganna Sansthaan, Dalibagh Colony, Hazratganj, Lucknow",
         phone: "+91 88810 00529",
         mapUrl: "https://www.google.com/maps/search/?api=1&query=KNK+Awadh+Salon+Tilak+Marg+Hazratganj+Lucknow",
@@ -122,7 +122,7 @@ export const faqList = [
     },
     {
         q: "Where are KNK Salon locations in Lucknow?",
-        a: "KNK Awadh Salon & Academy has three locations in Lucknow: Mahanagar, Gomti Nagar and Hazratganj.",
+        a: "KNK Awadh Salon & Academy has three locations in Lucknow: Mahanagar, Gomti Nagar and Butler Rd, Hazratganj.",
     },
     {
         q: "What services does KNK Awadh Salon & Academy offer?",
@@ -158,7 +158,7 @@ export const galleryImages = [
 export const marqueeItems = [
     "MAHANAGAR",
     "GOMTI NAGAR",
-    "HAZRATGANJ",
+    "BUTLER RD, HAZRATGANJ",
     "KNK ACADEMY",
     "SINCE DAY ONE, LUCKNOW",
 ];

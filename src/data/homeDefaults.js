@@ -167,7 +167,7 @@ export const DEFAULT_HOME_SECTIONS = {
                 directionsUrl: "#",
             },
             {
-                name: "KNK Awadh Salon & Academy – Hazratganj",
+                name: "KNK Awadh Salon & Academy – Butler Rd, Hazratganj",
                 address: "Ground Floor 11B, Tilak Marg, Opp. Ganna Sansthaan, Lucknow",
                 phone: "+918881000552",
                 directionsUrl: "#",
@@ -227,7 +227,7 @@ export const DEFAULT_HOME_SECTIONS = {
             },
             {
                 q: "What are your salon opening timings and locations?",
-                a: "KNK Salon Awadh is open Monday through Sunday, 10:00 AM to 8:30 PM across our luxury locations in Mahanagar, Gomti Nagar, and Hazratganj.",
+                a: "KNK Salon Awadh is open Monday through Sunday, 10:00 AM to 8:30 PM across our luxury locations in Mahanagar, Gomti Nagar, and Butler Rd, Hazratganj.",
             },
             {
                 q: "How can I book an appointment or bridal consultation?",
@@ -239,7 +239,7 @@ export const DEFAULT_HOME_SECTIONS = {
         eyebrow: "KNK AWADH SALON",
         heading: "Reserve your luxury experience.",
         subtext: "Monday to Sunday · 10:00 AM – 8:30 PM",
-        locationsText: "Mahanagar, Gomti Nagar & Hazratganj",
+        locationsText: "Mahanagar, Gomti Nagar & Butler Rd, Hazratganj",
         phone: "+918881000552",
         whatsappUrl: "https://wa.me/918881000552?text=Hi%20KNK%20Salon%2C%20I%20would%20like%20to%20book%20an%20appointment.",
         slideshow: [

@@ -17,7 +17,7 @@ const makeupServicesOptions = [
 const knkLocations = [
     { value: "Mahanagar", label: "KNK Salon — Mahanagar, Lucknow" },
     { value: "Gomti Nagar", label: "KNK Salon — Gomti Nagar, Lucknow" },
-    { value: "Hazratganj", label: "KNK Awadh Salon & Academy — Hazratganj, Lucknow" },
+    { value: "Butler Rd, Hazratganj", label: "KNK Awadh Salon & Academy — Butler Rd, Hazratganj, Lucknow" },
 ];
 
 const preferredTimeOptions = [

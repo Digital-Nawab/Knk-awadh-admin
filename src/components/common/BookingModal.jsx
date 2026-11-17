@@ -17,7 +17,7 @@ const DEFAULT_CATEGORIES = [
 const BRANCH_LOCATIONS = [
     "Mahanagar, Lucknow",
     "Gomti Nagar, Lucknow",
-    "Hazratganj, Lucknow",
+    "Butler Rd, Hazratganj, Lucknow",
 ];
 
 function findCategoryMatch(initial, availableCategories) {

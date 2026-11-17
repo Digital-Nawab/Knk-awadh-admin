@@ -16,7 +16,7 @@ export default function BridalFooter() {
   const { openBookingModal } = useBookingModal();
   const branches = [
     {
-      name: "Hazratganj (Flagship)",
+      name: "Butler Rd, Hazratganj (Flagship)",
       address: "Ground Floor 11B, Tilak Marg, Dalibagh",
       phone: "+91 88810 00529",
       tel: "tel:+918881000529",

@@ -199,7 +199,7 @@ function BookingForm({ whatsappText, whatsappNumber }) {
                         </option>
                         <option value="Mahanagar">Mahanagar</option>
                         <option value="Gomti Nagar">Gomti Nagar</option>
-                        <option value="Hazratganj">Hazratganj</option>
+                        <option value="Butler Rd, Hazratganj">Butler Rd, Hazratganj</option>
                     </select>
                 </div>
 

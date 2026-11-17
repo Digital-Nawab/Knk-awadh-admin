@@ -1,8 +1,11 @@
 import Layout from "@/layout/Layout";
-import DynamicCategoryPage from "@/components/serviceComponents/DynamicCategoryPage";
+import NailsService from "@/components/serviceComponents/NailsService";
+import NailsModel from "@/models/NailsModel";
+import { DEFAULT_NAILS_SECTIONS } from "@/data/nailsDefaults";
 import { getDynamicMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function generateMetadata() {
     return await getDynamicMetadata('/services/nails', {
@@ -11,10 +14,17 @@ export async function generateMetadata() {
     });
 }
 
-export default function NailsPage() {
+export default async function NailsPage() {
+    let nailsData = DEFAULT_NAILS_SECTIONS;
+    try {
+        nailsData = await NailsModel.getAllSections();
+    } catch (err) {
+        console.warn("Failed to prefetch nails sections on server:", err?.message || err);
+    }
+
     return (
         <Layout>
-            <DynamicCategoryPage categorySlug="nails" />
+            <NailsService initialData={nailsData} />
         </Layout>
     );
 }

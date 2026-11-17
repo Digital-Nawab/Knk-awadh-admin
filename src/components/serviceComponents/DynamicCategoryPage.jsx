@@ -304,7 +304,7 @@ export default function DynamicCategoryPage({ categorySlug = "nails" }) {
             </section>
             */}
 
-            <ProcessSteps />
+            <ProcessSteps categorySlug={categorySlug} category={category?.name || categorySlug} />
             <ServicesCTA />
         </div>
     );

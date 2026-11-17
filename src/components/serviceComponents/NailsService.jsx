@@ -2,171 +2,40 @@
 
 import React, { useState, useEffect } from "react";
 import { Eyebrow, GoldDivider } from "./ServiceUI";
-import ProcessSteps from "./ProcessSteps";
-import ServicesCTA from "./ServicesCTA";
 import CategoryServiceShowcase from "./CategoryServiceShowcase";
+import { DEFAULT_NAILS_SECTIONS } from "@/data/nailsDefaults";
 import { nailsShowcaseServices } from "@/data/categoryShowcaseData";
 
-const defaultNailMenu = {
-    "Nail Extensions": {
-        items: [
-            "Nail Cut",
-            "Nail Filing",
-            "Nail Paint Application",
-            "Gel Paint Removal",
-            "Gel Paint Application",
-            "Temporary Nail Extensions",
-            "Gel Nail Extensions",
-            "Acrylic Nail Extensions",
-        ],
-    },
-    "Mani / Pedi": {
-        items: ["Basic", "O3", "Alga", "Bombini", "Biscotti"],
-    },
-};
+export default function NailsService({ initialData = null }) {
+    const data = {
+        hero: { ...DEFAULT_NAILS_SECTIONS.hero, ...(initialData?.hero || {}) },
+        showcase: { ...DEFAULT_NAILS_SECTIONS.showcase, ...(initialData?.showcase || {}) },
+        process: { ...DEFAULT_NAILS_SECTIONS.process, ...(initialData?.process || {}) },
+        cta: { ...DEFAULT_NAILS_SECTIONS.cta, ...(initialData?.cta || {}) },
+    };
 
-function TreatmentMenu({ dynamicTabs = null }) {
-    let menuData = defaultNailMenu;
+    const hero = data.hero;
+    const showcase = data.showcase;
+    const processSteps = data.process;
+    const cta = data.cta;
 
-    if (dynamicTabs && Array.isArray(dynamicTabs) && dynamicTabs.length > 0) {
-        menuData = {};
-        dynamicTabs.forEach((tab) => {
-            const catName = tab.category || "Treatments";
-            menuData[catName] = {
-                items: Array.isArray(tab.items) ? tab.items : [],
-            };
-        });
-    }
+    // Headings
+    const titlePrefix = hero.titlePrefix || "Nails,";
+    const titleHighlight = hero.titleHighlight || "done right.";
 
-    const categories = Object.keys(menuData);
-    const [active, setActive] = useState(categories[0] || "Nail Extensions");
+    const showcaseServices = Array.isArray(showcase.items) && showcase.items.length > 0
+        ? showcase.items
+        : nailsShowcaseServices;
 
-    useEffect(() => {
-        if (categories.length > 0 && !menuData[active]) {
-            setActive(categories[0]);
-        }
-    }, [categories, active, menuData]);
+    const dynamicSteps = Array.isArray(processSteps.steps) && processSteps.steps.length > 0
+        ? processSteps.steps
+        : DEFAULT_NAILS_SECTIONS.process.steps;
 
-    const activeData = menuData[active] || { items: [] };
-
-    return (
-        <div className="relative mx-auto mt-20 max-w-4xl">
-            <div className="relative border border-gold/40 bg-cream px-6 py-12 sm:px-10 md:px-16 md:py-16">
-                <span aria-hidden="true" className="absolute left-0 top-0 h-6 w-6 border-l border-t border-gold" />
-                <span aria-hidden="true" className="absolute right-0 top-0 h-6 w-6 border-r border-t border-gold" />
-                <span aria-hidden="true" className="absolute left-0 bottom-0 h-6 w-6 border-l border-b border-gold" />
-                <span aria-hidden="true" className="absolute right-0 bottom-0 h-6 w-6 border-r border-b border-gold" />
-
-                <p className="text-center font-display italic text-3xl text-gold-deep">
-                    The full menu
-                </p>
-                <GoldDivider center />
-
-                {/* Tabs */}
-                <div className="mt-10 flex flex-wrap justify-center gap-3">
-                    {categories.map((cat) => {
-                        const isActive = cat === active;
-                        return (
-                            <button
-                                key={cat}
-                                onClick={() => setActive(cat)}
-                                className={`group flex items-center gap-2 rounded-full border px-5 py-2.5 font-sans text-[11px] tracking-[0.2em] uppercase transition-all duration-300 cursor-pointer ${
-                                    isActive
-                                        ? "border-gold bg-gold text-cream shadow-luxe"
-                                        : "border-border text-muted hover:border-gold hover:text-gold-deep"
-                                }`}
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" className={`h-4 w-4 ${isActive ? "text-cream" : "text-gold"}`}>
-                                    <path d="M9 3c-2 3-3 7-3 10a6 6 0 0 0 12 0c0-3-1-7-3-10" />
-                                    <path d="M9 3c1 1.5 1.5 3.2 1.5 5" />
-                                </svg>
-                                {cat}
-                            </button>
-                        );
-                    })}
-                </div>
-
-                {/* Editorial list */}
-                <div className="mt-12 grid gap-x-12 gap-y-1 sm:grid-cols-2">
-                    {activeData.items.map((item, i) => (
-                        <div
-                            key={`${active}-${item}-${i}`}
-                            className="group relative flex items-baseline gap-4 py-4"
-                        >
-                            <span
-                                aria-hidden="true"
-                                className="absolute left-0 top-0 h-px w-0 bg-gold transition-all duration-500 ease-out group-hover:w-full"
-                            />
-                            <span className="font-display text-sm italic text-gold-deep">
-                                {String(i + 1).padStart(2, "0")}
-                            </span>
-                            <span className="font-display text-lg text-ink transition-colors duration-300 group-hover:text-gold-deep sm:text-xl">
-                                {item}
-                            </span>
-                            <span
-                                aria-hidden="true"
-                                className="ml-auto text-gold opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                            >
-                                &#10022;
-                            </span>
-                            <span
-                                aria-hidden="true"
-                                className="absolute inset-x-0 bottom-0 h-px bg-border/60"
-                            />
-                        </div>
-                    ))}
-                </div>
-
-                <div className="mt-10 text-center">
-                    <a
-                        href="#book"
-                        data-booking-trigger="true"
-                        data-service={`Nails - ${active}`}
-                        className="inline-flex items-center justify-center bg-gold text-cream font-sans text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full shadow-luxe transition-transform duration-300 hover:scale-105 cursor-pointer"
-                    >
-                        Book {active}
-                    </a>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-export default function NailsService() {
-    const [categoryData, setCategoryData] = useState(null);
-
-    useEffect(() => {
-        let isMounted = true;
-        const fetchCategory = async () => {
-            try {
-                const res = await fetch("/api/services/slug/nail-art");
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.service && isMounted) {
-                        setCategoryData(data.service);
-                    }
-                }
-            } catch (e) {
-                console.warn("Could not load dynamic category data for nails", e);
-            }
-        };
-        fetchCategory();
-        return () => { isMounted = false; };
-    }, []);
-
-    const headline = categoryData?.title || "Nails, done right.";
-    const titleParts = headline.includes(",") ? headline.split(",") : [headline];
-
-    let dynamicTabs = null;
-    if (categoryData?.items) {
-        try {
-            dynamicTabs = typeof categoryData.items === "string" ? JSON.parse(categoryData.items) : categoryData.items;
-        } catch {}
-    }
+    const isHeroVideo = hero.mediaType === "video" && Boolean(hero.videoUrl);
 
     return (
         <div className="bg-cream">
-            {/* Hero */}
+            {/* 1. Hero Section */}
             <section className="relative overflow-hidden px-6 pt-20 pb-20 md:pt-28 md:pb-24">
                 <div
                     aria-hidden="true"
@@ -187,77 +56,140 @@ export default function NailsService() {
 
                 <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
                     <div className="relative z-10 max-w-[600px]">
-                        <Eyebrow>{categoryData?.name || "Nails"}</Eyebrow>
+                        <Eyebrow>{hero.eyebrow || "Nails"}</Eyebrow>
                         <h1 className="mt-6 font-display text-[64px] font-medium leading-[0.8] tracking-[-0.05em] text-ink sm:text-[78px] md:text-[92px] lg:text-[88px] xl:text-[105px]">
-                            {titleParts[0]}
-                            {titleParts.length > 1 && (
+                            {titlePrefix}
+                            {titleHighlight && (
                                 <>
-                                    ,
                                     <br />
-                                    <span className="italic text-gold">{titleParts.slice(1).join(",")}</span>
+                                    <span className="italic text-gold">{titleHighlight}</span>
                                 </>
                             )}
                         </h1>
                         <GoldDivider />
                         <p className="mt-7 max-w-[500px] font-sans text-[13px] leading-[1.9] text-muted sm:text-[14px]">
-                            {categoryData?.short_desc ||
+                            {hero.description ||
                                 "Gel, acrylic, extensions or a simple mani-pedi — every nail service handled by an artist trained for precision and finish."}
                         </p>
                         <div className="mt-8 flex flex-wrap gap-4">
                             <a
-                                href="#book"
+                                href={hero.btn1Link || "#book"}
                                 data-booking-trigger="true"
                                 data-service="Nails"
-                                className="inline-flex items-center justify-center bg-gold text-cream font-sans text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full shadow-luxe transition-transform duration-300 hover:scale-105 cursor-pointer"
+                                className="inline-flex items-center justify-center bg-gold text-cream font-sans text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full shadow-luxe transition-transform duration-300 hover:scale-105 cursor-pointer font-medium"
                             >
-                                Book Now
+                                {hero.btn1Text || "Book Now"}
                             </a>
                             <a
-                                href="#nail-services"
-                                className="inline-flex items-center justify-center border border-gold text-gold-deep font-sans text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full transition-colors hover:bg-gold/10"
+                                href={hero.btn2Link || "#nail-services"}
+                                className="inline-flex items-center justify-center border border-gold text-gold-deep font-sans text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full transition-colors hover:bg-gold/10 font-medium"
                             >
-                                View Nail Services
+                                {hero.btn2Text || "View Nail Services"}
                             </a>
                         </div>
                     </div>
 
-                    <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-luxe border border-border">
-                        <img
-                            src={categoryData?.image || "/assets/images/new/service/NAILS.webp"}
-                            alt={categoryData?.name || "KNK Awadh nail artist at work"}
-                            className="w-full h-full object-cover"
-                        />
+                    <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-luxe border border-border bg-ink/10">
+                        {isHeroVideo ? (
+                            <video
+                                key={hero.videoUrl}
+                                src={hero.videoUrl}
+                                poster={hero.posterUrl || hero.thumbnailUrl || undefined}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                preload="metadata"
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <img
+                                src={hero.image || "/assets/images/new/service/NAILS.webp"}
+                                alt={hero.eyebrow || "KNK Awadh nail artist at work"}
+                                fetchPriority="high"
+                                decoding="async"
+                                className="w-full h-full object-cover"
+                            />
+                        )}
                     </div>
                 </div>
             </section>
 
-            {/* Nail Services Cards Showcase (Dynamic from API) */}
+            {/* 2. Nail Services Cards Showcase (Dynamic from separate nails_sections table) */}
             <CategoryServiceShowcase
-                id="nail-services"
-                category="Nails"
-                eyebrow="Precision Nail Architecture"
-                title="Nails Services"
-                subtitle="From classic Parisian French art and high-durability acrylics to bespoke 3D bridal motifs and relaxing therapeutic pedicures."
-                services={nailsShowcaseServices}
+                id={showcase.id || "nail-services"}
+                category={showcase.category || "Nails"}
+                eyebrow={showcase.eyebrow || "Precision Nail Architecture"}
+                title={showcase.title || "Nails Services"}
+                subtitle={showcase.subtitle || "From classic Parisian French art and high-durability acrylics to bespoke 3D bridal motifs and relaxing therapeutic pedicures."}
+                services={showcaseServices}
             />
 
-            {/* Our nail treatment menu */}
-            <section className="px-6 py-20 md:py-28 bg-secondary">
+            {/* 4. Process Steps (How It Works) */}
+            <section className="px-6 py-20 md:py-28">
                 <div className="max-w-6xl mx-auto">
-                    <div className="max-w-[600px] mx-auto text-center mb-14">
-                        <Eyebrow>What We Do</Eyebrow>
+                    <div className="max-w-[600px] mb-20">
+                        <Eyebrow>{processSteps.eyebrow || "How It Works"}</Eyebrow>
                         <h2 className="mt-6 font-display text-[48px] font-medium leading-[0.9] tracking-[-0.05em] text-ink sm:text-[60px] md:text-[68px]">
-                            Our nail <span className="italic text-gold">services.</span>
+                            {processSteps.title || "Simple, from"}{" "}
+                            <span className="italic text-gold">{processSteps.titleHighlight || "start to finish."}</span>
                         </h2>
-                        <GoldDivider center />
+                        <GoldDivider />
                     </div>
 
-                    <TreatmentMenu dynamicTabs={dynamicTabs} />
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-16">
+                        {dynamicSteps.map((step, i) => (
+                            <div
+                                key={step.n || i}
+                                className={`group relative pl-6 ${
+                                    i === 0 ? "lg:pl-0 lg:border-l-0" : ""
+                                } lg:border-l lg:border-border/70`}
+                            >
+                                <p className="font-display text-3xl italic text-gold">
+                                    {step.n}
+                                </p>
+                                <span className="h-px w-8 bg-gold block mt-4 mb-4 transition-all duration-500 group-hover:w-14" />
+                                <h3 className="font-display text-2xl font-medium text-ink transition-colors duration-300 group-hover:text-gold-deep">
+                                    {step.title}
+                                </h3>
+                                <p className="mt-3 max-w-[26ch] font-sans text-[13px] leading-relaxed text-muted">
+                                    {step.text}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
-            <ProcessSteps />
-            <ServicesCTA />
+            {/* 5. Services CTA */}
+            <section className="px-6 py-20 md:py-24 text-center relative bg-secondary">
+                <div className="max-w-[600px] mx-auto">
+                    <Eyebrow>{cta.eyebrow || "Ready When You Are"}</Eyebrow>
+                    <h2 className="mt-6 font-display text-[48px] font-medium leading-[0.9] tracking-[-0.05em] text-ink sm:text-[60px] md:text-[68px]">
+                        {cta.title || "Let's find"}{" "}
+                        <span className="italic text-gold">{cta.titleHighlight || "your look."}</span>
+                    </h2>
+                    <p className="mt-7 font-sans text-[13px] leading-[1.9] text-muted sm:text-[14px]">
+                        {cta.description ||
+                            "Call us or send a message — we'll help you pick the right service and the right artist for your occasion."}
+                    </p>
+                    <div className="mt-9 flex flex-wrap justify-center gap-4">
+                        <a
+                            href={`tel:${cta.phone || "+919559321711"}`}
+                            className="inline-flex items-center justify-center font-sans text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full bg-gradient-gold text-cream transition-transform duration-300 hover:scale-105 font-medium"
+                        >
+                            {cta.phoneText || "Call Now"}
+                        </a>
+                        <a
+                            href={cta.whatsapp || "https://wa.me/918881000552"}
+                            className="inline-flex items-center justify-center font-sans text-[11px] tracking-[0.2em] uppercase px-8 py-4 rounded-full border border-gold text-gold-deep transition-colors font-medium hover:bg-gold/10"
+                        >
+                            {cta.whatsappText || "Chat on WhatsApp"}
+                        </a>
+                    </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
+            </section>
         </div>
     );
 }

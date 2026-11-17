@@ -10,7 +10,7 @@ export default function WhyChooseKnk({
         "100% genuine prestige global product lines with bond protection",
         "Hygienic private service suites with hospital-grade tool sterilization",
         "Tailored consultations ensuring results match your bone structure and personal style",
-        "Prime luxury destinations across Mahanagar, Hazratganj, and Gomti Nagar"
+        "Prime luxury destinations across Mahanagar, Butler Rd, Hazratganj, and Gomti Nagar"
     ];
 
     const displayPoints = points && points.length > 0 ? points : defaultPoints;
@@ -59,7 +59,7 @@ export default function WhyChooseKnk({
                                     Awadh · Lucknow
                                 </span>
                                 <p className="font-sans text-xs text-white/80">
-                                    Mahanagar · Hazratganj · Gomti Nagar
+                                    Mahanagar · Butler Rd, Hazratganj · Gomti Nagar
                                 </p>
                             </div>
                         </div>
