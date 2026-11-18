@@ -163,7 +163,7 @@ const BookingModel = {
         };
     },
 
-    async getAll({ status = null, formType = null, search = null } = {}) {
+    async getAll({ status = null, formType = null, search = null, startDate = null, endDate = null, month = null } = {}) {
         await this.ensureTable();
         let query = "SELECT * FROM bookings WHERE 1=1";
         const params = [];
@@ -217,6 +217,21 @@ const BookingModel = {
             params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
         }
 
+        // Date and Month range filter on lead arrival (created_at / booking_date)
+        if (startDate && endDate) {
+            query += " AND (DATE(created_at) BETWEEN ? AND ? OR (created_at IS NULL AND booking_date BETWEEN ? AND ?))";
+            params.push(startDate, endDate, startDate, endDate);
+        } else if (startDate) {
+            query += " AND (DATE(created_at) >= ? OR (created_at IS NULL AND booking_date >= ?))";
+            params.push(startDate, startDate);
+        } else if (endDate) {
+            query += " AND (DATE(created_at) <= ? OR (created_at IS NULL AND booking_date <= ?))";
+            params.push(endDate, endDate);
+        } else if (month && month !== "all") {
+            query += " AND (DATE_FORMAT(created_at, '%Y-%m') = ? OR (created_at IS NULL AND DATE_FORMAT(booking_date, '%Y-%m') = ?))";
+            params.push(month, month);
+        }
+
         query += " ORDER BY created_at DESC";
 
         const [rows] = await db.query(query, params);
@@ -249,40 +264,59 @@ const BookingModel = {
         return { count: result.affectedRows };
     },
 
-    async getStats() {
+    async getStats({ startDate = null, endDate = null, month = null } = {}) {
         await this.ensureTable();
-        const [totalRows] = await db.query("SELECT COUNT(*) as total FROM bookings");
-        const [pendingRows] = await db.query("SELECT COUNT(*) as pending FROM bookings WHERE status = 'pending'");
-        const [assignedRows] = await db.query("SELECT COUNT(*) as assigned FROM bookings WHERE status = 'assigned'");
-        const [followUpRows] = await db.query("SELECT COUNT(*) as follow_up FROM bookings WHERE status IN ('follow_up', 'follow-up')");
-        const [confirmedRows] = await db.query("SELECT COUNT(*) as confirmed FROM bookings WHERE status IN ('confirmed', 'booked')");
-        const [completedRows] = await db.query("SELECT COUNT(*) as completed FROM bookings WHERE status = 'completed'");
-        const [cancelledRows] = await db.query("SELECT COUNT(*) as cancelled FROM bookings WHERE status = 'cancelled'");
-        const [spamRows] = await db.query("SELECT COUNT(*) as spam FROM bookings WHERE status = 'spam'");
+
+        let dateClause = "";
+        const dateParams = [];
+        if (startDate && endDate) {
+            dateClause = " AND (DATE(created_at) BETWEEN ? AND ? OR (created_at IS NULL AND booking_date BETWEEN ? AND ?))";
+            dateParams.push(startDate, endDate, startDate, endDate);
+        } else if (startDate) {
+            dateClause = " AND (DATE(created_at) >= ? OR (created_at IS NULL AND booking_date >= ?))";
+            dateParams.push(startDate, startDate);
+        } else if (endDate) {
+            dateClause = " AND (DATE(created_at) <= ? OR (created_at IS NULL AND booking_date <= ?))";
+            dateParams.push(endDate, endDate);
+        } else if (month && month !== "all") {
+            dateClause = " AND (DATE_FORMAT(created_at, '%Y-%m') = ? OR (created_at IS NULL AND DATE_FORMAT(booking_date, '%Y-%m') = ?))";
+            dateParams.push(month, month);
+        }
+
+        const [allTimeTotalRows] = await db.query("SELECT COUNT(*) as allTimeTotal FROM bookings");
+        const [totalRows] = await db.query(`SELECT COUNT(*) as total FROM bookings WHERE 1=1 ${dateClause}`, dateParams);
+        const [pendingRows] = await db.query(`SELECT COUNT(*) as pending FROM bookings WHERE status = 'pending' ${dateClause}`, dateParams);
+        const [assignedRows] = await db.query(`SELECT COUNT(*) as assigned FROM bookings WHERE status = 'assigned' ${dateClause}`, dateParams);
+        const [followUpRows] = await db.query(`SELECT COUNT(*) as follow_up FROM bookings WHERE status IN ('follow_up', 'follow-up') ${dateClause}`, dateParams);
+        const [confirmedRows] = await db.query(`SELECT COUNT(*) as confirmed FROM bookings WHERE status IN ('confirmed', 'booked') ${dateClause}`, dateParams);
+        const [completedRows] = await db.query(`SELECT COUNT(*) as completed FROM bookings WHERE status = 'completed' ${dateClause}`, dateParams);
+        const [cancelledRows] = await db.query(`SELECT COUNT(*) as cancelled FROM bookings WHERE status = 'cancelled' ${dateClause}`, dateParams);
+        const [spamRows] = await db.query(`SELECT COUNT(*) as spam FROM bookings WHERE status = 'spam' ${dateClause}`, dateParams);
         const [todayRows] = await db.query("SELECT COUNT(*) as today FROM bookings WHERE DATE(created_at) = CURDATE()");
 
         // Lead sources:
         // 1. Home Page: hero_concierge, luxury_booking
-        const [homePageRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('hero_concierge', 'luxury_booking', 'home', 'home_concierge')");
+        const [homePageRows] = await db.query(`SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('hero_concierge', 'luxury_booking', 'home', 'home_concierge') ${dateClause}`, dateParams);
         // 2. Popup Modal: modal_booking, popup_modal
-        const [popupRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('modal_booking', 'popup_modal', 'booking_modal')");
+        const [popupRows] = await db.query(`SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('modal_booking', 'popup_modal', 'booking_modal') ${dateClause}`, dateParams);
         // 3. Landing Pages: bridal landing + salon landing
-        const [landingPageRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'makeup-artist-lucknow', 'makeup-landing-page', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page', 'salon-services-lucknow')");
+        const [landingPageRows] = await db.query(`SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'makeup-artist-lucknow', 'makeup-landing-page', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page', 'salon-services-lucknow') ${dateClause}`, dateParams);
 
-        const [bridalRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'makeup-artist-lucknow', 'makeup-landing-page')");
-        const [salonRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('salon_landing_page', 'salon_landing_modal', 'salon-landing-page', 'salon-services-lucknow')");
+        const [bridalRows] = await db.query(`SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'makeup-artist-lucknow', 'makeup-landing-page') ${dateClause}`, dateParams);
+        const [salonRows] = await db.query(`SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('salon_landing_page', 'salon_landing_modal', 'salon-landing-page', 'salon-services-lucknow') ${dateClause}`, dateParams);
         
         // 4. Skin Aesthetics Leads:
-        const [skinRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('skin_consultation', 'skin-aesthetics', 'skin_aesthetics', 'skin', 'aesthetic', 'laser-treatment', 'microblading')");
+        const [skinRows] = await db.query(`SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('skin_consultation', 'skin-aesthetics', 'skin_aesthetics', 'skin', 'aesthetic', 'laser-treatment', 'microblading') ${dateClause}`, dateParams);
 
         // 5. Academy Leads:
-        const [academyRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('academy', 'enroll_for_course', 'enroll-for-course')");
+        const [academyRows] = await db.query(`SELECT COUNT(*) as count FROM bookings WHERE form_type IN ('academy', 'enroll_for_course', 'enroll-for-course') ${dateClause}`, dateParams);
 
         // 6. General / Other Website:
-        const [websiteRows] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE form_type NOT IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page', 'makeup-artist-lucknow', 'salon-services-lucknow', 'skin_consultation', 'skin-aesthetics', 'skin_aesthetics', 'skin', 'aesthetic', 'laser-treatment', 'microblading')");
+        const [websiteRows] = await db.query(`SELECT COUNT(*) as count FROM bookings WHERE form_type NOT IN ('bridal_landing_page', 'bridal_landing_modal', 'makeup_landing_page', 'landing_page', 'landing_page_bridal', 'salon_landing_page', 'salon_landing_modal', 'salon-landing-page', 'makeup-artist-lucknow', 'salon-services-lucknow', 'skin_consultation', 'skin-aesthetics', 'skin_aesthetics', 'skin', 'aesthetic', 'laser-treatment', 'microblading') ${dateClause}`, dateParams);
 
         return {
             total: totalRows[0]?.total || 0,
+            allTimeTotal: allTimeTotalRows[0]?.allTimeTotal || 0,
             pending: pendingRows[0]?.pending || 0,
             assigned: assignedRows[0]?.assigned || 0,
             follow_up: followUpRows[0]?.follow_up || 0,

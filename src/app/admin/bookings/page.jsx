@@ -280,6 +280,9 @@ export default function AdminBookingsPage() {
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [typeFilter, setTypeFilter] = useState("all");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [selectedMonth, setSelectedMonth] = useState("all");
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [updatingId, setUpdatingId] = useState(null);
     const [copiedPhoneId, setCopiedPhoneId] = useState(null);
@@ -291,11 +294,28 @@ export default function AdminBookingsPage() {
     const [actionNotice, setActionNotice] = useState(null);
     const [showExportMenu, setShowExportMenu] = useState(false);
 
+    // Initial check for query parameters from URL (e.g. from Dashboard or bookmarked link)
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            const sDate = params.get("startDate");
+            const eDate = params.get("endDate");
+            const m = params.get("month");
+            const fType = params.get("formType");
+            const st = params.get("status");
+            if (sDate) setStartDate(sDate);
+            if (eDate) setEndDate(eDate);
+            if (m) setSelectedMonth(m);
+            if (fType) setTypeFilter(fType);
+            if (st) setStatusFilter(st);
+        }
+    }, []);
+
     // Reset visible count and clear selection when filters change
     useEffect(() => {
         setVisibleCount(15);
         setSelectedIds(new Set());
-    }, [statusFilter, typeFilter, search]);
+    }, [statusFilter, typeFilter, search, startDate, endDate, selectedMonth]);
 
     const showNotice = (msg, type = "success") => {
         setActionNotice({ msg, type });
@@ -310,6 +330,10 @@ export default function AdminBookingsPage() {
                 formType: typeFilter,
                 search: search,
             });
+            if (startDate) query.set("startDate", startDate);
+            if (endDate) query.set("endDate", endDate);
+            if (selectedMonth && selectedMonth !== "all") query.set("month", selectedMonth);
+
             const res = await fetch(`/api/bookings?${query.toString()}`);
             if (res.ok) {
                 const data = await res.json();
@@ -324,7 +348,106 @@ export default function AdminBookingsPage() {
         } finally {
             setLoading(false);
         }
-    }, [statusFilter, typeFilter, search]);
+    }, [statusFilter, typeFilter, search, startDate, endDate, selectedMonth]);
+
+    // Date preset handlers
+    const applyDatePreset = (preset) => {
+        const today = new Date();
+        const pad = (n) => String(n).padStart(2, "0");
+        const formatDate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+        if (preset === "all") {
+            setStartDate("");
+            setEndDate("");
+            setSelectedMonth("all");
+        } else if (preset === "today") {
+            const t = formatDate(today);
+            setStartDate(t);
+            setEndDate(t);
+            setSelectedMonth("all");
+        } else if (preset === "yesterday") {
+            const y = new Date(today);
+            y.setDate(y.getDate() - 1);
+            const yStr = formatDate(y);
+            setStartDate(yStr);
+            setEndDate(yStr);
+            setSelectedMonth("all");
+        } else if (preset === "this_month") {
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            const firstDay = `${year}-${pad(month + 1)}-01`;
+            const lastDay = formatDate(new Date(year, month + 1, 0));
+            setStartDate(firstDay);
+            setEndDate(lastDay);
+            setSelectedMonth(`${year}-${pad(month + 1)}`);
+        } else if (preset === "last_month") {
+            const d = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            const year = d.getFullYear();
+            const month = d.getMonth();
+            const firstDay = `${year}-${pad(month + 1)}-01`;
+            const lastDay = formatDate(new Date(year, month + 1, 0));
+            setStartDate(firstDay);
+            setEndDate(lastDay);
+            setSelectedMonth(`${year}-${pad(month + 1)}`);
+        }
+    };
+
+    const handleMonthSelect = (ym) => {
+        setSelectedMonth(ym || "all");
+        if (!ym || ym === "all") {
+            setStartDate("");
+            setEndDate("");
+        } else {
+            const [yearStr, monthStr] = ym.split("-");
+            const y = parseInt(yearStr, 10);
+            const m = parseInt(monthStr, 10);
+            const pad = (n) => String(n).padStart(2, "0");
+            const firstDay = `${y}-${pad(m)}-01`;
+            const lastDayObj = new Date(y, m, 0);
+            const lastDay = `${y}-${pad(m)}-${pad(lastDayObj.getDate())}`;
+            setStartDate(firstDay);
+            setEndDate(lastDay);
+        }
+    };
+
+    const handleStartDateChange = (val) => {
+        setStartDate(val);
+        if (val && endDate && val.slice(0, 7) === endDate.slice(0, 7)) {
+            setSelectedMonth(val.slice(0, 7));
+        } else if (val && !endDate) {
+            setSelectedMonth(val.slice(0, 7));
+        } else {
+            setSelectedMonth("all");
+        }
+    };
+
+    const handleEndDateChange = (val) => {
+        setEndDate(val);
+        if (val && startDate && val.slice(0, 7) === startDate.slice(0, 7)) {
+            setSelectedMonth(val.slice(0, 7));
+        } else if (val && !startDate) {
+            setSelectedMonth(val.slice(0, 7));
+        } else {
+            setSelectedMonth("all");
+        }
+    };
+
+    const formatReadableDate = (dateStr) => {
+        if (!dateStr) return "";
+        try {
+            const [y, m, d] = dateStr.split("-").map(Number);
+            const date = new Date(y, m - 1, d);
+            return date.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+            });
+        } catch {
+            return dateStr;
+        }
+    };
+
+    const isDateFiltered = Boolean(startDate || endDate || (selectedMonth && selectedMonth !== "all"));
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -570,7 +693,16 @@ export default function AdminBookingsPage() {
         setTimeout(() => setCopiedPhoneId(null), 2000);
     };
 
-    const isFiltered = typeFilter !== "all" || statusFilter !== "all" || search.trim() !== "";
+    const resetAllFilters = () => {
+        setTypeFilter("all");
+        setStatusFilter("all");
+        setSearch("");
+        setStartDate("");
+        setEndDate("");
+        setSelectedMonth("all");
+    };
+
+    const isFiltered = typeFilter !== "all" || statusFilter !== "all" || search.trim() !== "" || isDateFiltered;
     const hasMore = visibleCount < bookings.length;
     const remainingCount = Math.max(0, bookings.length - visibleCount);
 
@@ -901,6 +1033,191 @@ export default function AdminBookingsPage() {
                 </div>
             </div>
 
+            {/* Date & Month Range Filter Panel */}
+            <div className="bg-white p-4 rounded-xl border border-[#e8e2d5] shadow-2xs space-y-3.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#f2ede4] pb-2.5">
+                    <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-gold-deep" />
+                        <span className="text-xs font-semibold uppercase tracking-wider text-ink">
+                            Date &amp; Month Filter
+                        </span>
+                        {isDateFiltered ? (
+                            <span className="text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                Filter Active: {bookings.length} lead{bookings.length === 1 ? "" : "s"}
+                            </span>
+                        ) : (
+                            <span className="text-[10px] text-muted">
+                                (All Time: {stats.total || 0} leads)
+                            </span>
+                        )}
+                    </div>
+                    {isDateFiltered && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setStartDate("");
+                                setEndDate("");
+                                setSelectedMonth("all");
+                            }}
+                            className="text-xs text-rose-700 hover:text-rose-900 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                            <span>Clear Date Filter</span>
+                        </button>
+                    )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                    {/* Month & Year Picker */}
+                    <div className="md:col-span-4">
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">
+                            1. Select Month &amp; Year
+                        </label>
+                        <input
+                            type="month"
+                            value={selectedMonth && selectedMonth !== "all" ? selectedMonth : ""}
+                            onChange={(e) => handleMonthSelect(e.target.value)}
+                            onClick={(e) => {
+                                try {
+                                    e.target.showPicker();
+                                } catch {}
+                            }}
+                            className="w-full px-3 py-1.5 bg-[#faf7f2] border border-border rounded-lg text-xs font-sans text-ink focus:outline-none focus:border-gold focus:bg-white transition-all cursor-pointer font-medium"
+                        />
+                    </div>
+
+                    {/* Date From */}
+                    <div className="md:col-span-3">
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">
+                            2. Date From (Start)
+                        </label>
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => handleStartDateChange(e.target.value)}
+                            onClick={(e) => {
+                                try {
+                                    e.target.showPicker();
+                                } catch {}
+                            }}
+                            className="w-full px-3 py-1.5 bg-[#faf7f2] border border-border rounded-lg text-xs font-sans text-ink focus:outline-none focus:border-gold focus:bg-white transition-all cursor-pointer"
+                        />
+                    </div>
+
+                    {/* Date To */}
+                    <div className="md:col-span-3">
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">
+                            3. Date To (End)
+                        </label>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => handleEndDateChange(e.target.value)}
+                            onClick={(e) => {
+                                try {
+                                    e.target.showPicker();
+                                } catch {}
+                            }}
+                            className="w-full px-3 py-1.5 bg-[#faf7f2] border border-border rounded-lg text-xs font-sans text-ink focus:outline-none focus:border-gold focus:bg-white transition-all cursor-pointer"
+                        />
+                    </div>
+
+                    {/* Matching Leads Count in range */}
+                    <div className="md:col-span-2">
+                        <div className="bg-[#faf7f2] border border-[#e8e2d5] rounded-lg p-2 text-center">
+                            <span className="text-[10px] uppercase tracking-wider text-muted block font-semibold">
+                                Filtered Leads
+                            </span>
+                            <span className="font-mono text-base font-bold text-ink">
+                                {bookings.length}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Quick Presets Pills */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-[#f7f2ea] text-xs">
+                    <span className="text-[10px] uppercase tracking-wider text-muted font-semibold mr-1">
+                        Quick Shortcuts:
+                    </span>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("all")}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                            !startDate && !endDate && selectedMonth === "all"
+                                ? "bg-ink text-white font-semibold shadow-2xs"
+                                : "bg-[#faf7f2] hover:bg-[#f2ede4] text-muted hover:text-ink border border-border/60"
+                        }`}
+                    >
+                        All Time
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("today")}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                            startDate && startDate === endDate && startDate === new Date().toISOString().split("T")[0]
+                                ? "bg-ink text-white font-semibold shadow-2xs"
+                                : "bg-[#faf7f2] hover:bg-[#f2ede4] text-muted hover:text-ink border border-border/60"
+                        }`}
+                    >
+                        Today
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("yesterday")}
+                        className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#faf7f2] hover:bg-[#f2ede4] text-muted hover:text-ink border border-border/60 transition-colors cursor-pointer"
+                    >
+                        Yesterday
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("this_month")}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                            selectedMonth === `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}` &&
+                            startDate === `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-01`
+                                ? "bg-gold-deep text-white font-semibold shadow-2xs"
+                                : "bg-[#faf7f2] hover:bg-[#f2ede4] text-muted hover:text-ink border border-border/60"
+                        }`}
+                    >
+                        This Month
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("last_month")}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                            selectedMonth === `${new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getFullYear()}-${String(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getMonth() + 1).padStart(2, "0")}` &&
+                            startDate === `${new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getFullYear()}-${String(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getMonth() + 1).padStart(2, "0")}-01`
+                                ? "bg-gold-deep text-white font-semibold shadow-2xs"
+                                : "bg-[#faf7f2] hover:bg-[#f2ede4] text-muted hover:text-ink border border-border/60"
+                        }`}
+                    >
+                        Last Month
+                    </button>
+                </div>
+
+                {/* Highlight banner showing active date range */}
+                {isDateFiltered && (
+                    <div className="bg-[#fcfaf5] border border-gold/40 p-2.5 rounded-lg flex items-center justify-between text-xs text-ink font-sans">
+                        <div className="flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-gold-deep shrink-0" />
+                            <span>
+                                Showing <strong>{bookings.length}</strong> lead{bookings.length === 1 ? "" : "s"} received{" "}
+                                <strong>
+                                    {startDate && endDate
+                                        ? `${formatReadableDate(startDate)} to ${formatReadableDate(endDate)}`
+                                        : startDate
+                                        ? `from ${formatReadableDate(startDate)} onwards`
+                                        : endDate
+                                        ? `up to ${formatReadableDate(endDate)}`
+                                        : selectedMonth}
+                                </strong>
+                            </span>
+                        </div>
+                    </div>
+                )}
+            </div>
+
             {/* Filter Bar: Source tabs & Search */}
             <div className="bg-white p-3.5 rounded-xl border border-[#e8e2d5] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
                 {/* Source Tabs */}
@@ -1016,14 +1333,10 @@ export default function AdminBookingsPage() {
                     {isFiltered && (
                         <button
                             type="button"
-                            onClick={() => {
-                                setTypeFilter("all");
-                                setStatusFilter("all");
-                                setSearch("");
-                            }}
+                            onClick={resetAllFilters}
                             className="text-xs text-rose-700 hover:underline font-medium cursor-pointer px-1"
                         >
-                            Reset
+                            Reset All Filters
                         </button>
                     )}
                 </div>

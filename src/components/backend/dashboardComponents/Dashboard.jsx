@@ -18,6 +18,7 @@ import {
     Clock,
     AlertCircle,
     ArrowRight,
+    X,
 } from "lucide-react";
 import {
     LEAD_STATUS_PIPELINE,
@@ -58,6 +59,9 @@ export default function Dashboard() {
     const [search, setSearch] = useState("");
     const [channelTab, setChannelTab] = useState("all");
     const [statusFilter, setStatusFilter] = useState("all");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [selectedMonth, setSelectedMonth] = useState("all");
     const [copiedPhoneId, setCopiedPhoneId] = useState(null);
     const [updatingId, setUpdatingId] = useState(null);
     const [notice, setNotice] = useState(null);
@@ -70,7 +74,15 @@ export default function Dashboard() {
     const fetchOverviewData = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await fetch("/api/bookings?status=all&formType=all");
+            const query = new URLSearchParams({
+                status: "all",
+                formType: "all",
+            });
+            if (startDate) query.set("startDate", startDate);
+            if (endDate) query.set("endDate", endDate);
+            if (selectedMonth && selectedMonth !== "all") query.set("month", selectedMonth);
+
+            const res = await fetch(`/api/bookings?${query.toString()}`);
             if (res.ok) {
                 const data = await res.json();
                 if (data.stats) {
@@ -86,7 +98,118 @@ export default function Dashboard() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [startDate, endDate, selectedMonth]);
+
+    // Date preset handlers
+    const applyDatePreset = (preset) => {
+        const today = new Date();
+        const pad = (n) => String(n).padStart(2, "0");
+        const formatDate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+        if (preset === "all") {
+            setStartDate("");
+            setEndDate("");
+            setSelectedMonth("all");
+        } else if (preset === "today") {
+            const t = formatDate(today);
+            setStartDate(t);
+            setEndDate(t);
+            setSelectedMonth("all");
+        } else if (preset === "yesterday") {
+            const y = new Date(today);
+            y.setDate(y.getDate() - 1);
+            const yStr = formatDate(y);
+            setStartDate(yStr);
+            setEndDate(yStr);
+            setSelectedMonth("all");
+        } else if (preset === "this_month") {
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            const firstDay = `${year}-${pad(month + 1)}-01`;
+            const lastDay = formatDate(new Date(year, month + 1, 0));
+            setStartDate(firstDay);
+            setEndDate(lastDay);
+            setSelectedMonth(`${year}-${pad(month + 1)}`);
+        } else if (preset === "last_month") {
+            const d = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            const year = d.getFullYear();
+            const month = d.getMonth();
+            const firstDay = `${year}-${pad(month + 1)}-01`;
+            const lastDay = formatDate(new Date(year, month + 1, 0));
+            setStartDate(firstDay);
+            setEndDate(lastDay);
+            setSelectedMonth(`${year}-${pad(month + 1)}`);
+        }
+    };
+
+    const handleMonthSelect = (ym) => {
+        setSelectedMonth(ym || "all");
+        if (!ym || ym === "all") {
+            setStartDate("");
+            setEndDate("");
+        } else {
+            const [yearStr, monthStr] = ym.split("-");
+            const y = parseInt(yearStr, 10);
+            const m = parseInt(monthStr, 10);
+            const pad = (n) => String(n).padStart(2, "0");
+            const firstDay = `${y}-${pad(m)}-01`;
+            const lastDayObj = new Date(y, m, 0);
+            const lastDay = `${y}-${pad(m)}-${pad(lastDayObj.getDate())}`;
+            setStartDate(firstDay);
+            setEndDate(lastDay);
+        }
+    };
+
+    const handleStartDateChange = (val) => {
+        setStartDate(val);
+        if (val && endDate && val.slice(0, 7) === endDate.slice(0, 7)) {
+            setSelectedMonth(val.slice(0, 7));
+        } else if (val && !endDate) {
+            setSelectedMonth(val.slice(0, 7));
+        } else {
+            setSelectedMonth("all");
+        }
+    };
+
+    const handleEndDateChange = (val) => {
+        setEndDate(val);
+        if (val && startDate && val.slice(0, 7) === startDate.slice(0, 7)) {
+            setSelectedMonth(val.slice(0, 7));
+        } else if (val && !startDate) {
+            setSelectedMonth(val.slice(0, 7));
+        } else {
+            setSelectedMonth("all");
+        }
+    };
+
+    const formatReadableDate = (dateStr) => {
+        if (!dateStr) return "";
+        try {
+            const [y, m, d] = dateStr.split("-").map(Number);
+            const date = new Date(y, m - 1, d);
+            return date.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+            });
+        } catch {
+            return dateStr;
+        }
+    };
+
+    const isDateFiltered = Boolean(startDate || endDate || (selectedMonth && selectedMonth !== "all"));
+
+    const getBookingsUrl = (extraParams = {}) => {
+        const params = new URLSearchParams();
+        Object.entries(extraParams).forEach(([k, v]) => {
+            if (v && v !== "all") params.set(k, v);
+        });
+        if (startDate) params.set("startDate", startDate);
+        if (endDate) params.set("endDate", endDate);
+        if (selectedMonth && selectedMonth !== "all") params.set("month", selectedMonth);
+        const q = params.toString();
+        return `/admin/bookings${q ? `?${q}` : ""}`;
+    };
 
     useEffect(() => {
         fetchOverviewData();
@@ -217,13 +340,207 @@ export default function Dashboard() {
                     </button>
 
                     <Link
-                        href="/admin/bookings"
+                        href={getBookingsUrl()}
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-primary hover:bg-[#342a22] text-cream shadow-luxe transition-all cursor-pointer"
                     >
                         <span>Manage All Inquiries &amp; Export</span>
                         <ArrowRight className="w-3.5 h-3.5 text-gold" />
                     </Link>
                 </div>
+            </div>
+
+            {/* =========================================================================
+                DATE & MONTH RANGE FILTER CARD
+            ========================================================================== */}
+            <div className="bg-white p-4 sm:p-5 rounded-2xl border border-border shadow-xs space-y-3.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#f2ede4] pb-2.5">
+                    <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-gold-deep" />
+                        <span className="text-xs font-semibold uppercase tracking-wider text-ink">
+                            Filter Leads by Date &amp; Month
+                        </span>
+                        {isDateFiltered ? (
+                            <span className="text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                Filter Active: {stats.total || 0} lead{stats.total === 1 ? "" : "s"}
+                            </span>
+                        ) : (
+                            <span className="text-[10px] text-muted">
+                                (All Time: {stats.allTimeTotal || stats.total || 0} leads)
+                            </span>
+                        )}
+                    </div>
+                    {isDateFiltered && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setStartDate("");
+                                setEndDate("");
+                                setSelectedMonth("all");
+                            }}
+                            className="text-xs text-rose-700 hover:text-rose-900 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                            <span>Clear Date Filter</span>
+                        </button>
+                    )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                    {/* Month & Year Picker */}
+                    <div className="md:col-span-4">
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">
+                            1. Select Month &amp; Year
+                        </label>
+                        <input
+                            type="month"
+                            value={selectedMonth && selectedMonth !== "all" ? selectedMonth : ""}
+                            onChange={(e) => handleMonthSelect(e.target.value)}
+                            onClick={(e) => {
+                                try {
+                                    e.target.showPicker();
+                                } catch {}
+                            }}
+                            className="w-full px-3 py-1.5 bg-[#faf7f2] border border-border rounded-lg text-xs font-sans text-ink focus:outline-none focus:border-gold focus:bg-white transition-all cursor-pointer font-medium"
+                        />
+                    </div>
+
+                    {/* Date From */}
+                    <div className="md:col-span-3">
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">
+                            2. Date From (Start)
+                        </label>
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => handleStartDateChange(e.target.value)}
+                            onClick={(e) => {
+                                try {
+                                    e.target.showPicker();
+                                } catch {}
+                            }}
+                            className="w-full px-3 py-1.5 bg-[#faf7f2] border border-border rounded-lg text-xs font-sans text-ink focus:outline-none focus:border-gold focus:bg-white transition-all cursor-pointer"
+                        />
+                    </div>
+
+                    {/* Date To */}
+                    <div className="md:col-span-3">
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">
+                            3. Date To (End)
+                        </label>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => handleEndDateChange(e.target.value)}
+                            onClick={(e) => {
+                                try {
+                                    e.target.showPicker();
+                                } catch {}
+                            }}
+                            className="w-full px-3 py-1.5 bg-[#faf7f2] border border-border rounded-lg text-xs font-sans text-ink focus:outline-none focus:border-gold focus:bg-white transition-all cursor-pointer"
+                        />
+                    </div>
+
+                    {/* Matching Leads Count in range */}
+                    <div className="md:col-span-2">
+                        <div className="bg-[#faf7f2] border border-[#e8e2d5] rounded-lg p-2 text-center">
+                            <span className="text-[10px] uppercase tracking-wider text-muted block font-semibold">
+                                Total In Range
+                            </span>
+                            <span className="font-mono text-base font-bold text-ink">
+                                {stats.total || 0}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Quick Presets Pills */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-[#f7f2ea] text-xs">
+                    <span className="text-[10px] uppercase tracking-wider text-muted font-semibold mr-1">
+                        Quick Shortcuts:
+                    </span>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("all")}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                            !startDate && !endDate && selectedMonth === "all"
+                                ? "bg-ink text-white font-semibold shadow-2xs"
+                                : "bg-[#faf7f2] hover:bg-[#f2ede4] text-muted hover:text-ink border border-border/60"
+                        }`}
+                    >
+                        All Time
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("today")}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                            startDate && startDate === endDate && startDate === new Date().toISOString().split("T")[0]
+                                ? "bg-ink text-white font-semibold shadow-2xs"
+                                : "bg-[#faf7f2] hover:bg-[#f2ede4] text-muted hover:text-ink border border-border/60"
+                        }`}
+                    >
+                        Today
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("yesterday")}
+                        className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#faf7f2] hover:bg-[#f2ede4] text-muted hover:text-ink border border-border/60 transition-colors cursor-pointer"
+                    >
+                        Yesterday
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("this_month")}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                            selectedMonth === `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}` &&
+                            startDate === `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-01`
+                                ? "bg-gold-deep text-white font-semibold shadow-2xs"
+                                : "bg-[#faf7f2] hover:bg-[#f2ede4] text-muted hover:text-ink border border-border/60"
+                        }`}
+                    >
+                        This Month
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("last_month")}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                            selectedMonth === `${new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getFullYear()}-${String(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getMonth() + 1).padStart(2, "0")}` &&
+                            startDate === `${new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getFullYear()}-${String(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getMonth() + 1).padStart(2, "0")}-01`
+                                ? "bg-gold-deep text-white font-semibold shadow-2xs"
+                                : "bg-[#faf7f2] hover:bg-[#f2ede4] text-muted hover:text-ink border border-border/60"
+                        }`}
+                    >
+                        Last Month
+                    </button>
+                </div>
+
+                {/* Highlight banner showing active date range */}
+                {isDateFiltered && (
+                    <div className="bg-[#fcfaf5] border border-gold/40 p-2.5 rounded-lg flex items-center justify-between text-xs text-ink font-sans">
+                        <div className="flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-gold-deep shrink-0" />
+                            <span>
+                                Showing <strong>{stats.total || 0}</strong> lead{stats.total === 1 ? "" : "s"} received{" "}
+                                <strong>
+                                    {startDate && endDate
+                                        ? `${formatReadableDate(startDate)} to ${formatReadableDate(endDate)}`
+                                        : startDate
+                                        ? `from ${formatReadableDate(startDate)} onwards`
+                                        : endDate
+                                        ? `up to ${formatReadableDate(endDate)}`
+                                        : selectedMonth}
+                                </strong>
+                            </span>
+                        </div>
+                        <Link
+                            href={getBookingsUrl()}
+                            className="font-semibold text-gold-deep hover:underline inline-flex items-center gap-1 cursor-pointer"
+                        >
+                            <span>Open in Full Leads Console</span>
+                            <ArrowRight className="w-3 h-3" />
+                        </Link>
+                    </div>
+                )}
             </div>
 
             {/* =========================================================================
@@ -243,7 +560,7 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
                     {/* Card 1: Total Leads */}
                     <Link
-                        href="/admin/bookings?formType=all"
+                        href={getBookingsUrl({ formType: "all" })}
                         className="relative bg-white p-5 rounded-2xl border border-border shadow-xs hover:border-gold hover:shadow-soft transition-all group block"
                     >
                         <div className="flex items-center justify-between">
@@ -270,7 +587,7 @@ export default function Dashboard() {
 
                     {/* Card 2: Home Page Leads */}
                     <Link
-                        href="/admin/bookings?formType=home_page"
+                        href={getBookingsUrl({ formType: "home_page" })}
                         className="relative bg-white p-5 rounded-2xl border border-amber-200/80 shadow-xs hover:border-amber-500 hover:shadow-soft transition-all group block bg-gradient-to-br from-white via-white to-amber-50/20"
                     >
                         <div className="flex items-center justify-between">
@@ -297,7 +614,7 @@ export default function Dashboard() {
 
                     {/* Card 3: Popup Modal Leads */}
                     <Link
-                        href="/admin/bookings?formType=popup"
+                        href={getBookingsUrl({ formType: "popup" })}
                         className="relative bg-white p-5 rounded-2xl border border-purple-200/80 shadow-xs hover:border-purple-500 hover:shadow-soft transition-all group block bg-gradient-to-br from-white via-white to-purple-50/20"
                     >
                         <div className="flex items-center justify-between">
@@ -324,7 +641,7 @@ export default function Dashboard() {
 
                     {/* Card 4: Landing Page Leads */}
                     <Link
-                        href="/admin/bookings?formType=landing_page"
+                        href={getBookingsUrl({ formType: "landing_page" })}
                         className="relative bg-white p-5 rounded-2xl border border-rose-200/80 shadow-xs hover:border-rose-500 hover:shadow-soft transition-all group block bg-gradient-to-br from-white via-white to-rose-50/20"
                     >
                         <div className="flex items-center justify-between">
@@ -351,7 +668,7 @@ export default function Dashboard() {
 
                     {/* Card 5: Skin Aesthetics Leads */}
                     <Link
-                        href="/admin/bookings?formType=skin_aesthetics"
+                        href={getBookingsUrl({ formType: "skin_aesthetics" })}
                         className="relative bg-white p-5 rounded-2xl border border-amber-200/80 shadow-xs hover:border-[#784e2d] hover:shadow-soft transition-all group block bg-gradient-to-br from-white via-white to-[#fbf4eb]/40"
                     >
                         <div className="flex items-center justify-between">
@@ -691,7 +1008,7 @@ export default function Dashboard() {
                     </span>
 
                     <Link
-                        href="/admin/bookings"
+                        href={getBookingsUrl()}
                         className="inline-flex items-center gap-1.5 font-semibold text-primary hover:text-gold-deep transition-colors text-xs"
                     >
                         <span>View all {stats.total} leads in Bookings Management Console</span>

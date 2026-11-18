@@ -169,9 +169,12 @@ export async function listBookings(request) {
         const status = searchParams.get("status") || "all";
         const formType = searchParams.get("formType") || "all";
         const search = searchParams.get("search") || "";
+        const startDate = searchParams.get("startDate") || "";
+        const endDate = searchParams.get("endDate") || "";
+        const month = searchParams.get("month") || "";
 
-        const bookings = await BookingModel.getAll({ status, formType, search });
-        const stats = await BookingModel.getStats();
+        const bookings = await BookingModel.getAll({ status, formType, search, startDate, endDate, month });
+        const stats = await BookingModel.getStats({ startDate, endDate, month });
 
         return { status: 200, body: { bookings, stats } };
     } catch (error) {
