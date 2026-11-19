@@ -217,10 +217,13 @@ export async function listLeads(request) {
         const isTest = searchParams.get("isTest");
         const limit = Number(searchParams.get("limit")) || 100;
         const offset = Number(searchParams.get("offset")) || 0;
+        const startDate = searchParams.get("startDate") || "";
+        const endDate = searchParams.get("endDate") || "";
+        const month = searchParams.get("month") || "";
 
         const [leads, stats] = await Promise.all([
-            GoogleLeadModel.getAll({ status, search, isTest, limit, offset }),
-            GoogleLeadModel.getStats(),
+            GoogleLeadModel.getAll({ status, search, isTest, limit, offset, startDate, endDate, month }),
+            GoogleLeadModel.getStats({ startDate, endDate, month }),
         ]);
 
         return {

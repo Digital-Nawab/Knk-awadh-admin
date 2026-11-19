@@ -86,7 +86,7 @@ const GoogleLeadModel = {
         return { id: result.insertId, name, phone, email, status: status || "pending" };
     },
 
-    async getAll({ status = null, search = null, isTest = null, limit = 100, offset = 0 } = {}) {
+    async getAll({ status = null, search = null, isTest = null, limit = 100, offset = 0, startDate = null, endDate = null, month = null } = {}) {
         await this.ensureTable();
         let query = "SELECT * FROM google_leads WHERE 1=1";
         const params = [];
@@ -113,6 +113,21 @@ const GoogleLeadModel = {
             params.push(s, s, s, s, s, s, s);
         }
 
+        // Date and Month range filter on lead arrival (created_at)
+        if (startDate && endDate) {
+            query += " AND DATE(created_at) BETWEEN ? AND ?";
+            params.push(startDate, endDate);
+        } else if (startDate) {
+            query += " AND DATE(created_at) >= ?";
+            params.push(startDate);
+        } else if (endDate) {
+            query += " AND DATE(created_at) <= ?";
+            params.push(endDate);
+        } else if (month && month !== "all") {
+            query += " AND DATE_FORMAT(created_at, '%Y-%m') = ?";
+            params.push(month);
+        }
+
         query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
         params.push(Number(limit) || 100, Number(offset) || 0);
 
@@ -120,8 +135,24 @@ const GoogleLeadModel = {
         return rows;
     },
 
-    async getStats() {
+    async getStats({ startDate = null, endDate = null, month = null } = {}) {
         await this.ensureTable();
+        let dateClause = "";
+        const dateParams = [];
+        if (startDate && endDate) {
+            dateClause = " AND DATE(created_at) BETWEEN ? AND ?";
+            dateParams.push(startDate, endDate);
+        } else if (startDate) {
+            dateClause = " AND DATE(created_at) >= ?";
+            dateParams.push(startDate);
+        } else if (endDate) {
+            dateClause = " AND DATE(created_at) <= ?";
+            dateParams.push(endDate);
+        } else if (month && month !== "all") {
+            dateClause = " AND DATE_FORMAT(created_at, '%Y-%m') = ?";
+            dateParams.push(month);
+        }
+
         const [counts] = await db.query(`
             SELECT 
                 COUNT(*) as total,
@@ -134,17 +165,23 @@ const GoogleLeadModel = {
                 SUM(CASE WHEN is_test = 1 THEN 1 ELSE 0 END) as test_leads,
                 SUM(CASE WHEN created_at >= CURDATE() THEN 1 ELSE 0 END) as today_leads
             FROM google_leads
-        `);
-        return counts[0] || {
-            total: 0,
-            pending: 0,
-            assigned: 0,
-            follow_up: 0,
-            confirmed: 0,
-            completed: 0,
-            cancelled: 0,
-            test_leads: 0,
-            today_leads: 0,
+            WHERE 1=1 ${dateClause}
+        `, dateParams);
+
+        const [allTimeCounts] = await db.query(`SELECT COUNT(*) as allTimeTotal FROM google_leads`);
+
+        const c = counts[0] || {};
+        return {
+            total: c.total || 0,
+            allTimeTotal: allTimeCounts[0]?.allTimeTotal || c.total || 0,
+            pending: c.pending || 0,
+            assigned: c.assigned || 0,
+            follow_up: c.follow_up || 0,
+            confirmed: c.confirmed || 0,
+            completed: c.completed || 0,
+            cancelled: c.cancelled || 0,
+            test_leads: c.test_leads || 0,
+            today_leads: c.today_leads || 0,
         };
     },
 

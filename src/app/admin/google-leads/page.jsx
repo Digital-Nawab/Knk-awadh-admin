@@ -107,6 +107,9 @@ export default function AdminGoogleLeadsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [testFilter, setTestFilter] = useState("all"); // "all", "real", "test"
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [selectedMonth, setSelectedMonth] = useState("all");
     const [selectedIds, setSelectedIds] = useState([]);
     const [updatingId, setUpdatingId] = useState(null);
     const [openStatusMenuId, setOpenStatusMenuId] = useState(null);
@@ -124,6 +127,120 @@ export default function AdminGoogleLeadsPage() {
     const [isEditingDomain, setIsEditingDomain] = useState(false);
     const [useLocalUrl, setUseLocalUrl] = useState(false);
 
+    // Initial check for query parameters from URL
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            const sDate = params.get("startDate");
+            const eDate = params.get("endDate");
+            const m = params.get("month");
+            const st = params.get("status");
+            if (sDate) setStartDate(sDate);
+            if (eDate) setEndDate(eDate);
+            if (m) setSelectedMonth(m);
+            if (st) setStatusFilter(st);
+        }
+    }, []);
+
+    // Date preset handlers
+    const applyDatePreset = (preset) => {
+        const today = new Date();
+        const pad = (n) => String(n).padStart(2, "0");
+        const formatDate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+        if (preset === "all") {
+            setStartDate("");
+            setEndDate("");
+            setSelectedMonth("all");
+        } else if (preset === "today") {
+            const t = formatDate(today);
+            setStartDate(t);
+            setEndDate(t);
+            setSelectedMonth("all");
+        } else if (preset === "yesterday") {
+            const y = new Date(today);
+            y.setDate(y.getDate() - 1);
+            const yStr = formatDate(y);
+            setStartDate(yStr);
+            setEndDate(yStr);
+            setSelectedMonth("all");
+        } else if (preset === "this_month") {
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            const firstDay = `${year}-${pad(month + 1)}-01`;
+            const lastDay = formatDate(new Date(year, month + 1, 0));
+            setStartDate(firstDay);
+            setEndDate(lastDay);
+            setSelectedMonth(`${year}-${pad(month + 1)}`);
+        } else if (preset === "last_month") {
+            const d = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            const year = d.getFullYear();
+            const month = d.getMonth();
+            const firstDay = `${year}-${pad(month + 1)}-01`;
+            const lastDay = formatDate(new Date(year, month + 1, 0));
+            setStartDate(firstDay);
+            setEndDate(lastDay);
+            setSelectedMonth(`${year}-${pad(month + 1)}`);
+        }
+    };
+
+    const handleMonthSelect = (ym) => {
+        setSelectedMonth(ym || "all");
+        if (!ym || ym === "all") {
+            setStartDate("");
+            setEndDate("");
+        } else {
+            const [yearStr, monthStr] = ym.split("-");
+            const y = parseInt(yearStr, 10);
+            const m = parseInt(monthStr, 10);
+            const pad = (n) => String(n).padStart(2, "0");
+            const firstDay = `${y}-${pad(m)}-01`;
+            const lastDayObj = new Date(y, m, 0);
+            const lastDay = `${y}-${pad(m)}-${pad(lastDayObj.getDate())}`;
+            setStartDate(firstDay);
+            setEndDate(lastDay);
+        }
+    };
+
+    const handleStartDateChange = (val) => {
+        setStartDate(val);
+        if (val && endDate && val.slice(0, 7) === endDate.slice(0, 7)) {
+            setSelectedMonth(val.slice(0, 7));
+        } else if (val && !endDate) {
+            setSelectedMonth(val.slice(0, 7));
+        } else {
+            setSelectedMonth("all");
+        }
+    };
+
+    const handleEndDateChange = (val) => {
+        setEndDate(val);
+        if (val && startDate && val.slice(0, 7) === startDate.slice(0, 7)) {
+            setSelectedMonth(val.slice(0, 7));
+        } else if (val && !startDate) {
+            setSelectedMonth(val.slice(0, 7));
+        } else {
+            setSelectedMonth("all");
+        }
+    };
+
+    const formatReadableDate = (dateStr) => {
+        if (!dateStr) return "";
+        try {
+            const [y, m, d] = dateStr.split("-").map(Number);
+            const date = new Date(y, m - 1, d);
+            return date.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+            });
+        } catch {
+            return dateStr;
+        }
+    };
+
+    const isDateFiltered = Boolean(startDate || endDate || (selectedMonth && selectedMonth !== "all"));
+
     // Fetch leads and stats
     const fetchLeads = useCallback(async () => {
         try {
@@ -134,6 +251,9 @@ export default function AdminGoogleLeadsPage() {
             if (searchQuery.trim()) params.append("search", searchQuery.trim());
             if (testFilter === "real") params.append("isTest", "0");
             if (testFilter === "test") params.append("isTest", "1");
+            if (startDate) params.append("startDate", startDate);
+            if (endDate) params.append("endDate", endDate);
+            if (selectedMonth && selectedMonth !== "all") params.append("month", selectedMonth);
 
             const res = await fetch(`/api/admin/google-leads?${params.toString()}`);
             const data = await res.json();
@@ -149,7 +269,7 @@ export default function AdminGoogleLeadsPage() {
         } finally {
             setLoading(false);
         }
-    }, [statusFilter, searchQuery, testFilter]);
+    }, [statusFilter, searchQuery, testFilter, startDate, endDate, selectedMonth]);
 
     // Fetch webhook config
     const fetchWebhookConfig = useCallback(async () => {
@@ -585,6 +705,191 @@ export default function AdminGoogleLeadsPage() {
                         Test Leads
                     </button>
                 </div>
+            </div>
+
+            {/* Date & Month Range Filter Panel */}
+            <div className="bg-white border border-[#EAE2D5] rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-3.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F2EDE4] pb-2.5">
+                    <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-[#4285F4]" />
+                        <span className="text-xs font-semibold uppercase tracking-wider text-[#161413]">
+                            Filter Leads by Date &amp; Month
+                        </span>
+                        {isDateFiltered ? (
+                            <span className="text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                Filter Active: {leads.length} lead{leads.length === 1 ? "" : "s"}
+                            </span>
+                        ) : (
+                            <span className="text-[10px] text-[#7A726B]">
+                                (All Time: {stats.allTimeTotal || stats.total || 0} leads)
+                            </span>
+                        )}
+                    </div>
+                    {isDateFiltered && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setStartDate("");
+                                setEndDate("");
+                                setSelectedMonth("all");
+                            }}
+                            className="text-xs text-rose-700 hover:text-rose-900 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                            <span>Clear Date Filter</span>
+                        </button>
+                    )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                    {/* Month & Year Picker */}
+                    <div className="md:col-span-4">
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider text-[#7A726B] mb-1">
+                            1. Select Month &amp; Year
+                        </label>
+                        <input
+                            type="month"
+                            value={selectedMonth && selectedMonth !== "all" ? selectedMonth : ""}
+                            onChange={(e) => handleMonthSelect(e.target.value)}
+                            onClick={(e) => {
+                                try {
+                                    e.target.showPicker();
+                                } catch {}
+                            }}
+                            className="w-full px-3 py-1.5 bg-[#FAF5EE] border border-[#EAE2D5] rounded-xl text-xs font-sans text-[#161413] focus:outline-none focus:border-[#4285F4] focus:bg-white transition-all cursor-pointer font-medium"
+                        />
+                    </div>
+
+                    {/* Date From */}
+                    <div className="md:col-span-3">
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider text-[#7A726B] mb-1">
+                            2. Date From (Start)
+                        </label>
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => handleStartDateChange(e.target.value)}
+                            onClick={(e) => {
+                                try {
+                                    e.target.showPicker();
+                                } catch {}
+                            }}
+                            className="w-full px-3 py-1.5 bg-[#FAF5EE] border border-[#EAE2D5] rounded-xl text-xs font-sans text-[#161413] focus:outline-none focus:border-[#4285F4] focus:bg-white transition-all cursor-pointer"
+                        />
+                    </div>
+
+                    {/* Date To */}
+                    <div className="md:col-span-3">
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider text-[#7A726B] mb-1">
+                            3. Date To (End)
+                        </label>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => handleEndDateChange(e.target.value)}
+                            onClick={(e) => {
+                                try {
+                                    e.target.showPicker();
+                                } catch {}
+                            }}
+                            className="w-full px-3 py-1.5 bg-[#FAF5EE] border border-[#EAE2D5] rounded-xl text-xs font-sans text-[#161413] focus:outline-none focus:border-[#4285F4] focus:bg-white transition-all cursor-pointer"
+                        />
+                    </div>
+
+                    {/* Matching Leads Count in range */}
+                    <div className="md:col-span-2">
+                        <div className="bg-[#FAF5EE] border border-[#EAE2D5] rounded-xl p-2 text-center">
+                            <span className="text-[10px] uppercase tracking-wider text-[#7A726B] block font-semibold">
+                                Filtered Leads
+                            </span>
+                            <span className="font-mono text-base font-bold text-[#161413]">
+                                {leads.length}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Quick Presets Pills */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-[#F7F2EA] text-xs">
+                    <span className="text-[10px] uppercase tracking-wider text-[#7A726B] font-semibold mr-1">
+                        Quick Shortcuts:
+                    </span>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("all")}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
+                            !startDate && !endDate && selectedMonth === "all"
+                                ? "bg-[#161413] text-white font-semibold shadow-2xs"
+                                : "bg-[#FAF5EE] hover:bg-[#EAE2D5] text-[#524B44] hover:text-[#161413] border border-[#EAE2D5]"
+                        }`}
+                    >
+                        All Time
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("today")}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
+                            startDate && startDate === endDate && startDate === new Date().toISOString().split("T")[0]
+                                ? "bg-[#161413] text-white font-semibold shadow-2xs"
+                                : "bg-[#FAF5EE] hover:bg-[#EAE2D5] text-[#524B44] hover:text-[#161413] border border-[#EAE2D5]"
+                        }`}
+                    >
+                        Today
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("yesterday")}
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[#FAF5EE] hover:bg-[#EAE2D5] text-[#524B44] hover:text-[#161413] border border-[#EAE2D5] transition-colors cursor-pointer"
+                    >
+                        Yesterday
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("this_month")}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
+                            selectedMonth === `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}` &&
+                            startDate === `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-01`
+                                ? "bg-[#4285F4] text-white font-semibold shadow-2xs"
+                                : "bg-[#FAF5EE] hover:bg-[#EAE2D5] text-[#524B44] hover:text-[#161413] border border-[#EAE2D5]"
+                        }`}
+                    >
+                        This Month
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => applyDatePreset("last_month")}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
+                            selectedMonth === `${new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getFullYear()}-${String(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getMonth() + 1).padStart(2, "0")}` &&
+                            startDate === `${new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getFullYear()}-${String(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getMonth() + 1).padStart(2, "0")}-01`
+                                ? "bg-[#4285F4] text-white font-semibold shadow-2xs"
+                                : "bg-[#FAF5EE] hover:bg-[#EAE2D5] text-[#524B44] hover:text-[#161413] border border-[#EAE2D5]"
+                        }`}
+                    >
+                        Last Month
+                    </button>
+                </div>
+
+                {/* Highlight banner showing active date range */}
+                {isDateFiltered && (
+                    <div className="bg-[#FAF5EE] border border-[#4285F4]/30 p-2.5 rounded-xl flex items-center justify-between text-xs text-[#161413] font-sans">
+                        <div className="flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-[#4285F4] shrink-0" />
+                            <span>
+                                Showing <strong>{leads.length}</strong> lead{leads.length === 1 ? "" : "s"} received{" "}
+                                <strong>
+                                    {startDate && endDate
+                                        ? `${formatReadableDate(startDate)} to ${formatReadableDate(endDate)}`
+                                        : startDate
+                                        ? `from ${formatReadableDate(startDate)} onwards`
+                                        : endDate
+                                        ? `up to ${formatReadableDate(endDate)}`
+                                        : selectedMonth}
+                                </strong>
+                            </span>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Filter, Search & Status Pipeline Bar (Clean 2-Row Layout) */}
